@@ -126,7 +126,7 @@ The following is a simplistic example of a Django web application implemented as
 microservice using containers:
 
 
-![Django application flow when deployed as distinct containers](images/1.png)
+![Django application flow when deployed as distinct containers](1.jpg)
 
 This single microservice is composed of three containers with separate logical components:
 **Nginx container** (web server), **Gunicorn/Django container** (web application), and
@@ -512,7 +512,6 @@ Such cache stores are ideal for storing frequently used but ephemeral data, such
 sessions.
 
 
-
 ### Cached session backend
 
 By default, Django stores its user session in the database. This usually gets retrieved for
@@ -526,7 +525,6 @@ preferable to use Redis or Memcached as the session store, with memory limits hi
 enough to support the maximum number of active user sessions.
 
 
-
 ### Caching frameworks
 
 For basic caching strategies, it might be easier to use a caching framework. Among the
@@ -538,7 +536,6 @@ The simplest of these is Django-cachalot, a successor of Johnny Cache. It requir
 configuration. It is ideal for sites that have multiple reads and infrequent writes (that is, the
 vast majority of applications), it caches all Django ORM-read queries in a consistent
 manner.
-
 
 
 ### Caching patterns
@@ -721,7 +718,6 @@ slower but working state even if the caching system breaks down.
     
     "Hey, at least the beacon works," said Steve, and the crowd burst into
     laughter.
-    
 </pre>
 
 
@@ -742,7 +738,4 @@ features, alterations, and rewrites.
 Every time you revisit the code, use the opportunity to take a step back and find a cleaner
 design, identify a hidden pattern, or think of a better implementation. Other developers,
 and perhaps your future self, will thank you for it.
-
-
-
 
