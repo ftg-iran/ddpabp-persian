@@ -512,6 +512,7 @@ Such cache stores are ideal for storing frequently used but ephemeral data, such
 sessions.
 
 
+
 ### Cached session backend
 
 By default, Django stores its user session in the database. This usually gets retrieved for
@@ -523,4 +524,225 @@ store the session data in your cache:
 Since some cache storage can evict stale data leading to the loss of session data, it is
 preferable to use Redis or Memcached as the session store, with memory limits high
 enough to support the maximum number of active user sessions.
+
+
+
+### Caching frameworks
+
+For basic caching strategies, it might be easier to use a caching framework. Among the
+popular ones are `django-cache-machine` and `django-cachalot`. They can handle
+common scenarios, such as automatically caching results of queries to avoid database hits
+every time you perform a read.
+
+The simplest of these is Django-cachalot, a successor of Johnny Cache. It requires very little
+configuration. It is ideal for sites that have multiple reads and infrequent writes (that is, the
+vast majority of applications), it caches all Django ORM-read queries in a consistent
+manner.
+
+
+
+### Caching patterns
+
+Once your site starts getting heavy traffic, you will need to start exploring several caching
+strategies throughout your stack. Using Varnish, a caching server that sits between your
+users and Django, many of your requests might not even hit the Django server.
+
+Varnish can make pages load extremely fast (sometimes, hundreds of times faster than
+normal). However, if used improperly, it might serve static pages to your users. Varnish
+can be easily configured to recognize dynamic pages or dynamic parts of a page such as a
+shopping cart.
+
+**Russian doll caching**, popular in the rails community, is an interesting template cacheinvalidation pattern. 
+Imagine a user's timeline page with a series of posts, each containing a
+nested list of comments. In fact, the entire page can be considered as several nested lists of
+content. At each level, the rendered template fragment gets cached.
+
+So, if a new comment gets added to a post, only the associated post and timeline caches get
+invalidated.
+
+We first invalidate the cache content directly outside the changed content
+and move progressively until we reach the outermost content. The
+dependencies between models need to be tracked for this pattern to work.
+
+Another common caching pattern is to cache forever. Even after the content changes, the
+user might get served stale data from the cache. However, an asynchronous job, such as a
+Celery job, also gets triggered to update the cache. You can also periodically warm the
+cache at a certain interval to refresh the content.
+
+Essentially, a successful caching strategy identifies the static and dynamic parts of a site.
+For many sites, the dynamic parts are the user-specific data when you are logged in. If this
+is separated from the generally available public content, then implementing caching
+becomes easier.
+
+Don't treat caching as integral to the working of your site. The site must fall back to a
+slower but working state even if the caching system breaks down.
+
+**Cranos**:
+<pre>
+    It was six in the morning and the SHIM building was surrounded by a
+    grey fog. Somewhere inside, a small conference room had been designated
+    the war room. For the last three hours, the SuperBook team had been
+    holed up here diligently executing their pre-go-live plan.
+
+    More than 30 users had logged on the IRC chatroom #superbookgolive
+    from various parts of the world. The chat log was projected on a giant
+    whiteboard. When the last item was struck off, Evan glanced at Steve.
+    Then, he pressed a key triggering the deployment process.
+    
+    The room fell silent as the script output kept scrolling off the wall. One
+    error, Steve thought, just one error can potentially set them back by hours.
+    Several seconds later, the command prompt reappeared. It was live! The
+    team erupted in joy. Leaping from their chairs they gave high-fives to
+    each other. Some were crying tears of happiness. After weeks of
+    uncertainty and hard work, it all seemed surreal.
+
+    However, the celebrations were short-lived. A loud explosion from above
+    shook the entire building. Steve knew the second breach had begun. He
+    shouted to Evan, "don't turn on the beacon until you get my message",
+    and sprinted out of the room.
+    
+    As Steve hurried up the stairway to the rooftop, he heard the sound of
+    footsteps above him. It was Madam O. She opened the door and flung
+    herself in. He could hear her screaming "no!" and a deafening blast shortly
+    after that.
+    
+    By the time he reached the rooftop, he saw Madam O sitting with her back
+    against the wall. She was clutching her left arm and wincing in pain. Steve
+    slowly peered around the wall. At a distance, a tall bald man seemed to be
+    working on something with the help of two robots.
+    
+    "He looks like...." Steve broke off, unsure of himself.
+    
+    "Yes, it is Hart. Rather I should say he is Cranos now."
+    
+    "What?"
+    
+    "Yes, a split personality. A monster that laid hidden in Hart's mind for
+    years. I tried to help him control it. Many years back, I thought I had
+    stopped it from ever coming back. However, all this stress took a toll on
+    him. Poor thing, if only I could get near him."
+    
+    Poor thing indeed, he nearly tried to kill her. Steve took out his mobile
+    and sent out a message to turn on the beacon. He had to improvise.
+    
+    With his hands high in the air and fingers crossed, he stepped out. The
+    two robots immediately aimed directly at him. Cranos motioned them to
+    stop.
+
+    "Well, who do we have here? Mr. SuperBook himself. Did I crash into
+    your launch party, Steve?"
+    
+    "It was our launch, Hart."
+    
+    "Don't call me that", growled Cranos. "That guy was a fool. He wrote the
+    Sentinel code but he never understood its potential. I mean, just look at
+    what Sentinels can do, unravel every cryptographic algorithm known to
+    man. What happens when it enters an intergalactic network?"
+    
+    The hint was not lost on Steve. "SuperBook?" he asked slowly.
+    
+    Cranos let out a malicious grin. Behind him, the robots were busy wiring
+    into SHIM's core network. "While your SuperBook users will be busy
+    playing SuperVille, the tentacles of Sentinel will spread into new
+    unsuspecting worlds. Critical systems of every intelligent species will be
+    sabotaged. The Supers will have to bow to a new intergalactic supervillain
+    Cranos."
+    
+    As Cranos was delivering this extended monologue, Steve noticed a
+    movement of the corner of his eye. It was Acorn, the super-intelligent
+    squirrel, scurrying along the right edge of the rooftop. He also spotted
+    Hexa hovering strategically on the other side. He nodded at them.
+    
+    Hexa levitated a garbage bin and flung it towards the robots. Acorn
+    distracted them with high-pitched whistles. "Kill them all!" Cranos said
+    irritably. As he turned to watch his intruders, Steve fished out his phone,
+    dialed into FaceTime and held it towards Cranos.
+    
+    "Say hello to your old friend, Cranos," said Steve.
+    
+    Cranos turned to face the phone and the screen revealed Madam O's face.
+    With a smile, she muttered under her breath, "Taradiddle Bumfuzzle!"
+    
+    The expression on Cranos's face changed instantly. The seething anger
+    disappeared. He now looked like a man they had once known.
+    
+    "What happened?" asked Hart confused.
+    
+    "We thought we had lost you," said Madam O over the phone. "I had to
+    use hypnotic trigger words to bring you back."
+    
+    Hart took a moment to survey the scene around him. Then, he slowly
+    smiled and nodded at her.
+    
+    ----------------------------------------------------
+    
+    One Year Later
+    
+    Who would have guessed Acorn would turn into an intergalactic singing
+    sensation in less than a year? His latest album Acorn Unplugged debuted
+    at the top of Billboard's Top 20 chart. He threw a grand party in his new
+    white mansion overlooking a lake.
+    
+    The guest list included superheroes, pop stars, actors, and celebrities of all
+    sorts.
+    
+    "So, there was a singer in you after all," said Captain Obvious holding a
+    martini.
+    
+    "I guess there was," replied Acorn. He looked dazzling in a golden tuxedo
+    with all sorts of bling-bling.
+    
+    Steve appeared with Hexa in tow, who looked ravishing in a flowing
+    silver gown.
+    
+    "Hey Steve, Hexa. It has been a while. Is SuperBook still keeping you late
+    at work, Steve?"
+    
+    "Not so much these days. Knock on wood," replied Hexa with a smile.
+    
+    "Ah, you guys did a fantastic job. I owe a lot to SuperBook. My first single,
+    'Warning: Contains Nuts', was a huge hit in the Tucana galaxy. They
+    watched the video on SuperBook more than a billion times!"
+    
+    "I am sure every other superhero has a good thing to say about SuperBook
+    too. Take Blitz. His AskMeAnything interview won back the hearts of his
+    fans. They were thinking that he was on experimental drugs all this time.
+    It was only when he revealed that his father was Hurricane that his
+    powers made sense."
+    
+    "By the way, how is Hart doing these days?"
+    
+    "Much better," said Steve. "He got professional help. The sentinels were
+    handed back to S.H.I.M. They are developing a new quantum
+    cryptographic algorithm that will be much more secure."
+    
+    "So, I guess we are safe until the next supervillain shows up," said Captain
+    Obvious hesitantly.
+    
+    "Hey, at least the beacon works," said Steve, and the crowd burst into
+    laughter.
+    
+</pre>
+
+
+### Summary
+
+In this final chapter, we looked at various approaches to make your Django application
+stable, reliable, and fast. In other words, to make it production-ready. Although system
+administration might be an entire discipline in itself, a fair knowledge of the web stack is
+essential. We explored several hosting options, including PaaS, VPS, and Serverless.
+
+We also looked at several automated deployment tools and a typical deployment scenario.
+Finally, we covered several techniques to improve frontend and backend performance.
+
+The most important milestone of a website is finishing and taking it to production.
+However, it is by no means the end of your development journey. There will be new
+features, alterations, and rewrites.
+
+Every time you revisit the code, use the opportunity to take a step back and find a cleaner
+design, identify a hidden pattern, or think of a better implementation. Other developers,
+and perhaps your future self, will thank you for it.
+
+
+
 
