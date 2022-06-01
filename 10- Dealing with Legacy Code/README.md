@@ -81,26 +81,25 @@ her glasses back on, she left the room.
 
 ## Finding the Django Version
 
-Ideally, every project will have a requirements.txt or setup.py file at the root
-directory, and it will have the exact Version of Django used for that project. Let's look for a
+Ideally, every project will have a `requirements.txt` or `setup.py` file at the root directory, and it will have the exact Version of Django used for that project. Let's look for a
 line similar to this:
  
  `Django==1.5.9`
 
-The version number is mentioned precisely (rather than Django>=1.5.9),
-which is called pinning. Pinning every package is considered a good
+The version number is mentioned precisely (rather than `Django>=1.5.9`),
+which is called **pinning**. Pinning every package is considered a good
 practice since it reduces surprises and makes your build more
 deterministic.
 
 As a best practice, it is advisable to create a completely repeatable environment for a
 project. This includes having a requirements file with all transitive dependencies listed,
-pinning, and with --hash digests. --hash digests of the packages look like this:
+pinning, and with `--hash` digests. `--hash` digests of the packages look like this:
 
 `Django==1.5.9 --hash=sha256:2cf24dba5fb0a30e26e83b2ac5...`
 
 Hashes protect against remote tampering and save the need to create private package index
 servers containing approved packages.
-Unfortunately, there are real-world code bases where the requirements.txt file was not
+Unfortunately, there are real-world code bases where the `requirements.txt` file was not
 updated or even completely missing. In such cases, you will need to probe for various
 telltale signs to find out the exact version.
 
@@ -126,8 +125,8 @@ $ python
 1.5.9
 ```
 
-The Django Version used in this case is Version 1.5.9.
-Alternatively, you can run the manage.py script in the project to get a similar output:
+The Django Version used in this case is Version `1.5.9`.
+Alternatively, you can run the `manage.py` script in the project to get a similar output:
 
 ```bash
 $ python manage.py --version
@@ -150,7 +149,7 @@ Versions to determine the identifiable changes (for example, the `AUTH_PROFILE_M
 setting was deprecated since version 1.5) and match them to your legacy code. Once you
 pinpoint the correct Django Version, then you can move on to analyzing the code.
 
-`Pipenv`, a recent but `officially recommended` Python packaging tool, aims to solve many of these problems. It combines the functionality of `pip` and `virtualenv` so that when you install a package, it updates its requirements file (called pipenv) automatically. Last but not least, it enables repeatable builds using a `Pipenv.lock` file, which is fully pinned and
+[Pipenv](https://docs.pipenv.org/), a recent but [officially recommended](https://packaging.python.org/tutorials/managing-dependencies/#installing-pipenv) Python packaging tool, aims to solve many of these problems. It combines the functionality of `pip` and `virtualenv` so that when you install a package, it updates its requirements file (called pipenv) automatically. Last but not least, it enables repeatable builds using a `Pipenv.lock` file, which is fully pinned and
 includes hashes.
 
 ## Where are the files? This is not PHP
@@ -165,7 +164,7 @@ such as `/opt/webapps/my-django-app`. Why is this? Among many good reasons, it i
 often more secure to move your confidential data outside your public web root. This way, a
 web crawler will not be able to accidentally stumble into your source code directory.
 
-As you will read in `Chapter 13`, Production-Ready, the location of the source code can be
+As you will read in `Chapter 13`, _Production-Ready_, the location of the source code can be
 found by examining your web server's configuration file. Here, you will find either the
 `DJANGO_SETTINGS_MODULE` environment variable being set to the module's path, or it will
 pass on the request to a WSGI server that will be configured to point to
@@ -174,16 +173,16 @@ your `project.wsgi` file.
 ## Starting with urls.py
 
 Even if you have access to the entire source code of a Django site, figuring out how it works
-across various apps can be daunting. Often, it is best to start from the root URLconf located
-in the urls.py, file since it is literally a map that ties every request to the respective views.
+across various apps can be daunting. Often, it is best to start from the root `URLconf` located
+in the `urls.py`, file since it is literally a map that ties every request to the respective views.
 
 With normal Python programs, I often start reading from the start of its execution–say,
 from the top-level main module or wherever the `__main__` check idiom starts. In the case
-of Django applications, I usually start with urls.py since it is easier to follow the flow of
+of Django applications, I usually start with `urls.py` since it is easier to follow the flow of
 execution based on the various URL patterns a site has.
 
-In Linux, you can use the following find command to locate the settings.py file and the
-corresponding line specifying the urls.py root:
+In Linux, you can use the following `find` command to locate the `settings.py` file and the
+corresponding line specifying the `urls.py` root:
 
 ```bash
 $ find . -iname settings.py -exec grep -H 'ROOT_URLCONF' {} \;
@@ -264,3 +263,205 @@ If you find the installation of PyGraphviz challenging, then don't worry, you ar
 Recently, I faced numerous issues while installing on Ubuntu, ranging from Python 3
 incompatibility to incomplete documentation. To save your time, I have listed the steps that
 worked for me to reach a working setup:
+
+- 1. On Ubuntu, you will need the following packages installed to install
+PyGraphviz:
+
+```bash
+$ sudo apt-get install python-dev graphviz libgraphviz-dev pkg-config
+```
+
+- 2. Now, activate your virtual environment and run pip to install the development
+version of PyGraphviz directly from GitHub, which supports Python 3:
+
+```bash
+$ pip install
+git+http://github.com/pygraphviz/pygraphviz.git#egg=pygraphviz
+```
+
+- 3. Next, install `django-extensions` and add it to your `INSTALLED_APPS`. Now,
+you are all set.
+
+- 4. Here's a sample used to create a GraphViz dot file for just two apps and to
+convert it to a PNG image for viewing:
+
+```bash
+$ python manage.py graph_models app1 app2 > models.dot
+$ dot -Tpng models.dot -o models.png
+```
+
+## Incremental change or a full rewrite?
+
+Often, you will be handed over legacy code by the application owners in the earnest hope
+that most of it can be used right away or after a couple of minor tweaks. However, reading
+and understanding a huge and often outdated code base is not an easy job. Unsurprisingly,
+most programmers prefer working on greenfield development.
+
+In the best case scenario, the legacy code ought to be easily testable, well documented, and
+flexible to work in modern environments so that you can start making incremental changes
+in no time. In the worst case, you might recommend discarding the existing code and go for
+a full rewrite. Alternatively, as it is in most cases, the short-term approach will be to keep
+making incremental changes, and a parallel long-term effort might be underway for a
+complete reimplementation.
+
+A general rule of thumb to follow while taking such decisions is that if the cost of rewriting
+the application and maintaining the application is lower than the cost of maintaining the
+old application over time, it is recommended to go for a rewrite. Care must be taken to
+account for all the factors, such as the time taken to get new programmers up to speed, and
+the cost of maintaining outdated hardware.
+
+Sometimes, the complexity of the application domain becomes a huge barrier against a
+rewrite, since a lot of knowledge learned in the process of building the older code gets lost.
+Often, this dependency on the legacy code itself is a sign of poor design in the application,
+like failing to externalize the business rules from the application logic.
+
+The worst form of a rewrite you can probably undertake is a conversion or a mechanical
+translation from one language to another without taking any advantage of the existing best
+practices. In other words, you lost the opportunity to modernize the code base by removing
+years of cruft.
+
+Code should be seen as a liability and not as an asset. As counter-intuitive as it might
+sound, if you can achieve your business goals with a smaller amount of code, you have
+dramatically increased your productivity. Having less code to test, debug, and maintain can
+not only reduce ongoing costs, but also make your organization more agile and flexible to
+change.
+
+`Code is a liability, not an asset. Less code is more maintainable.`
+
+Irrespective of whether you are adding features or trimming your code, you must not touch
+your working legacy code without tests in place.
+
+## Writing tests before making any changes
+
+In the Working `Effectively with Legacy Code book by Michael Feathers`, legacy code is defined
+as, simply, code without tests. He elaborates that with tests, you can easily modify the
+behavior of the code quickly and verifiably. In the absence of tests, it is impossible to gauge
+whether the change made the code better or worse.
+
+Often, we do not know enough about legacy code to confidently write a test. Michael
+recommends writing tests that preserve and document the existing behavior, which are
+called characterization tests.
+
+Unlike the usual approach of writing tests, while writing a characterization test, you will
+first write a failing test with a dummy output, say X, because you don't know what to
+expect. When the test harness fails with an error, such as Expected output X but got Y, you
+will change your test to expect Y. So, now the test will pass, and it becomes a record of the
+code's existing behavior.
+
+`We might record buggy behavior as well. After all, this is unfamiliar code.
+Nevertheless, writing such tests are necessary before we start changing
+the code. Later, when we know the specifications and code better, we can
+fix these bugs and update our tests (not necessarily in that order).`
+
+## Step-by-step process to writing tests
+
+Writing tests before changing the code is similar to erecting a scaffolding before the
+restoration of an old building. It provides a structural framework that helps you
+confidently undertake repairs.
+
+You might want to approach this process in a stepwise manner as follows:
+
+- 1. Identify the area you need to make changes to. Your bug reports can be a good
+guide for narrowing down the problem area. Write characterization tests
+focusing on this area until you have satisfactorily captured its behavior.
+
+- 2. Look at the changes you need to make and write specific test cases for those.
+Resist the temptation to add new functionality. Prefer smaller unit tests to larger
+and slower integration tests.
+
+- 3. Introduce incremental changes and test in lockstep. If tests break, try to analyze
+whether it was expected. Don't be afraid to break even the characterization tests
+if that behavior is something that was intended to change.
+
+Observe that characterization tests capture all the existing behavior of your code, including
+bugs. Once your code goes into production and users become familiar with it, the bugs can
+become the expected behavior. So these tests serve as a testable documentation of the as-is
+functionality.
+
+If you have a good set of granular tests around your code, you can quickly find the effect of
+changing your code. Hence, the value of writing more unit tests with good coverage will
+help you quickly identify the impact of a change.
+
+On the other hand, if you decide to rewrite by discarding your code but not your data,
+Django can help you considerably.
+
+## Legacy database integration
+
+There is an entire section on legacy databases in Django documentation and rightly so, as
+you will run into them many times. Data is more important than code, and databases are
+the repositories of data in most enterprises.
+
+You can modernize a legacy application written in other languages or frameworks by
+importing their database structure into Django. As an immediate advantage, you can use
+the Django admin interface to view and change your legacy data.
+
+Django makes this easy with the `inspectdb` management command, which looks as
+follows:
+
+```bash
+$ python manage.py inspectdb > models.py
+```
+
+This command, if run while your settings are configured to use the legacy database, can
+automatically generate the Python code that will go into your models file. By default, these
+models are unmanaged, that is, `managed = False`. In this state, Django will not control
+the model's creation, modification, or deletion.
+
+Here are some best practices if you are using this approach to integrate in a legacy
+database:
+
+- Know the limitations of Django ORM beforehand. Currently, multicolumn
+(composite) primary keys and NoSQL databases are not supported.
+
+- Don't forget to manually clean up the generated models; for example, remove the
+redundant id fields since Django creates them automatically.
+
+- Foreign key relationships may have to be manually defined. In some databases,
+the autogenerated models will have them as integer fields (suffixed with _id).
+
+- Organize your models into separate apps. Later, it will be easier to add the views,
+forms, and tests in the appropriate folders.
+
+- Remember that running the migrations will create Django's administrative tables
+(django_* and auth_*) in the legacy database
+
+In an ideal world, your autogenerated models will immediately start working, but in
+practice, it takes a lot of trial and error. Sometimes, the data type that Django inferred
+might not match your expectations. In other cases, you might want to add additional meta-
+information, such as `unique_together`, to your model.
+
+Eventually, you should be able to see all the data that was locked inside that aging PHP
+application in your familiar Django admin interface. I am sure this will bring a smile to
+your face.
+
+## Future proofing
+
+A well-written code base is a pleasure to work with. A poorly organized and brittle code
+base usually ends up as legacy code and hinders innovation. So how can you reduce the
+chances of your application being considered as legacy? Here are some recommendations:
+
+- Django deprectations: Deprectations tell you whether a feature or idiom will be
+discontinued from Django in the future. Since Django 1.11, they are quiet by
+default. Use `python -Wd` so that deprecation warnings do appear.
+- Code reviews: Ensure high code quality and encourage best practices in reviews.
+- Consistent Formatting: Use a code formatter like black before committing code
+to reduce review time
+- Increase code coverage: Write more tests, especially unit tests.
+- Type hinting: Use type hinting to perform static analysis of Python 3 code and
+reduce the number of test cases.
+- Configuration management: Have strong version control and other
+configuration management practices to ensure replicable environments and
+painless rollbacks. This includes using a host of tools from Git to Ansible, while
+having an agile DevOps culture.
+
+## Summary
+
+In this chapter, we looked at various techniques to understand the legacy code. Reading
+code is often an underrated skill. However, rather than reinventing the wheel, we need to
+judiciously reuse good working code whenever possible. In this chapter, and throughout
+the rest of the book, we emphasize the importance of writing test cases as an integral part of
+coding.
+
+In the next chapter, we will talk about writing test cases and the often frustrating task of
+debugging that follows this.
+
