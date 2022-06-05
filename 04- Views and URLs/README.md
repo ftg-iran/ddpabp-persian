@@ -18,7 +18,7 @@
 
 نمونه یک ویوی ساده به شکل زیر است:
 
-```
+```python
     # In views.py
     from django.http import HttpResponse
 
@@ -30,7 +30,7 @@
 
 تنظیم نقشه مسیرها در ```پیکربندی URL``` به صورت سنتی است که از عبارات منظم استفاده می‌شود و نمونه آن به صورت زیر است:
 
-```
+```python
     # In urls.py
         url(r'^hello-fn/(?P<name>\w+)/$', views.hello_fn),
         url(r'^hello-fn/$', views.hello_fn),
@@ -40,7 +40,7 @@
 
 وقتی شما از سینتکس مسیریابی ساده شده که در جنگو 2.0 معرفی شد استفاده می‌کنید، ارسال پارامترها به طور یکسان کار میکند.پس شما نگاشت معادل آن را میتوانید در ```viewschapter/urls.py``` پیدا کنید:
 
-```
+```python
     # In urls.py
         path('hello-fn/<str:name>/', views.hello_fn),
         path('hello-fn/', views.hello_fn),
@@ -52,7 +52,7 @@
 
 ویوهای مبتنی بر کلاس در جنگو 1.4 معرفی شدند. در اینجا ما معادل تابع ویو قبلی را که دیدیم برای ویو مبتنی بر کلاس بازنویسی کرده‌ایم:
 
-```
+```python
 from django.views.generic import View
 
 
@@ -63,7 +63,7 @@ class HelloView(View):
 
 در اینجا نیز متناظر با قبل در ```پیکربندی URL``` ما دو خط داریم که در زیر آمده است:
 
-```
+```python
 # In urls.py
     path('hello-cl/<str:name>/', views.HelloView.as_view()),
     path('hello-cl/', views.HelloView.as_view()),
@@ -71,7 +71,7 @@ class HelloView(View):
 
 چندین تفاوت جالب بین ویوهای کلاسی و ویوهای تابعی وجود دارد. این که ما نیاز داریم اول کلاس را تعریف کنیم خیلی واضح است و بعد از آن باید صراحتاً فقط درخواست‌های ```GET``` را مدیریت کنیم. در ویو  تابعی قبلی برای متود ```POST ،GET``` یا دیگر عملکردهای HTTP همان پاسخ را دریافت می‌کنیم. همانطور که در دستورهای زیر از کلاینت در شل جنگو استفاده می‌کنیم:
 
-```
+```python
     >>> from django.test import Client
     >>> c = Client()
 
@@ -93,7 +93,7 @@ class HelloView(View):
 
 مهمترین مزیت استفاده از کلاس این است که هنگام شخصی سازی ویو می‌توانیم راحت‌تر آن را انجام دهیم. شما می‌توانید یک کلاس عمومی ویو برای خوش آمدگویی بنویسید و خوش آمدگویی‌های اختصصاصی خود را نیز از آن استخراج کنید مثل زیر:
 
-```
+```python
     class GreetView(View):
         greeting = "Hello {}!"
         default_name = "World"
@@ -108,7 +108,7 @@ class HelloView(View):
 
 پس ```پیکربندی URL``` نشأت گرفته از کلاس به صورت زیر است:
 
-```
+```python
     # In urls.py
         path('hello-su/<str:name>/', views.SuperVillainView.as_view()),
         path('hello-su/', views.SuperVillainView.as_view()),
@@ -179,7 +179,7 @@ class HelloView(View):
 
 میکسین‌ها، پردازش‌های ویو را که در جای خوب تعریف شده باشند پیگیری میکنند. به طور مثال اکثر ویوهای عمومی از ```get_context_data``` استفاده می‌کنند تا دیکشنری کانتکس را با آن تنظیم کنند. کلاس مشتق شده یا میکسین‌ها میتوانند متغیر کانتکس اضافه را به آن اضافه کند. برای مثال ```فید(feed)``` حاوی فیدهای کاربران درباره پست‌ها است. در زیر میکسین آن که ممکن است چگونه باشد آمده است:
 
-```
+```python
     class FeedMixin:
         def get_context_data(self, **kwargs):
             context = super().get_context_data(**kwargs)
@@ -192,7 +192,7 @@ class HelloView(View):
 
 حالا با قرار گرفتن آن در لیست کلاس های پایه می‌توان از این میکسین برای افزودن فید کاربر استفاده کرد. اگر سوپر کتاب به یک صفحه اصلی شبکه اجتماعی معمولی با یک فرم برای ساختن یک پست بر اساس فید شما نیاز دارد، می‌تواند از این میکسین که در زیر آمده است استفاده کند:
 
-```
+```python
     class MyFeed(FeedMixin, generic.CreateView):
         model = models.Post
         template_name = "myfeed.html"
@@ -201,7 +201,7 @@ class HelloView(View):
 
 یک میکسین که خوب نوشته شده باشد الزامات خیلی کمی دارد. باید انقدر انعطاف پذیر باشد که در اکثر موقعیت‌ها مفید واقع شود. در مثال قبل، ```FeedMixin``` متغیر کانتکس ```feed``` را در کلاس مشتق شده بازنویسی خواهد کرد. اگر یک کلاس پدر از متغیر کانتکس ```feed``` استفاده کند می‌تواند روی میکسین باعث ایجاد نقص شود. از این رو خیلی مفیدتر خواهد بود اگر یک متغیر کانتکس شخصی سازی شده جدید را بسازد مثل زیر:
 
-```
+```python
     class FeedMixin(object):
         feed_context_name = "feed"
 
@@ -218,7 +218,7 @@ class HelloView(View):
 
 شما ممکن است با کدهایی مواجه شده باشید که چندین میکسین به صورت زیر داشته‌اند:
 
-```
+```python
 class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 ```
 
@@ -228,7 +228,7 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 برای اینکه متوجه شوید  چرا اینطوری کار میکند به مثال ساده زیر توجه کنید:
 
-```
+```python
     class A:
         def do(self):
             print("A")
@@ -257,7 +257,7 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 ترتیب اینکه مشخص کنیم چطور کلاس‌های پایه را صدا بزنیم می‌تواند با چک کردن ویژگی ```__mro__``` کلاس بررسی شود:
 
-```
+```python
     >>> AB.__mro__
     (<class 'AB'>, <class 'A'>, <class 'B'>, <class 'object'>)
 ```
@@ -275,7 +275,7 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 یک ```دکوراتور(Decorator)``` تابعی است که تابعی را می‌گیرد و یک تابع دکوراتور شده را برمیگرداند. گیج شدید؟ یک سری کد وجود دارد که به شما کمک می‌کند این مسئله را بهتر متوجه شوید. استفاده از علامت ```@``` برای نشان دادن دکوراتور است، همانطور که در زیر دکوراتور ```login_required``` نشان داده شده است:
 
-```
+```python
     @login_required
     def simple_view(request):
         return HttpResponse()
@@ -283,7 +283,7 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 کدی که در ادامه آمده دقیقاً همان کد قبلی است:
 
-```
+```python
     def simple_view(request):
         return HttpResponse()
 
@@ -318,13 +318,13 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 1. به وسیله استفاده از دکوراتورها روی ویوهای مبتنی بر تابع یا ویوهای مبتنی بر کلاس:
 
-```
+```python
     @login_required(MyView.as_view())
 ```
 
 2. به وسیله بازنویسی کردن متود ```dispatch``` ویوهای مبتنی بر کلاس از طریق میکسین:
 
-```
+```python
     from django.utils.decorators import method_decorator
 
     class LoginRequiredMixin:
@@ -335,7 +335,7 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 3. ما واقعا اینجا نیازی به دکوراتورها نداریم. به شما توصیه میشود که از حالت خیلی صریح‌تر زیر استفاده کنید:
 
-```
+```python
     class LoginRequiredMixin:
 
         def dispatch(self, request, *args, **kwargs):
@@ -350,7 +350,7 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 در اینجا مثالی از استفاده آن برای کنترل دسترسی به ویو برای کاربران وارد شده و ناشناس آورده شده است:
 
-```
+```python
     from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
 
     class UserProfileView(LoginRequiredMixin, DetailView):
@@ -366,7 +366,7 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 کاربران کارمند در جنگو فقط کاربرانی هستند که پرچم ```is_staff``` آن‌ها در مدل کاربر تنظیم شده است. شما می‌توانید میکسین پیش ساخته ```UserPassesTestMixin``` را صدا بزنید و استفاده کنید که در زیر مثال آن آمده است:
 
-```
+```python
     from django.contrib.auth.mixins import UserPassesTestMixin
 
     class SomeStaffView(UserPassesTestMixin, TemplateView):
@@ -376,7 +376,7 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 شما همچنین می‌توانید میکسین‌های خودتان را بسازید که بررسی‌های به خصوصی را انجام دهد مانند اینکه شئ‌ای توسط نویسنده‌اش ویرایش می‌شود یا خیر(به وسیله مقایسه‌‌اش با یوزرهای وارد شده):
 
-```
+```python
     class CheckOwnerMixin:
         # To be used with classes derived from SingleObjectMixin
         def get_object(self, queryset=None):
@@ -406,7 +406,7 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 ما می‌توانیم این حالت از میکسین‌ها را همانطور که در قبل دیدیم انتزاع کنیم:
 
-```
+```python
     class FeedMixin(object):
         def get_context_data(self, **kwargs):
             context = super().get_context_data(**kwargs)
@@ -419,7 +419,7 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 راه حل خیلی عمومی‌تر استفاده از میکسین ```StaticContextMixin``` از پکیج ```django-braces``` برای متغیرهای کانتکس ایستا است. به طور مثال ما می‌توانیم متغیر کانتکس ```latest_profile``` را که آخرین کاربری که به اضافه شده است، را اضافه کنیم:
 
-```
+```python
     class CtxView(StaticContextMixin, generic.TemplateView):
         template_name = "ctx.html"
         static_context = {"latest_profile": Profile.objects.latest('pk')}
@@ -429,7 +429,7 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 متقابلاً اگر کانتکس اشتراکی مقداری ایستا باشد و ویوی عمومی از ```ContextMixin``` مشتق شده باشد(که اکثراً همینطور است) پس آن‌ها هنگام صدا زدن ```as_view``` می‌توانند ذکر شوند. برای نمونه:
 
-```
+```python
     path('myfeed/', views.MyFeed.as_view(
         extra_context={'title': 'My Feed'})),
 ```
@@ -455,7 +455,7 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 برای مثال، ما می‌توانیم سرویس ساده‌ای بسازیم که پنج پست عمومی اخیر از سوپر کتاب را برمیگرداند:
 
-```
+```python
     from django.http import JsonResponse
 
     class PublicPostJSONView(View):
@@ -467,7 +467,7 @@ class ComplexView(MyMixin, YourMixin, AccessMixin, DetailView):
 
 اگر سعی کنیم که این ویو را بازیابی کنیم به جای پاسخ HTML، رشته JSON دریافت خواهیم کرد:
 
-```
+```python
     >>> from django.test import Client
     >>> Client().get("http://0.0.0.0:8000/public/").content
     b'[{"posted_by_id": 23, "message": "Hello!"},
@@ -512,7 +512,7 @@ Identifiers (URIs)** صدایشان می‌زنیم. از این رو URL نیز
 
 به طور مثال ساختار یک URI(<http://dev.example.com/gallery/videos?id=217#comments>) می‌تواند در پایتون به وسیله تابع ```urlparse``` شکسته شود.
 
-```
+```python
     >>> from urllib.parse import urlparse
     >>> urlparse("http://dev.example.com:80/gallery/videos?id=217#comments")
     ParseResult(scheme='http', netloc='dev.example.com:80',
@@ -535,7 +535,7 @@ Identifiers (URIs)** صدایشان می‌زنیم. از این رو URL نیز
 
 این گزیده‌ی ```urls.py``` از [python.org](https://www.python.org/) است که در جنگو ساخته شده است:
 
-```
+```python
     urlpatterns = [
 
 
@@ -636,7 +636,7 @@ Identifiers (URIs)** صدایشان می‌زنیم. از این رو URL نیز
 
 الگوی ساده شده ```<year/<int:year/``` می‌تواند تمام این حالات سال و بیشتر را تطابق دهد. شما می‌توانید یک بررسی برای معتبر بودن سال در ویو اضافه کنید. به صورت زیر:
 
-```
+```python
     class YearView(View):
         def get(self, request, year):
             try:
@@ -660,7 +660,7 @@ Identifiers (URIs)** صدایشان می‌زنیم. از این رو URL نیز
 
 در اینجا چند مثال بیشتر از واکشی‌های معکوس(reverse lookup) آورده‌ایم:
 
-```
+```python
     >>> from django.urls import reverse
     >>> reverse("hello_fn")
     /hello-fn/
@@ -674,13 +674,13 @@ Identifiers (URIs)** صدایشان می‌زنیم. از این رو URL نیز
 
 برای مثال ما می‌توانیم فضای نام ```viewschapter``` را که فقط URLهای این فصل است را با اضافه کردن این خط به ```پیکربندی URL``` ریشه بسازیم:
 
-```
+```python
 path('', include(viewschapter.urls, namespace='viewschapter')),
 ```
 
 حالا می‌توانیم از الگوهای نام استفاده کنیم مثل ```feed``` یا هر چیز دیگری که در ```فضای نام(namespace)``` اپ منحصر به فرد هستند. با این حال وقتی میخواهید به نامی درون یک ```فضای نام``` ارجاع دهید نیاز دارید که اول ```فضای نام``` را ذکر کنید و بعد از آن علامت : و بعد از آن نام الگو که در مثال ما به صورت ```"viewschapter:hello_fn"``` است. 
 
-```
+```python
     >>> from django.urls import reverse
     >>> reverse("viewschapter:hello_fn")
     /hello-fn/
@@ -694,7 +694,7 @@ path('', include(viewschapter.urls, namespace='viewschapter')),
 
 برای مثال مسیر اپ پست‌های ```بلاگ``` ممکن است مجموعه‌ای از کاراکترهای معتبر باشد اما شما می‌خواهید صفحه ```درباره(About)``` را به صورت جدا مدیریت کنید. توالی درست این الگوها باید به صورت باشد:
 
-```
+```python
     blog_patterns = [
         path('about/', views.AboutView.as_view(), name='about'),
         path('<slug:slug>/', views.ArticleView.as_view(), name='article'),
@@ -723,7 +723,7 @@ path('', include(viewschapter.urls, namespace='viewschapter')),
 
 به طور مثال شما می‌توانید ساختار مشابهی را برای ```article``` بسازید که در زیر نشان داده شده است:
 
-```
+```python
     blog_patterns = [
         path('', views.BlogHomeView.as_view(), name='blog_home'),
         path('<slug:slug>/', views.ArticleView.as_view(), name='article'),
