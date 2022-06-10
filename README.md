@@ -210,12 +210,12 @@
 |                   |  mmjsys       |01- Django and Patterns             |
 |                   |  رزرو نشده       |02- Application Design              |
 |                   |  رزرو نشده       |03- Models                          |
-|                   |  Hamed Daneshvar       |04- Views and URLs                  |
+|         اتمام          |  Hamed Daneshvar       |04- Views and URLs                  |
 |                   |  رزرو نشده       |05- Templates                       |
 |                   |  رزرو نشده       |06- Admin Interface                 |
 |                   |  رزرو نشده       |07- Forms                           |
 |                   |  رزرو نشده       |08- Working Asynchronously          |
-|                   |  Hamed Daneshvar       |09- Creating APIs                   |
+|          اتمام         |  Hamed Daneshvar       |09- Creating APIs                   |
 |                   |  رزرو نشده       |10- Dealing with Legacy Code        |
 |                   |  رزرو نشده       |11- Testing and Debugging           |
 |                   |  رزرو نشده       |12- Security                        |
