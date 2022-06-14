@@ -207,7 +207,7 @@
   
 | تاریخ اتمام ترجمه |       مترجم      |                    فصل             |
 |:-----------------:|:----------------:|:----------------------------------:|
-|                   |  mmjsys       |01- Django and Patterns             |
+|        ۱ مرداد           |  mmjsys       |01- Django and Patterns             |
 |                   |  رزرو نشده       |02- Application Design              |
 |                   |  رزرو نشده       |03- Models                          |
 |         اتمام          |  Hamed Daneshvar       |04- Views and URLs                  |
