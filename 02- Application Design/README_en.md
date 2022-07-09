@@ -39,7 +39,7 @@ The output of all this would be a one-page write-up and a couple of poorly drawn
 
 In this book, we have taken upon ourselves the noble project of building a social network called SuperBook for superheroes. A simple wireframe based on our discussions with a bunch of randomly selected superheroes is shown here:
 
-![](/images/0.jpg)*A wireframe of the SuperBook website in responsive design – Desktop (left) and mobile (right) layouts*
+![](/02-%20Application%20Design/images/0.jpg) *A wireframe of the SuperBook website in responsive design – Desktop (left) and mobile (right) layouts*
 
 **Are you a storyteller?**
 
@@ -63,7 +63,7 @@ _My name is Aksel. I am a gray squirrel living in downtown New York. However, ev
 
 ***Ok, Acorn. Why do you think you were chosen for the user testing?*** Probably, because I was featured in an NY Star special on lesser-known superheroes. I guess people find it amusing that a squirrel can use a MacBook (Interviewer: this interview was conducted over chat). Plus, I have the attention span of a squirrel.*
 
-![](/images/1.png) ***Based on what you saw, what is your opinion of SuperBook?***
+![](/02-%20Application%20Design/images/1.png) ***Based on what you saw, what is your opinion of SuperBook?***
 
 _I think it is a fantastic idea. I mean, people see superheroes all the time. However, nobody cares about them. Most are lonely and antisocial. SuperBook could change that._
 
@@ -232,7 +232,7 @@ Django has now standardized on a release schedule with three kinds of releases:
 
 The following Django roadmap visualized should make the release approach clearer:
 
-![](images/2.png)
+![](/02-%20Application%20Design/images/2.png)
 
 Django Release Roadmap
 
