@@ -147,7 +147,7 @@ To find out how and when it is invoked, let's look at how Celery works.
 
 Celery can be somewhat difficult to understand due its distributed architecture. Here's a high-level diagram showing a typical Django-Celery setup:
 
-![](/08-%20Working%20Asynchronously/image-000.png)
+![](/08-%20Working%20Asynchronously/images/image-000.png)
 
 How a typical Django Celery setup works
 
@@ -407,7 +407,7 @@ The main function is a coroutine that triggers the creation of a separate corout
 
 The total running time of this program on the same test laptop is 7.5 s. This is a speedup of 2.3x on a single core. This surprising result can be better understood if we can visualize how the time was spent, as shown in the following diagram:
 
-![](/08-%20Working%20Asynchronously/image-001.jpg)
+![](/08-%20Working%20Asynchronously/images/image-001.jpg)
 
 A simplistic representation comparing tasks in the synchronous and asynchronous scrapers
 
@@ -441,7 +441,7 @@ As at the time of writing, Django Channels 2 is out, which is a complete rewrite
 
 Here's a simplified block diagram of a typical Channels setup:
 
-![](/08-%20Working%20Asynchronously/image-002.png)
+![](/08-%20Working%20Asynchronously/images/image-002.png)
 
 How a typical Django Channels infrastructure works
 
