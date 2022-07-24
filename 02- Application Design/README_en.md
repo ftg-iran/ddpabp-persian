@@ -98,9 +98,7 @@ A good mockup can give 80 percent of customer experience with less than 10 perce
 
 When you have a fairly good idea of what you need to build, you can start thinking about the implementation in Django. Once again, it is tempting to start coding away. However, when you spend a few minutes thinking about the design, you can find plenty of different ways to solve a design problem.
 
-You can also start designing tests first, as advocated in the **Test-driven Development** (**TDD**) methodology. We will see more of the TDD approach in : _Testing and Debugging_.
-
-Chapter 11
+You can also start designing tests first, as advocated in the **Test-driven Development** (**TDD**) methodology. We will see more of the TDD approach in Chapter 11: _Testing and Debugging_.
 
 Whichever approach you take, it is best to stop and think:
 
@@ -135,12 +133,7 @@ might find that your company or personal library has even more. Once your projec
 
 It might sound easier to install and use a readily available app. However, it not as simple as it sounds. Let's take a look at some third-party authentication apps for our project, and list the reasons why we didn't use them for SuperBook at the time of writing:
 
-**Over-engineered for our needs**: We felt that [ ](https://github.com/python-social-auth/social-app-django)with
-
-[python-social-auth](https://github.com/python-social-auth/social-app-django)![](gd2nxz3p.003.png)
-
-support for any social login was unnecessary
-
+ **Over-engineered for our needs**: We felt that [python-social-auth](https://github.com/python-social-auth/social-app-django)with support for any social login was unnecessary
 - **Too specific**: Using [Django-Facebook would](http://django-facebook.readthedocs.io/en/latest/installation.html) mean tying our authentication to that provided by a specific website
 - **Might break other apps**: Some apps can cause unintentional side effects in other apps
 - **Python dependencies**: Some apps have dependencies that are not actively maintained or unapproved
