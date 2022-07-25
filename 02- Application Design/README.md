@@ -1,299 +1,273 @@
-**Application Design**
+**طراحی برنامه**
 
-In this chapter, we will cover the following topics:
+در این بخش، موضوعات زیر را پوشش می‌دهیم:
 
-- Gathering requirements
-- Creating a concept document
-- HTML mockups
-- How to divide a project into apps
-- Whether to write a new app or reuse an existing one
-- Best practices before starting a project
-- Why Python 3?
-- Which Django version to use
-- Starting the SuperBook project
+- جمع‌آوری نیازمندی‌ها
+- ساخت یک سند کانسپت
+- ماکت‌های HTML 
+- چگونه یک پروژه را به اپ‌های مختلف تقسیم کنیم
+- آیا یک اپ جدید بنویسیم یا یک اپ موجود را بازنویسی کنیم
+- بهینه‌‌ترین روش‌ها قبل از شروع یک پروژه
+- چرا پایتون ۳
+- کدام نسخه جنگو را استفاده کنیم
+- شروع پروژه SuperBook
 
-Many novice developers approach a new project by beginning to write code right away. More often than not, it leads to incorrect assumptions, unused features, and lost time. Spending some time with your client in understanding core requirements, even in a project short on time, can yield incredible results. Managing requirements is a key skill worth learning.
+بسیاری از توسعه‌دهندگان یک پروژه جدید را با نوشتن کد آغاز می‌کنند. معمولاً چنین  روشی به برداشت‌های غلط، امکانات بی‌استفاده و اتلاف زمان منتهی می‌شود. صرف وقت برای فهمیدن نیازهای اصلی مشتری، حتی در یک پروژه کوچک از نظر زمانی، می‌تواند نتایج باورنکردنی داشته باشد. مدیریت نیازمندی‌ها یک مهارت کلیدی است که ارزش یادگیری دارد.
 
-**How to gather requirements?**
+**چگونه نیازمندی‌ها را جمع‌آوری کنیم؟**
 
-_"Innovation is not about saying yes to everything. It's about saying NO to all but the most crucial features."_
+_"خلاقیت، بله گفتن به هر چیزی نیست، بلکه نه گفتن به هرچیزی غیر از ویژگی‌های بسیار مهم است."_
 
-_– Steve Jobs_
+_–استیو جابز_
 
-I have saved several doomed projects by spending a few days with the client to carefully listen to their needs and set the right expectations. Armed with nothing but a pencil and paper (or their digital equivalents), the process is incredibly simple, but effective. Here are some of the key points to remember while gathering requirements:
+من پروژه‌های محکوم به شکست بسیاری را فقط با گوش کردن دقیق به نیاز‌های مشتری و تعیین انتظارات درست، نجات داده‌ام. تنها سلاح من قلم وکاغذ (یا معادل دیجیتال آن) بوده است. فرآیند به طرز باورنکردنی ساده اما تأثیرگذار است. در اینجا چند نکته کلیدی آمده است تا در زمان جمع‌آوری نیازمندی‌ها به یاد داشته باشید:
 
-1. Talk directly to the application owners even if they are not technically minded.
-1. Make sure you listen to their needs fully and note them.
-1. Don't use technical jargon such as _models_. Keep it simple and use end- user friendly terms such as a _user profile_.
-1. Set the right expectations. If something is not technically feasible or difficult, make sure you tell them right away.
-1. Sketch as much as possible. Humans are visual in nature. Websites more so. Use rough lines and stick figures. No need to be perfect.
-1. Break down process flows such as user signup. Any multistep functionality needs to be drawn as boxes connected by arrows.
-1. Next, work through the features list in the form of user stories or in any easily readable form.
-1. Play an active role in prioritizing the features into high, medium, or low buckets.
-1. Be very, very conservative in accepting new features.
-1. Post-meeting, share your notes with everyone to avoid misinterpretations.
+1. مستقیماً با صاحبان برنامه صحبت کنید حتی اگر از نظر فنی توانایی نداشته باشند.
+2. اطمینان پیدا کنید که کاملاً نیازهای آن‌ها را شنیده‌اید و یادداشت برداشته‌اید.
+3. از اصطلاحات تخصصی مانند _models_ استفاده نکنید. ساده صحبت کنید و از اصطلاحات آشنا برای کاربر مانند _پروفایل کاربری_ استفاده کنید.
+4. انتظارات درست ایجاد کنید. اگر چیزی از نظر فنی سخت یا غیرممکن است، مطمئن شوید که درست به مشتری توضیح داده‌اید.
+5. تا می‌توانید طراحی کنید. افراد به طور طبیعی با تصویر راحت‌تر هستند، وب‌سایت‌ها هم تصویری هستند. از خطوط ساده و چسباندن عکس استفاده کنید. لازم نیست همه چیز عالی باشد.
+6. فرآیندهایی مانند ثبت‌نام را به بخش‌های کوچک تقسیم کنید. هر عملکرد چند مرحله‌ای، باید در مستطیل‌هایی که با خط و فلش به هم وصل شده‌اند رسم شود.
+7. حالا، ویژگی‌های مورد نیاز برنامه را به صورتی لیستی از سناریوهای کاربری و در شکلی ساده و قابل خواندن جمع‌آوری کنید.
+8. سعی کنید نقش مؤثری در تقسیم ویژگی‌ها به سه اولویت بالا، متوسط و پایین، ایفا کنید.
+9. در قبول ویژگی جدید بسیار، بسیار محافظه‌کارانه برخورد کنید.
+10. بعد از جلسه، یادداشت‌های خود را با بقیه به اشتراک بگذارید تا از سوءتفاهم جلوگیری شود.
 
-The first meeting will be long (perhaps a day-long workshop or a couple of hour-long meetings). Later, when these meetings become frequent, you can trim them down to 30 minutes or one hour.
+جلسه اول طولانی خواهد بود (شاید یک کارگاه یک روزه یا یک جلسه چند ساعته). بعداً وقتی این جلسات تکرار شد می‌توانید آن‌ها را تبدیل به جلساتی نیم ساعته یا یک ساعته کنید.
 
-The output of all this would be a one-page write-up and a couple of poorly drawn sketches. Some also make a _wireframe_, which shows the skeletal structure of the site.
+نتایج این جلسات احتمالاً یک صفحه نوشته و چند صفحه طراحی ضعیف خواهد بود. بعضی‌ها یک _wireframe_ که اسکلت اصلی وب‌سایت است نیز می‌سازند.
 
-In this book, we have taken upon ourselves the noble project of building a social network called SuperBook for superheroes. A simple wireframe based on our discussions with a bunch of randomly selected superheroes is shown here:
+در این کتاب ما یک پروژه به نام SuperBook که یک شبکه اجتماعی برای ابرقهرمانان است می‌سازیم. یک وایرفریم ساده بر اساس صحبت‌های ما با چندین ابرقهرمان که به صورت اتفاقی انتخاب شده‌اند در اینجا آمده است:
 
-![](/02-%20Application%20Design/images/0.jpg) *A wireframe of the SuperBook website in responsive design – Desktop (left) and mobile (right) layouts*
+![](/02-%20Application%20Design/images/0.jpg) *یک وایرفریم از وبسایت سوپربوک به صورت ریسپانسیو - صفحه بندی دسکتاپ و موبایل*
 
-**Are you a storyteller?**
+**آیا شما یک قصه‌گو هستید؟**
 
-So what is this one-page write-up? It is a simple document that explains how it feels to use the site. In almost all the projects I have worked with, when someone new joins the team, they will be quickly discouraged if asked to go through every bit of paperwork. But they will be thrilled if they find a single-page document that quickly tells them what the site is meant to be.
+خب، خلاصه یک صفحه‌ای چیست؟ یک سند ساده است که شرح می‌دهد استفاده از سایت چه حسی دارد. تقریباً در تمام پروژه‌هایی که من با آن‌ها کار کرده‌ام وقتی فرد جدید وارد تیم می‌شود، اگر از آن‌ها خواسته شود که تمام اسناد را مطالعه کنند سریعاً دلسرد می‌شوند اما اگر قرار باشد فقط یک صفحه را مطالعه کنند تا بفهمند که هدف سایت چیست بسیار هیجان‌زده می‌شوند.
 
-You can call this document whatever you like—concept document, market requirements document, customer experience documentation, or even an Epic Fragile StoryLog™ (patent pending). It really doesn't matter.
+شما می‌توانید به سند هر نامی که دوست دارید بدهید؛ سند کانسپت، سند نیازمندی‌های بازار، مستندات تجربه مشتری یا Epic Fragile StoryLog™ (در انتظار ثبت برند). واقعاً اهمیت خاصی ندارد.
 
-The document should focus on the user experience rather than technical or implementation details. Make it short and interesting to read. In fact, Joel Spolsky's rule number one on documenting requirements is _funny_.
+این سند باید بر روی تجربه کاربر متمرکز باشد تا جزییات فنی یا نحوه پیاده‌سازی. این سند باید کوتاه و جذاب برای مطالعه کردن باشد. در واقع قانون شماره یک جوئل اسپاسکی برای سند نیازمندی‌ها _بامزه‌بودن_ است.
 
-If possible, write about a typical user (persona in marketing speak), the problem they are facing, and how the web application solves it. Imagine how they would explain the experience to a friend. Try to capture this.
+اگر امکان دارد در مورد یک کاربر معمولی ( که در زبان بازاریابی پرسونا می‌گویند) بنویسید، مشکلاتی که آن‌‌ها مواجه می‌شوند و روشی که وب اپلیکیشن مشکل آن‌ها را برطرف می‌کند. تصور کنید که آن‌ها چطور تجربه خود را برای دیگران شرح خواهند داد. سعی کنید این تصویر را به‌دست آورید.
 
-Here is a concept document for the SuperBook project:
+اینجا یک سند کانسپت برای پروژه سوپربوک داریم:
 
-**_The SuperBook concept_**
+**_کانسپت سوپربوک_**
 
-_The following interview was conducted after our website SuperBook was launched in the future. A 30-minute user test was conducted just prior to the interview._
+_این مصاحبه پس از راه‌اندازی وب‌سایت ما سوپربوک، در آینده انجام شده است. یک تست کاربری ۳۰ دقیقه‌ای دقیقاً قبل از مصاحبه اجرا شده است._
 
-**_Please introduce yourself._**
+**_لطفا خودتان را معرفی کنید_**
 
-_My name is Aksel. I am a gray squirrel living in downtown New York. However, everyone calls me Acorn. My dad, T. Berry, a famous hip-hop star, used to call me that. I guess I was never good enough at singing to take up the family business. Actually, in my early days, I was a bit of a kleptomaniac. I am allergic to nuts, you know. Other bros have it easy. They can just live off any park. I had to improvise—cafes, movie halls, amusement parks, and so on. I read labels very carefully too._
+_ اسم من اَکسل است. من یک سنجاب خاکستری هستم که در مرکز نیویورک زندگی می‌کنم. همه من را اَکورن صدا می‌کنند.پدرم تی. بری که هنرمند شناخته‌شده هیپ هاپ بود من را به این نام صدا می‌کرد. فکر می‌کنم هیچ وقت این‌قدر خوب نمی‌خواندم که کسب‌ و کار خانوداگی را ادامه دهم. در واقع در ابتدا کمی عشق سرقت بودم.  می‌دانید که، من به فندق و مانند آن حساسیت دارم اما بقیه رفیق‌هایم راحت می‌خورند. آن‌ها می‌توانند به سادگی در هر پارکی زندگی کنند. من مجبورم خلاق باشم، کافه‌ها، سالن‌های سینما یا پارک‌های سرگرمی. من برچسب‌ها را به دقت می خوانم._
 
-***Ok, Acorn. Why do you think you were chosen for the user testing?*** Probably, because I was featured in an NY Star special on lesser-known superheroes. I guess people find it amusing that a squirrel can use a MacBook (Interviewer: this interview was conducted over chat). Plus, I have the attention span of a squirrel.*
+***خب اکورن فکر می‌کنی که چرا برای تست کاربری انتخاب شده‌ای؟***
 
-![](/02-%20Application%20Design/images/1.png) ***Based on what you saw, what is your opinion of SuperBook?***
+_احتمالاً برای اینکه در برنامه ویژه NY Star که در مورد ابرقهرمانان کمتر شناخته شده‌بود شرکت کردم. به نظرم این برای مردم جالب بود که یک سنجاب می‌تواند از مک‌بوک استفاده کند (مصاحبه کننده: این مصاحبه از طریق چت انجام شده است). علاوه بر این، من دقت نظر یک سنجاب را دارم._
 
-_I think it is a fantastic idea. I mean, people see superheroes all the time. However, nobody cares about them. Most are lonely and antisocial. SuperBook could change that._
+![](/02-%20Application%20Design/images/1.png) ***بر اساس چیزی که دیده‌اید نظر شما در مورد سوپربوک چیست؟***
 
-**_What do you think is different about SuperBook?_**
+_فکر می‌کنم که ایده فوق‌العاده‌ای است. منظورم این است که مردم معمولاً ابرقهرمانان را می‌بینند، با اینحال کسی به ‌آن‌ها توجهی ندارد. اکثر آن‌ها تنها و غیر اجتماعی هستند. سوپربوک می‌تواند این وضعیت را تغییر دهد._
 
-_It is built from the ground up for people like us. I mean, there is no fill your "Work and Education" nonsense when you want to use your secret identity. Though I don't have one, I can understand why one would._
+**_فکر می‌کنید که چه چیزی در سوپربوک متفاوت است؟_**
 
-**_Could you tell us briefly some of the features you noticed?_**
+_این سایت از ابتدا برای افرادی مانند ما ساخته شده است. منظورم این است که وقتی قرار است از هویت مخفی خود استفاده کنید مجبور نیستید موارد بی‌معنی مانند "سابقه کار و تحصیلات" را پر کنید. اگرچه که من چنین چیزی ندارم ولی می‌توانم بفهمم که چرا ممکن است یکی بخواهد این‌ کار را بکند._
 
-_Sure, I think this is a pretty decent social network, where you can:_
+**_ممکن است به طور خلاصه برخی ویژگی‌هایی را که برای شما مهم بودند نام ببرید؟_**
 
-- _Sign up with any username (no more, "enter your real name", silliness)_
-- _Fans can follow people without having to add them as "friends"_
-- _Make posts, comment on them, and re-share them_
-- _Send a private post to another user_
+_بله حتماً، فکر می‌کنم این یک شبکه اجتماعی مناسب است که شما می‌توانید:_
 
-\*Everything is easy. It doesn't take a superhuman to figure it out. **Thanks for your time, Acorn.\***
+- _می‌توان با هر نوع نام کاربری ثبت نام کرد (دیگر عبارت احمقانه "نام واقعی خود را وارد کنید" را نمی‌بینیم)_
+- _طرفدارها می‌توانندافراد را دنبال کنند بدون آنکه مجبور باشند آن‌ها را به عنوان "دوست" اضافه کنند_
+- _می‌توان پست و کامنت ایجاد کرد و آن‌ها را بازنشر کرد_
+- _می‌توان یک پست خصوصی را برای دیگری ارسال کرد_
 
-**HTML mockups**
 
-In the early days of building web applications, tools such as Photoshop and Flash were used extensively to get pixel-perfect mockups. They are hardly recommended or used anymore.
+\* همه چیز ساده است. لازم نیست ابرقهرمان باشید تا با آن کار کنید. **آکورن، از وقتی که گذاشتی تشکر می‌کنیم. \***
 
-Giving a native and consistent experience across mobiles, tablets, laptops, and other platforms is now considered more important than getting that pixel-perfect look. In fact, most web designers directly create layouts on HTML.
+**ماکت‌های HTML**
 
-Creating an HTML mockup is a lot faster and easier than ever before. If your web designer is unavailable, developers can use a CSS framework such as Bootstrap or ZURB Foundation framework to create pretty decent mockups.
+در ابتدای ساخت وب اپلیکیشن‌ها، ابزارهایی مانند فوتوشاپ و Flash به طور گسترده‌ای استفاده می‌شدند تا ماکت‌هایی با کیفیت پیکسلی، ساخته شوند. الان به ندرت پیشنهاد می‌شوند یا مورد استفاده قرار می‌گیرند.
 
-The goal of creating a mockup is to create a realistic preview of the website. It should not merely focus on details and polish to look closer to the final product compared to a sketch, but add interactivity as well. Make your static HTML come to life with working links and some simple JavaScript- driven interactivity.
 
-A good mockup can give 80 percent of customer experience with less than 10 percent of the overall development effort.
+امروزه ارائه یک تجربه یکسان بین موبایل، تبلت، لپ تاپ و سایر پلتفرم‌ها بسیار مهم‌تر از یک طراحی پیکسلی بسیار دقیق است. در واقع، اکثر طراحان وب مستقیماً صفحه‌بندی خود را به صورت HTML انجام می‌دهند.
 
-**Designing the application**
+ساختن یک ماکت HTML بسیار سریع‌تر و ساده‌تر از قبل است. اگر طراح وب شما در دسترس نیست، توسعه‌دهندگان می‌توانند از یک فریمورک CSS مانند Bootsrap یا ZURB Foundation برای ساخت یک ماکت مناسب و زیبا استفاده کنند.
 
-When you have a fairly good idea of what you need to build, you can start thinking about the implementation in Django. Once again, it is tempting to start coding away. However, when you spend a few minutes thinking about the design, you can find plenty of different ways to solve a design problem.
+هدف از ساخت یک ماکت، ایجاد پیش‌نمایشی واقعی از وب‌سایت است. ماکت نباید بر جزییات متمرکز باشد بلکه باید به نسبت طراحی‌های خطی اولیه، به محصول نهایی نزدیک‌تر باشد و علاوه بر این تعاملی باشد. HTML ایستای خود را با اضافه کردن لینک و برخی تکه کدهای جاواسکریپتی ساده، پویاتر کنید.
 
-You can also start designing tests first, as advocated in the **Test-driven Development** (**TDD**) methodology. We will see more of the TDD approach in : _Testing and Debugging_.
+یک ماکت خوب می‌تواند تا ۸۰ درصد از تجربه کاربری نهایی را تنها با حدود ۱۰ درصد از توسعه اصلی، ایجاد کند.
 
-Chapter 11
+**طراحی اپلیکیشن**
 
-Whichever approach you take, it is best to stop and think:
+وقتی که شما تصویر خوبی از آنچه لازم است بسازید، پیدا کردید، وقت آن است که به پیاده‌سازی آن در جنگو فکر کنید. الان شروع کدنویسی وسوسه‌انگیز است، با اینحال اگر چند دقیقه‌ای برای طراحی وقت بگذارید راه‌های بسیار متفاوتی برای حل مشکلات طراحی پیدا خواهید کرد.
 
-- What are the different ways in which I can implement this?
-- What are the trade-offs?
-- Which factors are more important in our context?
-- Finally, which approach is the best?
+هنچنین شما می‌توانید ابتدا تست‌ها را طراحی کنید، همانطور که در متد **توسعه تست محور** (**Test-Driven Development**)، مطرح می‌شود. ما رویکرد TDD را در بخش ۱۱ _تست کردن و رفع مشکل_ بیشتر بررسی خواهیم کرد.
 
-The best designs are often elegant and harmonious as a whole. This is usually where design patterns can help you. Well-designed code is not only easier to read, but also faster to extend and enhance.
+هر رویکردی را که انتخاب کنید، خوب است که کمی توقف کنید و به این موضوعات فکر کنید:
 
-Experienced Django developers look at the overall project in different ways. Sticking to the DRY principle (or sometimes because they get lazy), they think, have I seen this functionality before? For instance, can this social login feature be implemented using a third-party package such as django-all-auth?
+- راه‌های مختلف من برای پیاده‌سازی این اپلیکیشن چیست؟
+- مزایا و معایب آن چیست؟
+- در زمینه کار ما کدام فاکتورها مهم‌تر هستند؟
+- در نهایت، کدام رویکرد بهترین است؟
 
-If they have to write the app themselves, they start thinking of various design patterns in the hope of an elegant design. However, they first need to break down a project at the top-level into apps.
+بهترین طراحی‌ها اغلب در مجموع ظریف و هماهنگ هستند.این‌جاست که معمولاً الگوهای طراحی به شما کمک می‌کنند. کدهای خوب طراحی شده لزوماً برای خواندن، ساده نیستند اما برای توسعه و بهبود دادن ساده‌تر هستند.
 
-**Dividing a project into apps**
+توسعه‌دهندگان باتجربه جنگو، به کلیت پروژه از روش‌های مختلفی نگاه می‌کنند. این توسعه‌دهندگان با وفاداری به اصول DRY (شاید به خاطر اینکه تنبل شده‌اند)، همواره فکر می‌کنند آیا من این عملکرد را قبلاً دیده‌ام؟ مثلاً آیا این لاگین به کمک سوشیال را می‌توان به کمک یک پکیج کمکی مانند django-all-auth، پیاده‌سازی کرد؟
 
-Django applications are called **projects**. A project is made up of several applications or apps. An app is a Python package that provides a set of features for a common purpose such as authentication or thumbnails.
+اگر مجبور باشند که اپ را خودشان بنویسند، به امید پیدا کردن بهترین طراحی، به انواع الگوهای طراحی فکر می‌کنند. با این‌حال، در ابتدا نیاز است که یک پروژه را به اپ‌های کوچک تقسیم کنند.
 
-Ideally, each app must be reusable and loosely coupled to others. You can create as many apps as you need. Never be afraid to add more apps or refactor the existing ones into multiple apps. A typical Django project contains 15-20 apps.
+**تقسیم کردن پروژه به اپ‌ها**
 
-An important decision to make at this stage is whether to use a third-party Django app or build one from scratch. Third-party apps are ready-to-use apps, which are not built by you. Most packages are quick to install and set up. You can start using them in a few minutes.
+اپلیکیشن‌های جنگو، **پروژه** نامیده می‌شوند. یک پروژه از اپلیکیشن‌ها یا اپ‌های مختلفی تشکیل شده است. یک اپ، یک پکیج پایتونی است که مجموعه‌ای از ویژگی‌ها را برای یک هدف مشخص مانند ثبت‌نام یا تامبنیل عکس‌ها تأمین می‌کند.
 
-On the other hand, writing your own app often means designing and implementing the models, views, test cases, and so on yourself. Django will make no distinction between apps of either kind.
+به صورت ایده‌ال یک اپ باید چندبار مصرف باشد و به‌سادگی بتواند با سایر اپ‌ها ارتباط برقرار کند. شما می‌توانید به هر تعداد که بخواهید اپ بسازید. هرگز نگران اضافه کردن اپ‌های جدید یا بازنویسی اپ‌های موجود و تقسیم آن‌ها به چند اپ جدید نباشید. یک پروژه معمول جنگو از ۱۵ تا ۲۰ اپ تشکیل شده است.
 
-**Reuse or roll-your-own?**
+تصمیم مهم در این مقطع این است که از یک پکیج شخص ثالث استفاده کنید یا آن را از ابتدا بسازید. پکیج‌های شخص ثالث، که توسط شما نوشته نشده‌اند، آماده استفاده هستند. اکثر پکیج‌ها بسیار سریع نصب و تنظیم می‌شوند. شما می‌توانید ظرف چند دقیقه از آن‌ها استفاده کنید.
 
-One of Django's biggest strengths is the huge ecosystem of third-party apps. At the time of writing, [ ](http://djangopackages.com/)lists more than 3,500 packages. You
+در سوی دیگر، اگر اپ خود را بنویسید به این معنی است که باید مدل‌ها، ویوها، تست‌ها و سایر موارد را خودتان بنویسید. جنگو بین این دو نوع از اپ هیچ تفاوتی قائل نیست.
 
-[djangopackages.com](http://djangopackages.com/)
+**استفاده مجدد یا نوشتن از اول؟**
 
-might find that your company or personal library has even more. Once your project is broken into apps and you know which kind of apps you need, you will need to take a call for each app—whether to write or reuse an existing one.
+یکی از بزرگ‌ترین ویژگی‌های جنگو اکوسیستم اپ‌های شخص ثالث آن است. در زمان نوشتن این متن، [djangopackages.com](http://djangopackages.com/) بیش از ۳۵۰۰ پکیج را لیست کرده است. شما ممکن است در شرکتتان یا در کتابخانه‌های خصوصی حتی بیشتر از این هم پیدا کنید. زمانی که پروژه شما به اپ‌های کوچک تقسیم شود و بدانید که به چه نوع اپ‌هایی نیاز دارید، وقت فراهم کردن اپ‌ها است، چه آن‌ها را بنویسید یا اینکه از اپی موجود دوباره استفاده کنید.
 
-It might sound easier to install and use a readily available app. However, it not as simple as it sounds. Let's take a look at some third-party authentication apps for our project, and list the reasons why we didn't use them for SuperBook at the time of writing:
+ممکن است نصب و استفاده از یک اپ آماده ساده‌تر به نظر برسد، اما به همین سادگی هم نیست. بیایید برای پروژه خودمان نگاهی به چند اپ شخص ثالث اعتبارسنجی بیندازیم و دلایلی را که از آن‌ها برای پروژه سوپربوک استفاده نمی‌کنیم، فهرست کنیم:
 
-**Over-engineered for our needs**: We felt that [ ](https://github.com/python-social-auth/social-app-django)with
+- **بیش از حد مهندسی شده برای نیازهای ما**: ما احساس می‌کنیم پکیج [python-social-auth](https://github.com/python-social-auth/social-app-django) با پشتیبانی لاگین به همه شبکه‌های اجتماعی، غیر ضروری است.
+- **بیش از حد مشخص شده**: استفاده از  [Django-Facebook ](http://django-facebook.readthedocs.io/en/latest/installation.html) به معنی آن است که اعتبارسنجی خودمان را به امکانات یک وب‌سایت مشخص گره بزنیم.
+- **ایجاد خرابی در سایر اپ‌ها **: بعضی از اپ‌ها ممکن است تأثیرات ناخواسته‌ای بر سایر اپ‌ها داشته باشند.
+- **وابستگی‌های پایتونی**: برخی از اپ‌ها وابستگی‌هایی دارند که به طور فعال به‌روزرسانی نمی‌شوند یا مورد تأیید نیستند.
+- **وابستگی‌های غیر پایتونی**: برخی اپ‌ها وابستگی‌های غیر پایتونی دارند مانند Redis و Node.js که سربارهایی برای انتشار وب‌سایت ایجاد می‌کنند.
+- **چندبار مصرف نبودن**: بسیاری از اپ‌های خودمان قابل استفاده نیستند چرا که برای استفاده مجدد نوشته نشده‌اند و استفاده چندباره از آن‌ها سخت است.
 
-[python-social-auth](https://github.com/python-social-auth/social-app-django)![](gd2nxz3p.003.png)
+هیچ‌کدام از این پکیج‌ها بد نیستند. این‌ها فقط نیاز فعلی ما را پاسخ نمی‌هند. این پکیج‌ها ممکن است برای پروژه دیگری مورد استفاده قرار بگیرند. در مسأله ما اپ پیش‌ساخته اعتبارسنجی جنگو، به خوبی کافی است.
 
-support for any social login was unnecessary
+به عبارت دیگر، شما ممکن است ترجیح دهید از یک اپ شخص ثالث به یکی از دلایل زیر استفاده کنید:
 
-- **Too specific**: Using [Django-Facebook would](http://django-facebook.readthedocs.io/en/latest/installation.html) mean tying our authentication to that provided by a specific website
-- **Might break other apps**: Some apps can cause unintentional side effects in other apps
-- **Python dependencies**: Some apps have dependencies that are not actively maintained or unapproved
-- **Non-Python dependencies**: Some packages might have non-Python dependencies, such as Redis or Node.js, which have deployment overheads
-- **Not reusable**: Many of our own apps were not used because they were not very easy to reuse or were not written to be reusable
+- **DRY**: دوباره چرخ را اختراع نکنید. از مزایای اپ‌های متن باز و به خوبی تست‌شده که احتمالاً بهتر از آن چیزی است که بخواهید از ابتدا بنویسید، استفاده کنید.
+- **برای فهمیدن زیادی سخت است**: آیا نیاز است که مدل‌های شما یک درخت را شکل دهند اما همزمان از نظر دیتابیس بهینه باشند؟ از django-mptt استفاده کنید.
+- **بهترین یا توصیه شده‌ترین اپ برای یک هدف**: این توصیه‌ها در طول زمان تغییر می‌کنند، اما پکیجی مانند django-debug-toolbar، توصیه‌شده‌ترین پکیج برای رفع عیب است.
+- **باتری اضافه**: بسیاری احساس می‌کنند که پکیج‌هایی مانند django-model-utils و django-extensions باید بخشی از بدنه اصلی فریمورک جنگو باشد.
+- **حداقل وابستگی‌ها**: این همیشه نکته مثبتی است. اپ‌های کمتر به معنی تداخل ناخواسته کمتر بین سایر اپ‌هاست و نگرانی کمتری ایجاد می‌کند.
 
-None of these packages are bad. They just don't meet our needs for now. They might be useful for a different project. In our case, the built-in Django auth app was good enough.
+خب، آیا باید از یک اپ استفاده دوباره کرد و زمان را صرفه‌جویی کرد یا اینکه باید از اول نوشت؟ من پیشنهاد می‌کنم که اول یک اپ شحص ثالث را در یک محیط آزمایشی، امتحان کنید. اگر یک توسعه‌دهنده متوسط جنگو هستید، بخش بعد به شما می‌گوید که چگونه اپ را در محیط آزمایشی بررسی کنید.
 
-On the other hand, you might prefer to use a third-party app for some of the following reasons:
+**محیط آزمایشی اپ من**
 
-- **DRY**: Do not reinvent the wheel. Take advantage of open source and well-tested apps that might be better than what you write from scratch.
-- **Too hard to get right**: Do your model's instances need to form a tree, but also be (relational) database-efficient? Use .
+در هر موقعیتی، شما با لیست متفاوتی از اپ‌های به دردبخور برای جنگو در پست‌های وبلاگی مواجه می‌شوید. با اینحال بهترین راه برای تصمیم‌گیری در مورد استفاده از یک پکیج در یک پروژه، **پروتوتایپ**‍ کردن آن است.
 
-django-mptt
+حتی اگر شما یک محیط مجازی پایتون برای پروژه خود درست کرده باشید، نصب کردن و بررسی این اپ‌ها و بعد حذف آن‌ها، ممکن است باز هم محیط مجازی شما را کثیف کند. بنابراین من معمولاً یک محیط مجازی جداگانه با پسوند _sandbox_ می‌سازم که به طور اختصاصی برای بررسی پکیج‌هاست. یک پروژه کوچک هم می‌سازم تا بهتر متوجه شوم که استفاده از این پکیج خاص چطور به ساده شدن کارها کمک می‌کند.
 
-- **Best or recommended app for the job**: This changes over time, but packages such as django-debug-toolbar are the most recommended for their use case.
-- **Missing batteries**: Many feel that packages such as django-model-utils
+در نهایت اگر از بررسی این اپ راضی بودم به کمک یک ابزار کنترل نسخه مانند گیت یک شاخه جدید برای اضافه کردن این اپ به پروژه، می‌سازم. سپس، کدنویسی و نوشتن تست‌ها را در این شاخه جدید ادامه می‌دهم تا ویژگی‌های لازم به پروژه اضافه شوند. در پایان این شاخه بازبینی شده و به شاخه اصلی اضافه می‌شود. 
 
-and should have been part of the framework.
+**با کدام پکیج‌ها پروژه را بسازیم؟**
 
-django-extensions
+برای روشن شدن فرآیند، پروژه سوپربوک ما به طور کلی به اپ‌های زیر تقسیم می‌شود (البته لیست کامل نیست):
 
-- **Minimal dependencies**: This is always good in my book. Fewer apps means fewer unintended interactions between apps to worry about.
+- **اعتبارسنحی یا Authentication ** (اپ موجود django.auth) این اپ، ثبت‌نام، ورود و خروج کاربر را مدیریت می‌کند
+- **اکانت‌ها یا Accounts** (اپ اختصاصی) این اپ اطلاعات اضافی پروفایل کاربر را مدیریت می‌کند
+- **پست‌ها یا Posts** (اپ اختصاصی) این اپ پست‌ها و کامنت‌ها را مدیریت می‌کند
 
-So, should you reuse apps and save time or write a new custom app? I would recommend that you try a third-party app in a sandbox. If you are an intermediate Django developer, then the next section will tell you how to try packages in a sandbox.
+در این مرحله، هر اپی که قرار است از ابتدا ساخته شود (با برچسب اپ اختصاصی)، و یا از اپ‌های شخص ثالث استفاده شود (اپ موجود)، مشخص شده است. در مراحل پیشرفت پروژه، ممکن است این موارد تغییر کند. با این‌حال این لیست برای الان کافی است.
 
-**My app sandbox**
+**بهینه‌ترین روش‌ها قبل از شروع پروژه**
 
-From time to time, you will come across several blog posts listing the must- have Django packages. However, the best way to decide whether a package is appropriate for your project is **prototyping**.
+موقعی که یک محیط توسعه را آماده می‌کنید، مطمئن شوید که این ابزارها را فراهم کرده‌اید:
 
-Even if you have created a Python virtual environment for development, trying all these packages and later discarding them can litter your environment. So, I usually end up creating a separate virtual environment named _sandbox_ purely for trying such apps. Then, I build a small project to understand how easy it is to use.
+- **یک محیط مجازی تازه پایتون**: پایتون ۳ به صورت پیش‌فرض دارای ماژول venv است یا اینکه می‌توانید virtualenv را نصب کنید. هر دو این‌ها جلوی آلوده شدن محیط عمومی کتابخانه‌های پایتون شما را می‌گیرند. اما [pipenv ](https://docs.pipenv.org/) ابزار پیشنهادی ماست (در این کتاب هم از آن استفاده می‌کنیم) تا وابستگی‌ها و محیط مجازی پروژه را کنترل کند. 
+- **کنترل نسخه**: همیشه از یک ابزار کنترل نسخه مانند گیت یا Mercurial استفاده کنید. این ابزارها نجات‌دهنده هستند. به کمک آن‌ها بدون نگرانی و ترس می‌توانید تغییرات ایجاد کنید.
+- **انتخاب یک قالب برای پروژه**: قالب پیش‌فرض جنگو تنها انتخاب نیست. بر اساس نیازهایتان می‌توانید از قالب‌های دیگر مانند  [Edge ](https://github.com/pydanny/cookiecutter-django) یا  [Cookiecutter](https://github.com/pydanny/cookiecutter-django) استفاده کنید.
+- **پایپ لاین‌های انتشار**: من معمولاً کمی دیرتر نگران این موضوع می‌شوم. اما یک فرآیند انتشار سریع می‌تواند توسعه را سرعت ببخشد. من Fabric (یک نسخه پایتون ۳ به نام  fabric3 دارد) یا Ansible را ترجیح می‌دهم.
 
-Later, if I am happy with my test drive of the app, I create a branch in my project using a version control tool such as Git to integrate the app. Then, I continue with coding and running tests in the branch until the necessary features are added. Finally, this branch will be reviewed and merged back to the mainline (sometimes called master) branch.
+**سوپربوک، مأموریتی که باید بپذیرید**
 
-**Which packages made it?**
+این کتاب به رویکرد عملی و کاربردی برای پیاده‌سازی الگوهای طراحی جنگو و روش‌های بهینه آن، به کمک مثال‌ها، باور دارد. برای هماهنگی بیشتر، تمام مثال‌ها در مورد ساخت یک پروژه شبکه اجتماعی به نام سوپربوک است. 
 
-To illustrate the process, our SuperBook project can be roughly broken down into the following apps (not the complete list):
+سوپربوک، به طور خاص بر روی بخش ویژه و اغلب نادیده گرفته‌ شده‌ای از افرادی که دارای ابرقدرت‌های استثنایی هستند، متمرکز است. شما یکی از توسعه‌دهندگان تیمی متشکل از سایر توسعه‌دهندگان، طراحان وب، یک مدیر بازاریابی و یک مدیر پروژه هستید.
 
-- **Authentication** (built-in django.auth): This app handles user signups, login, and logout
-- **Accounts** (custom): This app provides additional user profile information
-- **Posts** (custom): This app provides posts and comments functionality
+پروژه روی آخرین نسخه پایتون (نسخه 3.6) و جنگو (نسخه 2.0) در زمان نوشتن کتاب، توسعه داده می‌شود. از آنجایی که انتخاب پایتون ۳ ممکن است موضوعی بحث برانگیز باشد، شایسته است که توضیح بیشتری داده شود.
 
-Here, an app has been marked to be built from scratch (tagged custom) or the third-party Django app that we would be using. As the project progresses, these choices might change. However, this is good enough for a start.
+**چرا پایتون ۳؟**
 
-**Best practices before starting a project**
+در حالی که توسعه پایتون 3.0 در سال ۲۰۰۶ شروع شد، اولین نسخه آن در ۳ دسامبر ۲۰۰۸  منتشر شد. دلیل اصلی برای توسعه دادن یک نسخه هماهنگ با نسخه‌های قبلی این موارد بود: هماهنگی تمام رشته‌ها با یونیکد، افزایش استفاده از iteratorها، کنار گذاشتن ویژگی‌های منسوح شده مانند کلاس‌های قدیمی، و برخی قواعد دستوری جدید مانند عبارت‌های nonlocal. 
 
-While preparing a development environment, make sure that you have the following in place:
+بازخوردها به پایتون ۳ در جامعه جنگو کمی درهم آمیخته بود. اگرچه تغییرات زبان بین نسخه ۲ و ۳ کم بود (و در طول زمان هم کاهش یافت)، انتقال تمام کدهای جنگو، یک مهاجرت واقعاً بزرگ بود.
 
-- **A fresh Python virtual environment**: Python 3 includes the venv module or you can install virtualenv. Both of them prevent polluting your global Python library. [pipenv is](https://docs.pipenv.org/) the recommended tool (used in this book as well) for higher-level management of virtual environments and dependencies.
-- **Version control**: Always use a version control tool such as Git or Mercurial. They are lifesavers. You can also make changes much more confidently and fearlessly.
-- **Choose a project template**: Django's default project template is not the only option. Based on your needs, try other templates such as Edge [https://github.com/arocks/edge](https://github.com/pydanny/cookiecutter-django) by yours truly or use Cookiecutter [https://github.com/pydanny/cookiecutter-django](https://github.com/pydanny/cookiecutter-django)).
+در ۱۳ فوریه، جنگو 1.5، اولین نسخه منتشر شده‌ای بود که پایتون ۳ را پشتیبانی می‌کرد. توسعه‌دهندگان اصلی اعلام کرده‌اند که در آینده، جنگو فقط برای پایتون ۳ نوشته خواهد شد.
 
-- **Deployment pipeline**: I usually worry about this a bit later, but having a fast deployment process speeds up development. I prefer Fabric (it has a Python 3 fork called fabric3) or Ansible.
+به دلایل زیر، پایتون ۳ انتخاب ایده‌آلی برای این کتاب است:
 
-**SuperBook – your mission, should you choose to accept it**
+- **دستور زبان بهتر**: دستور زبان پایتون ۳ بسیاری از دستورات زشت مانند _izip_، _xrange_ و \_\_unicode\_\_ را با دستورات تمیزتری مانند zip، range و \_\_str\_\_ جابجا کرده‌است.
 
-This book believes in a practical and pragmatic approach of demonstrating Django design patterns and the best practices through examples. For consistency, all our examples will be about building a social network project called SuperBook.
+- **حمایت شخص ثالث کافی**: بیش از ۹۰ درصد از ۲۰۰ کتابخانه مهم شخص ثالث، از پایتون ۳ پشتیبانی می‌کنند (به Python 3 Wall of Superpowers نگاهی بیندازید).
+- **نداشتن کد قدیمی**: ما یک پروژه را از ابتدا شروع می‌کنیم و نیازی نداریم با کدهای باقی مانده از قبل سر و کار داشته باشیم.
+- **زبان پیش‌فرض در پلتفرم‌های جدید**: الان به صورت پیش‌فرض مفسر پایتون ۳ در Arch Linux وجود دارد و اوبونتو و فدورا هم در نسخه‌های بعدی آن را به صورت پیش‌فرض فعال خواهند کرد.
+- **ساده‌تر است**: از دیدگاه توسعه بر اساس جنگو، تغییرات این دو بسیار کم هستند و می‌توان ظرف چند دقیقه آن‌ها را فرا گرفت.
 
-SuperBook focuses exclusively on the niche and often neglected market segment of people with exceptional superpowers. You are one of the developers in a team comprised of other developers, web designers, a marketing manager, and a project manager.
+نکته آخر مهم است. حتی اگر شما از پایتون ۲ استفاده کنید، این کتاب برای شما قابل استفاده است. ضمیمه A را بخوانید تا تفاوت‌ها را بفهمید. لازم است تغییرات کمی بدهید تا کدها را برای پایتون ۲ آماده کنید.
 
-The project will be built in the latest version of Python (version 3.6) and Django (version 2.0) at the time of writing. Since the choice of Python 3 can be a contentious topic, it deserves a fuller explanation.
+**کدام نسخه جنگو را استفاده کنیم**
 
-**Why Python 3?**
+جنگو الان یک برنامه زمانی استاندارد شده برای توسعه در سه مدل مختلف دارد:
 
-While the development of Python 3 started in 2006, its first release, Python 3.0, was released on December 3, 2008. The main reasons for a backward incompatible version were: switching to Unicode for all strings, increased use of iterators, cleanup of deprecated features such as old-style classes, and some new syntactic additions such as the nonlocal statement.
+- **نسخه ویژگی‌ (Feature)**: این نسخه‌ها ویژگی‌های جدید دارند یا ویژگی‌های موجود را ارتقا داده‌اند. این نسخه‌ها هر ۸ ماه یک‌بار منتشر می‌شوند و یک پشتیبانی ۱۶ ماهه از زمان انتشار دارند. شماره‌های آن‌ها به صورت A.B است (دقت کنید که نسخه مینور ندارند)
+- **نسخه پشتیبانی بلندمدت(Long-Term Support)**: این‌ها یک نوع خاص از نسخه ویژگی هستند که یک دوره پشتیبانی ۳ ساله از زمان انتشار دارند. این نسخه‌ها هر دو سال یکبار منتشر می‌شوند. شماره این نسخه‌ها به شکل A.2 است (هر سه نسخه ویژگی، یک نسخه LTS خواهد بود). نسخه‌های بلند مدت، چند ماه با هم همپوشانی دارند تا مهاجرت از یک نسخه به نسخه دیگر با آرامش انجام شود.
+- **نسخه رفع عیب (Patch)**: این نسخه‌ها برای رفع عیب یا اصلاح مشکلات امنیتی هستند. این نسخه‌ها بلافاصه منتشر می‌شوند. چون به طور معمول تغییرات زیادی ندارند به‌روزرسانی به این نسخه‌ها معمولاً بدون مشکل است. این نسخه‌ها شماره‌هایی به شکل A.B.C دارند.
 
-The reaction to Python 3 in the Django community was rather mixed. Even though the language changes between version 2 and 3 were small (and over time, reduced), porting the entire Django codebase was a significant migration effort.
-
-On February 13, Django 1.5 became the first version to support Python 3. Core developers have clarified that, in future, Django will only be written for Python 3.
-
-For this book, Python 3 is ideal for the following reasons:
-
-- **Better syntax**: This fixes a lot of ugly syntaxes, such as izip, xrange, and \_\_unicode\_\_, with the cleaner and more straightforward zip, range, and .\_\_str\_\_
-
-- **Sufficient third-party support**: Of the top 200 third-party libraries, more than 90 percent have Python 3 support (see Python 3 Wall of Superpowers).
-- **No legacy code**: We are creating a new project, rather than dealing with legacy code that needs to support an older version.
-- **Default in modern platforms**: This is already the default Python interpreter in Arch Linux. Ubuntu and Fedora plan to complete the switch in a future release.
-- **It is easy**: From a Django development point of view, there are very few changes, and they can all be learned in a few minutes.
-
-The last point is important. Even if you are using Python 2, this book will serve you fine. Read Appendix A to understand the changes. You will need to make only minimal adjustments to backport the example code to Python 2.
-
-**Which Django Version to use**
-
-Django has now standardized on a release schedule with three kinds of releases:
-
-- **Feature release**: These releases will have new features or improvements to existing features. It will happen every eight months and will have 16 months of extended support from release. They have version numbers like A.B (note there's no minor version).
-- **Long-Term Support (LTS) release**: These are special kinds of feature releases, which have a longer extended support of three years from the release date. These releases will happen every two years. They have version numbers like A.2 (since every third feature release will be an LTS). LTS releases have few months of overlap to aid in a smoother migration.
-- **Patch release**: These releases are bug fixes or security patches. It is recommended to deploy them as soon as possible. Since they have minimal breaking changes, these upgrades should be painless to apply. They have version numbers like A.B.C
-
-The following Django roadmap visualized should make the release approach clearer:
+این نقشه راه توسعه جنگو، تصویر شفاف‌تری از رویکرد توسعه جنگو ارائه می‌دهد:
 
 ![](/02-%20Application%20Design/images/2.png)
 
-Django Release Roadmap
+نقشه انتشار نسخه‌های جنگو
 
-![](/images/3.png) _Django 1.11 LTS will be the last release to support Python 2 and it is supported until April 2020. Subsequent versions will only use Python 3._
+جنگو 1.11 LTS آخرین نسخه‌ای خواهد بود که پایتون ۲ را پشتیبانی می‌کند و این نسخه تا آپریل ۲۰۲۰ پشتیبانی خواهد شد. نسخه‌های بعدی فقط از پایتون ۳ پشتیبانی خواهند کرد.
 
-The right Django version for you will be based on how frequently you can upgrade your Django installation and what features you need. If your project is actively developed and the Django Version can be upgraded at least once in 16 months, then you should install the latest feature release regardless of whether it is LTS or non-LTS.
+یک نسخه جنگو مناسب برای شما، بستگی به این دارد که هر چند وقت بک‌بار می‌توانید جنگو را آپدیت کنید و به کدام ویژگی‌ها نیاز دارید. اگر پروژه شما به صورت فعال در حال توسعه است و نسخه جنگو می‌تواند هر ۱۶ ماه یکبار آپدیت شود، پس شما می‌توانید آخرین نسخه ویژگی را نصب کنید فارغ از اینکه LTS هست یا نه.
 
-Otherwise, if your project is only occasionally developed, then you should pick the most recent LTS version. Upgrading your project's Django dependency from one feature release to another can be a non-trivial effort. So, read the release notes and plan accordingly.
+در غیر اینصورت، اگر پروژه شما فقط گاهی توسعه داده می‌شود، پس باید آخرین نسخه LTS را انتخاب کنید. به روزرسانی وابستگی‌های پروژه جنگو از یک نسخه ویژگی به نسخه ویژگی دیگر ممکن است تلاشی غیر ضروری باشد. بنابراین توضیحات هر نسخه را مطالعه کنید و براساس آن برنامه‌ریزی کنید.
 
-This book takes advantage of Django 2.0 features, wherever possible.
+این کتاب تا حد ممکن از امکانات جنگو 2.0 استفاده می‌کند.
 
-**Starting the project**
+**شروع پروژه**
 
-This section has the installation instructions for the SuperBook project, which contains all the example code used in this book. Do check out the project's on GitHub [ ](https://github.com/DjangoPatternsBook/superbook2)for
+این بخش دارای دستورالعمل‌های نصب پروژه سوپربوک است که شامل تمام کدهای استفاده شده در کتاب است. می‌توانید برای دیدن آخرین یادداشت‌ها در مورد نصب پروژه، فایل README.md را در [گیتهاب](https://github.com/DjangoPatternsBook/superbook2) ببینید. ما از ابزار pipenv برای ساخت یک محیط مجازی و نصب وابستگی‌ها استفاده می‌کنیم.
 
-README.md <https://github.com/DjangoPatternsBook/superbook2> the latest installation notes. We will be using the pipenv tool to set up the
+![](images/3.png) _برای هر پروژه جنگو یک محیط مجازی جداگانه بسازید_
 
-virtual environment and install all dependencies.
+ابتدا، پروژه را از گیتهاب کپی کنید:
 
-![](gd2nxz3p.006.png) _Create a separate virtual environment for each Django project._
+**$ git clone https://github.com/DjangoPatternsBook/superbook2.git**
 
-First, clone the example project from GitHub:
-
-![](gd2nxz3p.007.png)**$ git clone https://github.com/DjangoPatternsBook/superbook2.git**
-
-Next, install system-wide or locally, but outside a as
-
-pipenv virtualenv, recommended in pipenv installation documents. Alternatively, follow these
-
-commands:
+سپس، pipenv را بر اساس توصیه مستندات خودش، به صورت لوکال یا به صورت عمومی، اما خارج از virtualenv، به کمک دستورات زیر نصب کنید:
 
 **$ pip install -U pip $ pip install pipenv![](gd2nxz3p.008.png)**
 
-Now go to the project directory and install the dependencies:
+حالا به پوشه پروژه بروید و وابستگی‌ها را نصب کنید:
 
-**$ cd superbook2![](gd2nxz3p.008.png)**
+**$ cd superbook2!**
 
 **$ pipenv install --dev**
 
-Next, enter the shell to start using your freshly created virtual
+سپس وارد شل بشوید تا از محیط مجازی تازه ساخته شده با تمام وابستگی‌ها، استفاده کنید:
 
-pipenv
+**$ pipenv shell**
 
-environment with all the dependencies:
+در نهایت، پروژه را با دستورات مدیریتی جنگو، اجرا کنید:
 
-![](gd2nxz3p.009.png)**$ pipenv shell**
-
-Finally, run the project after executing the typical management commands:
-
-**$ cd src![](gd2nxz3p.010.png)**
+**$ cd src**
 
 **$ python manage.py migrate**
 
-**$ python manage.py createsuperuser $ python manage.py runserver**
+**$ python manage.py createsuperuser** 
 
-You can navigate to http://127.0.0.1:8000 or the URL indicated in your Terminal and feel free to play around with the site.
+**$ python manage.py runserver**
 
-**Summary**
+می‌توانید به آدرس http://127.0.0.1:8000 که در ترمینال نمایش داده‌شده بروید و از وب‌سایت استفاده کنید.
 
-Beginners often underestimate the importance of a good requirements- gathering process. At the same time, it is important not to get bogged down with the details, because programming is inherently an exploratory process. The most successful projects spend the right amount of time preparing and planning before development so that it yields the maximum benefits.
+**خلاصه**
 
-We discussed many aspects of designing an application, such as creating interactive mockups or dividing it into reusable components called apps. We also discussed the steps to set up SuperBook, our example project.
+تازه‌کارها معمولاً یک فرآیند جمع‌آوری نیازمندی‌های خوب را دست‌کم می‌گیرند. همزمان بسیار مهم است که بیش از حد درگیر جزییات نشد، چرا که برنامه‌نویسی ذاتاً یک فرآیند اکتشافی است. پروژه‌های موفق، پیش از توسعه، زمان مناسبی را برای برنامه‌ریزی و آماده‌سازی صرف می‌کنند در نتیجه بیشترین منافع را ایجاد می‌کنند.
 
-In the next few chapters, we will look at each component of Django in detail and learn the design patterns and best practices around them.
+ما درمورد جنبه‌های مختلفی از طراحی اپلیکیشن بحث کردیم مانند ساختن ماکت تعاملی یا تقسیم پروژه به بخش‌های چندبار مصرف به نام اپ. همچنین برای پروژه مثالی سوپربوک، مراحل راه‌اندازی را مطرح کردیم.
+
+در بخش‌های بعدی به هر قسمت از جنگو با جزییات بیشتری نگاه خواهیم کرد و الگوهای طراحی و روش‌های بهینه در مورد آن‌ها را یاد خواهیم گرفت.
