@@ -1,13 +1,13 @@
-# Models
+# مدل ها 
 
-In this chapter, we will discuss the following topics:
-* The importance of models
-* Class diagrams
-* Model structural patterns
-* Model behavioral patterns
-* Migrations
+در این بخش به بحث های زیر میپردازیم 
+* اهمیت مدل ها 
+* نمودار کلاس ها 
+* الگوی مدل ساختاری
+* مدل الگوی رفتاری
+* مایگریشن ها(مهاجرت ها)
 
-I was once consulted by a data analytics start-up in their early stages. Despite data retrieval being limited to a window of recent data, they had performance issues with page load sometimes taking several seconds. After analyzing their architecture, the problem seemed to be in their data model. However, migrating and transforming petabytes of structured live data seemed impossible.
+من یک بار به یک استارت آپ تحلیل داده توی مراحل اولیه اشون مشاوره دادم.با وجود اینکه گرفتن دیتا به یک بازه زمانی اخیر محدود بود اون ها خیلی مشکل های کارایی(performance) داشتن  ختی باز کردن صفحات بعضی اوقات چند ثانیه طول می کشید.بعد از بررسی ساختارتون,مشکل به تظر میومد که از مدل داده شون بود. گرچه مهاجرت کردن(migrating) و تبدیل پتابایت هایی از دیتای ساختار یافته زنده غیر ممکن به نظر میرسید .
 
     Show me your flowcharts and conceal your tables, and I shall continue to be mystified.
     Show me your tables, and I won't usually need your flowcharts; they'll be obvious.
