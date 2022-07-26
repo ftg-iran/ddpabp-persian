@@ -212,7 +212,7 @@
 |           ۱۵ مرداد        |  Alireza Khorami       |03- Models                          |
 |         اتمام          |  Hamed Daneshvar       |04- Views and URLs                  |
 |            ۱۵ مرداد       |  Rahimz        |05- Templates                       |
-|                   |  رزرو نشده       |06- Admin Interface                 |
+|             ۱ شهریور      |  sajjad ebrahimi moghaddam        |06- Admin Interface                 |
 |             ۱ شهریور      |  amirajoodani        |07- Forms                           |
 |           ۲۰ مرداد        |  Khalil Farashiani       |08- Working Asynchronously          |
 |          اتمام         |  Hamed Daneshvar       |09- Creating APIs                   |
