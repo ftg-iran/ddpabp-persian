@@ -209,17 +209,17 @@
 |:-----------------:|:----------------:|:----------------------------------:|
 |        ۱ مرداد           |  mmjsys       |01- Django and Patterns             |
 |         اتمام     |  Rahimz       |02- Application Design              |
-|                   |  رزرو نشده       |03- Models                          |
+|           ۱۵ مرداد        |  Alireza Khorami       |03- Models                          |
 |         اتمام          |  Hamed Daneshvar       |04- Views and URLs                  |
-|                   |  رزرو نشده       |05- Templates                       |
+|            ۱۵ مرداد       |  Rahimz        |05- Templates                       |
 |                   |  رزرو نشده       |06- Admin Interface                 |
-|                   |  رزرو نشده       |07- Forms                           |
-|                   |  رزرو نشده       |08- Working Asynchronously          |
+|             ۱ شهریور      |  amirajoodani        |07- Forms                           |
+|           ۲۰ مرداد        |  Khalil Farashiani       |08- Working Asynchronously          |
 |          اتمام         |  Hamed Daneshvar       |09- Creating APIs                   |
 |                   |  رزرو نشده       |10- Dealing with Legacy Code        |
 |                   |  رزرو نشده       |11- Testing and Debugging           |
-|                   |  رزرو نشده       |12- Security                        |
-|                   |  رزرو نشده       |13- Production-Ready                |
+|            ۱۰ مرداد       |  Mohammad Amin Orojloo       |12- Security                        |
+|           ۱ شهریور        |  mokarramis        |13- Production-Ready                |
 |                   |  رزرو نشده       |Appendix A: Python 2 Versus Python 3|
 
 </div>
