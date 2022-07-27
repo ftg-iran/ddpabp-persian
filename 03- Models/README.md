@@ -19,10 +19,11 @@ Traditionally, designing code around well thought-out data is always recommended
     Rule of Representation: Fold knowledge into data so program logic can
     be stupid and robust.
 
-Think about how you can move the complexity from code to data. It is always harder to understand logic in code compared to data. UNIX has used this philosophy very successfully by giving many simple tools that can be piped to perform any kind of manipulation on textual data.
-
-Finally, data has greater longevity than code. Enterprises might decide to rewrite entire codebases because they don't meet their needs anymore, but the databases are usually maintained and even shared across applications.
-
+فکر کن چطوری میتونی پیچیدگی رو از کد به دیتا ببری. همیشه سخت تره که منطق کد رو بفهمی تا منطق دیتارو. یونیکس از همین فلسفه خیلی خوب خوب استفاده میکنه با استفاده از دادن یک عالمه وسیله ساده که میتونن با هم ترکیب(پایپ) بشن تا هر گونه تغییر رو روی دیتا های متنی انچام بدی
+.
+در آخر, دیتا مدت زمان خیلی بیشتری دوام میاره تا کد. شرکت ها ممکنه به خاطر این که پایگاه کد نیازاشون رو دیگه برطرف نمیکنه تصمیم بگیرن که کل پایگاه کد شون رو دوباره بنویسن,ولی دیتابیس ها معمولا حفظ میشن و حتی بین چند اپلیکیشن هم به اشتراک گذاشته می شوند.     
+دیتابیس های خوب طراحی کردن بیشتر یک هنره تا یک علم. این بخش به شما چند قانون بنیادی رو مثل عادی سازی(Normalization) یا بهترین روش ها برای منظم کردن داده رو به شما ارایه میده. ولی قبل از اون,بیاید یک نگاهی بندازیم که دیتا مدل ها توی کجای یک اپلیکشن جنگو کاربرد دارن. 
+ 
 Well-designed databases are more of an art than a science. This chapter will give you some fundamental principles such as Normalization and best practices around organizing your data. But before that, let's look at where data models fit in a Django application.
 
 
