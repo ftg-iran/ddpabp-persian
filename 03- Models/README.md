@@ -24,25 +24,21 @@ Traditionally, designing code around well thought-out data is always recommended
 در آخر, دیتا مدت زمان خیلی بیشتری دوام میاره تا کد. شرکت ها ممکنه به خاطر این که پایگاه کد نیازاشون رو دیگه برطرف نمیکنه تصمیم بگیرن که کل پایگاه کد شون رو دوباره بنویسن,ولی دیتابیس ها معمولا حفظ میشن و حتی بین چند اپلیکیشن هم به اشتراک گذاشته می شوند.     
 دیتابیس های خوب طراحی کردن بیشتر یک هنره تا یک علم. این بخش به شما چند قانون بنیادی رو مثل عادی سازی(Normalization) یا بهترین روش ها برای منظم کردن داده رو به شما ارایه میده. ولی قبل از اون,بیاید یک نگاهی بندازیم که دیتا مدل ها توی کجای یک اپلیکشن جنگو کاربرد دارن. 
  
-Well-designed databases are more of an art than a science. This chapter will give you some fundamental principles such as Normalization and best practices around organizing your data. But before that, let's look at where data models fit in a Django application.
 
+# ام بزرگ تر از وی و سی بزرگ تر از وی است 
+در جنگو, مدل ها کلاس هایی هستند که روشی شی گرایانه برای دسترسی به دیتابیس میده. معمولا, هر کلاس به یک جدول در دیتابیس و هر صفت ‌(اتربیوت) به یک ستون در دیتابیس اشاره دارد. شما میتونین با استفاده از api که خودکار ساخته شده به جدوال کویری بزنید. 
+مدل ها میتونن پایه خیلی از اجزای دیگه باشه. وقتی که مدل دارین., میتونید خیلی سریع ادمین های مدل, فرم های مدل و یک عالمه ویو عمومی(جنریک). 
+در هر مورد , شما فقط نیاز دارین چند خط کد بنویسید که حیلی دیگه این پروسه جادویی به نظر نیاد. 
 
-#M is bigger than V and C
-In Django, models are classes that provide an object-oriented way of dealing with databases. Typically, each class refers to a database table and each attribute refers to a database column. You can make queries to these tables using an automatically generated API.
+همچنین, مدل ها تو خیلی بیشتر از جاهایی که انتظار دارید استفاده میشه. این به خاطر اینه که جنگو میتونه به روش های متفاوتی اجرا بشه. بعضی از نقاط ورود در جنگو :‌
+*  جریان آشتای وب درخواست-پاسخ  
+* شل اینترکتیو جنگو 
+* دستورات مدیریتی (management commands)
+* اسکریپت های تست 
+* صف های وظایف ناهمزمان همانند سلری
 
-Models can be the base for many other components. Once you have a model, you can rapidly derive model admins, model forms, and all kinds of generic views. In each case, you would need to write a line of code or two, just so that it does not seem too magical.
-
-Also, models are used in more places than you would expect. This is because Django can be run in several ways. Some of the entry points of Django are as follows:
-
-* The familiar web request-response flow
-* Django interactive shell
-* Management commands
-* Test scripts
-* Asynchronous task queues such as Celery
-
-In almost all of these cases, the model modules would get imported (as a part of **django.setup()**). Hence, it is best to keep your models free from any unnecessary dependencies or to import any other Django components such as views.
-
-In short, designing your models properly is quite important. Now let's get started with the SuperBook model design.
+تقریبا در همه این موارد, ماژول مدل ایمپورت میشود (بخشی از **django.setup()**). از این رو , بهترین کار اینه که مدل هاتون رو از هرگونه وابستگی های غیر ضروری آزاد نگه داریم یا که اجزایی مثل ویو رو امیپورت کنیم. 
+خلاصه, طراحی مناسب مدل ها خیلی مهم هستندو حالا بیاین شروع کنیم یک مدل سوپرکتاب رو. 
 
 ####The Brown Bag Lunch:
     Author's Note: The progress of the SuperBook project will appear in a box
