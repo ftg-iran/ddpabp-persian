@@ -216,11 +216,11 @@
 |             ۱ شهریور      |  amirajoodani        |07- Forms                           |
 |           ۲۰ مرداد        |  Khalil Farashiani       |08- Working Asynchronously          |
 |          اتمام         |  Hamed Daneshvar       |09- Creating APIs                   |
-|                   |  رزرو نشده       |10- Dealing with Legacy Code        |
+|              ۱ شهریور     |  Fereydoon jafari babookani       |10- Dealing with Legacy Code        |
 |            ۱۵ مرداد       |  Rahimz       |11- Testing and Debugging           |
 |            ۱۰ مرداد       |  Mohammad Amin Orojloo       |12- Security                        |
 |           ۱ شهریور        |  mokarramis        |13- Production-Ready                |
-|                   |  رزرو نشده       |Appendix A: Python 2 Versus Python 3|
+|              ۲۱ مرداد     |  Hamed Alizade       |Appendix A: Python 2 Versus Python 3|
 
 </div>
 
