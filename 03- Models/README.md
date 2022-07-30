@@ -39,11 +39,9 @@ Traditionally, designing code around well thought-out data is always recommended
 
 تقریبا در همه این موارد, ماژول مدل ایمپورت میشود (بخشی از **django.setup()**). از این رو , بهترین کار اینه که مدل هاتون رو از هرگونه وابستگی های غیر ضروری آزاد نگه داریم یا که اجزایی مثل ویو رو امیپورت کنیم. 
 خلاصه, طراحی مناسب مدل ها خیلی مهم هستندو حالا بیاین شروع کنیم یک مدل سوپرکتاب رو. 
-
-####The Brown Bag Lunch:
-    Author's Note: The progress of the SuperBook project will appear in a box
-    like this. You may skip the box, but you will miss the insights,
-    experiences, and drama of working in a web application project.
+####لانچ کیف قهوه ای :
+    یادداشت نویسنده: پیشروی این پروژه سوپرکتاب در یک جعبه(بخش) مثل این نمایش داده خواهد شد. 
+    شاید شما از جعبه عبور کنید, ولی بینش ها و تجربه های زیادی رو از دست میدید,و درامای کار کردن روی یک پروژه وب ابپلیکیشن.
 
     Steve's first week with his client, the SuperHero Intelligence and
     Monitoring (SHIM) for short, was a mixed bag. The office was incredibly
