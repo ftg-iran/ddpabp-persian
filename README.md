@@ -207,7 +207,7 @@
   
 | تاریخ اتمام ترجمه |       مترجم      |                    فصل             |
 |:-----------------:|:----------------:|:----------------------------------:|
-|        ۱ مرداد           |  mmjsys       |01- Django and Patterns             |
+|        ۱ شهریور           |  محمدامیر لطفی پور       |01- Django and Patterns             |
 |         اتمام     |  Rahimz       |02- Application Design              |
 |           ۱۵ مرداد        |  Alireza Khorami       |03- Models                          |
 |         اتمام          |  Hamed Daneshvar       |04- Views and URLs                  |
