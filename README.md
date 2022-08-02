@@ -218,7 +218,7 @@
 |          اتمام         |  Hamed Daneshvar       |09- Creating APIs                   |
 |              ۱ شهریور     |  Fereydoon jafari babookani       |10- Dealing with Legacy Code        |
 |            ۱۵ مرداد       |  Rahimz       |11- Testing and Debugging           |
-|            ۱۰ مرداد       |  Mohammad Amin Orojloo       |12- Security                        |
+|            ۱ شهریور       |  Mohammad Amin Orojloo       |12- Security                        |
 |           ۱ شهریور        |  mokarramis        |13- Production-Ready                |
 |              ۲۱ مرداد     |  Hamed Alizade       |Appendix A: Python 2 Versus Python 3|
 
