@@ -211,7 +211,7 @@
 |         اتمام     |  Rahimz       |02- Application Design              |
 |           ۱۵ مرداد        |  Alireza Khorami       |03- Models                          |
 |         اتمام          |  Hamed Daneshvar       |04- Views and URLs                  |
-|            ۱۵ مرداد       |  Rahimz        |05- Templates                       |
+|            اتمام       |  Rahimz        |05- Templates                       |
 |             ۱ شهریور      |  sajjad ebrahimi moghaddam        |06- Admin Interface                 |
 |             ۱ شهریور      |  amirajoodani        |07- Forms                           |
 |           ۲۰ مرداد        |  Khalil Farashiani       |08- Working Asynchronously          |
