@@ -41,12 +41,10 @@ Traditionally, designing code around well thought-out data is always recommended
 خلاصه, طراحی مناسب مدل ها خیلی مهم هستندو حالا بیاین شروع کنیم یک مدل سوپرکتاب رو. 
 ####لانچ کیف قهوه ای :
     یادداشت نویسنده: پیشروی این پروژه سوپرکتاب در یک جعبه(بخش) مثل این نمایش داده خواهد شد. 
-    شاید شما از جعبه عبور کنید, ولی بینش ها و تجربه های زیادی رو از دست میدید,و درامای کار کردن روی یک پروژه وب ابپلیکیشن.
 
-    Steve's first week with his client, the SuperHero Intelligence and
-    Monitoring (SHIM) for short, was a mixed bag. The office was incredibly
-    futuristic, but getting anything done needed a hundred approvals and
-    sign-offs.
+    شاید شما از جعبه عبور کنید, ولی بینش ها و تجربه های زیادی رو از دست میدید,و درامای کار کردن روی یک پروژه وب ابپلیکیشن.
+هفته اول استیو با مشتریش٫ هوش ابرقهرمانی و مانیتورینگ (شیم) به صورت کوتاه٫ خیلی قاطی پاتی بود. اداره خیلی آینده نگرانه ٫ ولی چیزی رو انجام دادن به ۱۰۰ تاتاییدیع و امضا نیاز داشت 
+    
 
     Being the lead Django developer, Steve had finished setting up a midsized development server hosting four virtual machines over two days.
     The next morning, the machine itself had disappeared. A washing
