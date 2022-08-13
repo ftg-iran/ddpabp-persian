@@ -217,7 +217,7 @@
 |           ۲۰ مرداد        |  Khalil Farashiani       |08- Working Asynchronously          |
 |          اتمام         |  Hamed Daneshvar       |09- Creating APIs                   |
 |              ۱ شهریور     |  Fereydoon jafari babookani       |10- Dealing with Legacy Code        |
-|            ۱۵ مرداد       |  Rahimz       |11- Testing and Debugging           |
+|            اتمام       |  Rahimz       |11- Testing and Debugging           |
 |            ۱ شهریور       |  Mohammad Amin Orojloo       |12- Security                        |
 |           ۱ شهریور        |  mokarramis        |13- Production-Ready                |
 |              ۲۱ مرداد     |  Hamed Alizade       |Appendix A: Python 2 Versus Python 3|
