@@ -45,41 +45,30 @@ Traditionally, designing code around well thought-out data is always recommended
     شاید شما از جعبه عبور کنید, ولی بینش ها و تجربه های زیادی رو از دست میدید,و درامای کار کردن روی یک پروژه وب ابپلیکیشن.
 هفته اول استیو با مشتریش٫ هوش ابرقهرمانی و مانیتورینگ (شیم) به صورت کوتاه٫ خیلی قاطی پاتی بود. اداره خیلی آینده نگرانه ٫ ولی چیزی رو انجام دادن به ۱۰۰ تاتاییدیع و امضا نیاز داشت 
     
+    با وجود توسعه دهنده ارشد جنگو بودن, استیو یک سرور در حال توسعه متوسط که روش ۴ تا ماشین مجازی بیشتر از دو روز بالا بود رو تموم کرده بود. 
+    صبح بعدش, دستگاه ناپدید شده بود. یک ربات به اندازه ماشین لباسشویی که نزدیکیا بود گفت که به دلیل نصب برنامه های تایید نشده بخش پزشک قانونی انتقال داده شده .
+    
+    مدیر بخش فنی, هارت, گرچه خیلی کمک کرد.اون درخواست کرد که ماشین به همراه تمام موارد نصب شده برگردونده بشه که این پروسه فقط یک ساعت طول کشید. 
+    او همچنین پیش تاییدیه هایی رو فرستاد که مشکلی برای پروژه ابرکتاب پیش نیاد. 
+    
+بعدا در بعد از ظهر اون روز, استیو یک کیف قهوه ای ناهار به همراه خودش داشت    ت 
+    لباس پوشیده در یک بلیزر بژ رنگ و یک جین آبی کم رنگ., هارت هم به موقع رسید. 
+    با اینکه از اکثر آدم ها قد بلند تر بود و کله اش هم خیلی خوب شیو شده بود, اون خیلی باحال و قابل دسترس بود. 
+    اون از استیو پرسید که آیا استیو قبلا نگاهی به پایگاه داده ابرقهرمانی که تو سالای ۶۰ میلادی تلاش به ساخت بود انداخته یا نه 
+    
+    
+    "اوه آره Sentinel Project درسته؟" استیو گفتت
+    "آره یک نگاهی انداختم دیتابیس به نظر میومد که به صورت موجودیت-ویژگی-ارزش مدل طراحی شده بود,یک چیزی که که من اون رو ضد-قاعده میدونم. شاید اونا ایده خیلی کمی از ابرقهرمان داشتن اون موقع ها    ا." 
 
-    Being the lead Django developer, Steve had finished setting up a midsized development server hosting four virtual machines over two days.
-    The next morning, the machine itself had disappeared. A washing
-    machine-sized robot nearby said that it had been taken to the forensic
-    department due to unapproved software installations.
+    
+    هارت تقریبا پیچ خورد وقتی آخرین جمله رو شنید. توی صدای آروم تری گفت,
+    "تو درست میگی,من نکردم,درکنارش,بهم کلا دو روز وفت دادن تا همه چی رو طراحی کنم. من واقعا به معنای کلمه فک کردم یک جای دنیا یک بمب اتمی در حال تیک تیک کردنه"
+    
+    دهان استیو باز باز موند و ساندویچش قبل از ورود به دهانش خشکش زد. 
+    هارت خندید. "قطعا بهترین کارم نبود.وقتی از یک میلیارد انتری میگذشت روزها وقت میگرفت تا هر گونه تحلیلی رو روی اون دیتابیس لعنتی انجام بدیم.
+    ابرکتاب اون رو توی چند ثانیه جمع میکنه,درسته؟"
 
-
-    The CTO, Hart, was, however, of great help. He asked the machine to be
-    returned in an hour with all the installations intact. He had also sent preapprovals for the SuperBook project to avoid any such roadblocks in the
-    future.
-
-
-    Later that afternoon, Steve was having a brown-bag lunch with him.
-    Dressed in a beige blazer and light blue jeans, Hart arrived well in time.
-    Despite being taller than most people and having a clean-shaven head, he
-    seemed cool and approachable. He asked if Steve had checked out the
-    previous attempt to build a superhero database in the sixties.
-
-    "Oh yes, the Sentinel project, right?" said Steve. "I did. The database
-    seemed to be designed as an Entity-Attribute-Value model, something
-    that I consider an anti-pattern. Perhaps they had very little idea about the
-    attributes of a superhero those days."
-
-    Hart almost winced at the last statement. In a slightly lowered voice, he
-    said, "you are right, I didn't. Besides, they gave me only two days to
-    design the whole thing. I believe there was literally a nuclear bomb ticking
-    somewhere."
-
-    Steve's mouth was wide open and his sandwich had frozen at its entrance.
-    Hart smiled. "Certainly not my best work. Once it crossed about a billion
-    entries, it took us days to run any kind of analysis on that damn database.
-    SuperBook would zip through that in mere seconds, right?"
-
-    Steve nodded weakly. He had never imagined that there would be around
-    a billion superheroes in the first place.
+    استیو ضعیف سر تکون داد. اون هیچوقت فکر نمیکرد که یک ملیارد ابرقهرمان یک جا باشند اصلا.
 
 
 
