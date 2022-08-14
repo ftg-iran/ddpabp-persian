@@ -72,26 +72,20 @@ Traditionally, designing code around well thought-out data is always recommended
 
 
 
-####The model hunt
-Here is a first cut at identifying the models in SuperBook. As typical for an early attempt,
-we have represented only the essential models and their relationships in the form of a
-simplistic class diagram:
+####شکار مدل 
+این اولین دید از شناختن مدل ها توی ابرکتابه. معمول برای اولین تلاش,ما فقط مدل اصلی و روابطش رو به صورت نمودار ساده نمایان میکنیم. 
 
-![The model hunt](./images/1.png)
+![شکار مدل](./images/1.png)
+بیاید یک لحظه مدل ها رو فراموش کنیم و درباره اشیایی حرف بزنیم که داریم مدلشون میکنیم. هر کاربر یک پروفایل داره. یک کاربر میتونه چندین کامنت یا پست بزاره. یک لایک میتونه به یک ترکیبی از کاربر/پست مرتبط باشه. 
 
-Let's forget models for a moment and talk in terms of the objects we are modeling. Each user has a profile. A user can make several comments or several posts. A Like can be related to a single user/post combination.
+کشیدن یک نمودار کلاس مثل این رو پیشنهاد میکنم. صفت های کلاس ممکنه توی این بخش گم شده باشند. ولی شما میتونید بعدا جزییاتش رو بیشتر کنید. وقتی که کل پروژه توی نمودار نمایان شد, جدا کردن اپ ها رو ساده تر میکنه. 
 
-Drawing a class diagram of your models like this is recommended . Class attributes might be missing at this stage, but you can detail them later. Once the entire project is represented in the diagram, it makes separating the apps easier.
-
-Here are some tips to create this representation:
-* Nouns in your write-up typically end up as entities.
-* Boxes represent entities, which become models.
-* Connector lines are bi-directional and represent one of the three types of
-relationships in Django: one-to-one, one-to-many (implemented with Foreign
-Keys), and many-to-many.
-* The field denoting the one-to-many relationship is defined in the model on
-the **Entity-relationship model (ER-model)**. In other words, the n side is where
-the Foreign Key gets declared.
+اینجا چند نکته وجود داره تا این نمایش رو انجام بدیم:
+* 'اسم' ها معمولا وقتی دارید شرح میدید به صورت موجودیت معنا پیدا میکنن 
+* جعبه هایی که موجودیت ها رو نشون میدن به مدل تبدیل میشوند. 
+* خط های متصل کننده که دو جهتی هستند و سه نوع از روابط رو در جنگو تعریف میکنند:
+یک-به-یک , یک-به-خیلی (با کلید خارجی پیاده سازی میشن) و خیلی-به-خیلی
+*  بخشی که رابطه یک-به-یک رو تعریف میکنه در **موجودیت-رابطه مدل** وجود دارد. در کلماتی دیگه,طرف ان ام جایی هست که کلید خارجی تعریف میشه.
 
 The class diagram can be mapped into the following Django code (which will be spread
 across several apps):
