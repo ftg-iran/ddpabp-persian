@@ -1,177 +1,180 @@
-# 8 Working Asynchronously
+# فصل 8 کارکردن به صورت ناهمزمان
 
-In this chapter, we will cover the following topics:
+- چرا به ناهمزمانی نیاز داریم؟
+- الگوهای ناهمزمانی
+- کار کردن با Celery
+- فهم asyncio
+- ورود به channelها
 
-- Need for asynchronous
-- Asynchronous patterns
-- Working with Celery
-- Understanding asyncio
-- Entering channels
+در مواقع ساده‌تر، یک برنامه وب در جنگو یک فرآیند یکپارچه بزرگ بود که می‌توانست یک درخواست را مدیریت کرده و تا زمانی که پاسخی تولید نکرده است بقیه درخواست ها را مسدود کند.
 
-In simpler times, a web application used to be a large monolithic Django process that can handle a request and block until the response is generated.
+در دنیای میکروسرویس ها اپلیکیشن ها مانند یک زنجیره پیچیده و اغلب بهم پیوسته تشکیل شده اند که هرکدام خدمات بخصوصی را ارائه می دهد. جنگو احتمالا مانند یک رابط در این جریان برنامه ها عمل می کند هماطور که Eliyahu Goldratt می گوید، "این زنجیره به اندازه ضعیف ترین حلقه آن قوی است.» به عبارت دیگر، ماهیت همزمانی (syncronous) جنگو به طور بالقوه می تواند آن را به یک گلوگاه عملکرد تبدیل کند (می تواند نقطه ضعفی برای جنگو باشد).
 
-In today's microservices world, applications are made up of a complex and often- interlocking chain of processes providing specialized services. Django is possibly one of the links in an application flow. As Eliyahu Goldratt would say, "the chain is only as strong as its weakest link". In other words, the synchronous nature of Django can potentially make it a performance bottleneck.
+برای همین راه حل های ناهمزمان (asynchronous) مختلفی برای این موضوع در نظر گرفته شده است که این راه حل ها می توانند به شما در حفظ زمان پاسخ (response time) سریع و اجرا کردن ماهیت ناهمزمان برنامه‌های امروزی کمک کنند.
 
-Hence, there are various asynchronous solutions built around Django that can help you retain the fast response times as well as satisfy the asynchronous nature of today's applications.
+ ## چرا ناهمزمانی؟
 
-**Why asynchronous?**
+مانند تمامی فریمورک های وب مبتنی بر WSGI جنگو یک فریمورک همزمان (synchronous) است. وقتی که یک کاربر به یک صفحه وب درخواستی (request) را می فرستد، درخواست از طریق یک View به جنگو می رسد و از خطوط مختلف کد عبور می کند تا صفحه وب رندر شده باز گردد. به خاطر اینکه تا زمانی که این مراحل اجرا شود بقیه درخواست ها متظر می مانند یا مسدود می شوند به آن همزمان (synchronous) می گویند.
 
-Like most WSGI-based web frameworks, Django is synchronous. When a client requests a web page, the request reaches Django through a view and passes through various lines of code until the rendered web page is returned. As this communication waits or blocks until the process executes all this code, it is termed as synchronous.
+توسعه‌دهندگان تازه وارد جنگو نگران ایجاد وظایف ناهمزمان (asynchronous tasks) نیستند، من متوجه شده ام که کد آن ها شامل کارهای زمانبر و کندی مانند پردازش تصویر یا حتی درخواست‌های پیچیده پایگاه داده است که منجر به کندی بارگذاری (load) صفحه می شود. در حالت ایده آل کارهای زمانبر باید از چرخه درخواست-پاسخ خارج شوند. زمان بارگذاری صفحه برای تجربه کاربری یک موضوع حیاتی است و باید برای جلوگیری از هرگونه تاخیر بهینه سازی شود.
+
+یکی دیگر از مشکلات اساسی این مدل همزمان (synchronous)، مدیریت رویدادهایی است که توسط درخواست های وب ایجاد نمی شوند.
+
+حتی اگر یک وب سایت هیچ بازدید کننده ای نداشته باشد، باید به فعالیت های مختلف تعمیر و نگهداری توجه کرد. آنها را می توان در یک زمان خاص مانند ارسال یک خبرنامه در نیمه شب جمعه، یا کارهای روزانه پشت صحنه (background tasks) مانند اسکن فایل های آپلود شده برای ویروس ها، برنامه ریزی کرد. برخی از وبسایت ها ممکن است به‌روزرسانی‌های همزمان یا اعلان‌های لحظه ای را از طریق WebSockets ارائه دهند که توسط مدل WSGI قابل مدیریت و پشتیبانی نباشد.
+
+برخی از انواع معمول کارهای ناهمزمان (asynchronous tasks) عبارتند از:
+
+- ارسال ایمیل/اس ام اس تک یا انبوه
+- صدا زدن وب سرویس ها
+- کوئری های SQL پیچیده و کند
+- فعالیت ها logging
+- رمزگذاری یا رمزگشایی فایل های مدیا (encoding or decoding)
+- تجزیه مجموعه بزرگی از متن
+- وب اسکرپینگ
+- ارسال خبرنامه
+- تسک های یادگیری ماشین و پردازش تصویر ( Machine learning, Image processing)
+
+همانطور که دیدید هر پروژه بزرگ جنگو  به یک زیرساخت برای مدیریت وظایف ناهمزمان نیاز دارد. ممکن است زمانی که ناهمزمانی را به کدتان بیاورید، با یک فرآیند، کدتان به مراتب سریع‌تر اجرا شود (برای مثالی چشمگیر از افزایش سرعت، به بخش _درک asyncio_ مراجعه کنید). این به این دلیل است که مادامی که منتظر انجام یک کار I/O بودید، بهتر است آن زمان صرف اجرای کارهای دیگر استفاده شود.
+
+## مشکلات کد ناهمزمان
+
+برنامه نویسی ناهمزمان ممکن است بسیار وسوسه کننده به نظر برسد، اما تسلط بر آن بسیار دشوار است. 
+
+چندین مشکل وجود دارد که باید از آنها آگاه باشید، مانند موارد زیر:
+
+- **حالت رقابتی(Race condition)**:  اگر دو یا چند نخ (thread) مقدار یک داده را تغییر دهند، ترتیب اجرای آنها می تواند بر مقدار نهایی تأثیر بگذارد. این مسابقه می تواند منجر به قرار گرفتن داده ها در وضعیت نامشخص شود.
+
+- **گرسنگی(Starvation)**: انتظار نامحدود توسط یک نخ (thread) به دلیل ورود موضوعات دیگر.
+
+- **بن بست(Deadlock)**:  اگر نخی منتظر یک منبع باشد که نخ دیگری در حال استفاده آن منبع است و بالعکس همزمان در حال استفاده از منبع باشند، هر دو رشته در یک بن بست گیر کرده اند.
+
+- **حفظ ترتیب(Order preservation)** : ممکن است وابستگی هایی بین بخش های کد وجود داشته باشد که هنگام تغییر ترتیب اجرا مشاهده نشود.
+
+در پایتون، ممکن است اجتناب کامل از چنین اتفاقاتی غیرممکن باشد، اما می‌توانیم یکسری از روش های بهینه(best practice) ها را برای حذف آنها برای بیشتر اهداف عملی دنبال کنیم. این موارد در بخش _Celery best practices_ پوشش داده خواهند شد.
+
+## پترن ها و الگوهای ناهمزمانی(Asynchronous patterns)
+
+بیایید به الگوهای کلی مختلفی که در وب اپلیکیشن ها استفاده شده است نگاه کنیم.
+
+## الگوی پاسخ به اندپوینت(Endpoint callback pattern)
+
+در این الگو زمانی که یک سرویس صدا زده می شود یک اندپوینتی مشخص می شود که پس از اتمام عملیات صدا زده می شود. این شبیه به مشخص کردن بازخوانی(callback) در برخی از زبان های برنامه نویسی مانند جاوا اسکریپت است. زمانی که به عنوان یک بازخوانی (callback) HTTP استفاده می شود به عنوان **webhook** شناخته می شود.
+
+یک فرآیند تقریباً به شرح زیر است:
+
+1. مشتری یک سرویس را از طریق کانالی مانند REST، RPC یا UDP فراخوانی می کند. همچنین اندپوینتی را برای اطلاع از آماده شدن نتیجه فراهم می کند.
+
+2. فراخوانی بلافاصله بر میگردد
+
+3. زمانی که کار تکمیل شد، سرویس اندپوینت تعریف شده را فراخوانی می کند تا به فرستنده اطلاع دهد.
+
+به یاد داشته باشید که ارائه دهنده یا گیرنده سرویس باید بتواند به فرستنده دسترسی داشته باشد. برای داده های حساس، باید نوعی احراز هویت برای شناسایی فرستنده و رمزگذاری برای محافظت از کانال در برابر سرقت دیتا وجود داشته باشد.
+
+این الگو کاملاً محبوب است و توسط برنامه های وب مختلف مانند GitHub، PayPal، Twilio و غیره پیاده سازی شده است. این ارائه دهندگان سرویس معمولاً یک API برای مدیریت اشتراک در این WebHok دارند، مگر اینکه شما یک واسط برای انجام چنین کاری داشته باشید.
+
+## الگوی Publish-subscribe
+
+این الگو شکل کلی تری نسبت به الگوی قبلی دارد. در اینجا، یک broker به عنوان یک واسطه بین فرستنده و گیرنده ها عمل می کند. درست است، چندین گیرنده می‌توانند در یک موضوع مشترک شوند، یعنی یک گروه منطقی نام‌گذاری شده از کانال‌هایی که توسط هر کسی منتشر شده است.
+
+در این الگو، روند ارتباط به شرح زیر است:
+
+1. یک یا چند listener به broker اطلاع می دهند که علاقه مند به اشتراک گذاری یک موضوع هستند
+2. یک publisher پیامی را به broker تحت عنوان مربوطه ارسال می کند
+3. واسط (broker) پیام را به همه مشترکین (subscribers) ارسال می کند
 
 
-New Django developers do not worry about creating asynchronous tasks, but I've noticed that their code eventually accumulates slow blocking tasks, such as image processing or even complex database queries, which leads to unbearably slow page loads. Ideally, they must be moved out of the request-response cycle. Page loading time is critical to user experience, and it must be optimized to avoid any delays.
+یک broker این امکان را دارد که فرستنده و گیرنده(sender and receiver) را به جهات مختلف جدا می کند. علاوه بر این، کارگزار می تواند بسیاری از وظایف اضافی مانند کامل تبدیل فیلتر کردن پیام، را انجام دهد. این الگو کاملاً مقیاس پذیر است و از این رو در میان افزارهای(middleware) سازمانی محبوب است.
 
-Another fundamental problem of this synchronous model is the handling of events that are not triggered by web requests. Even if a website does not have any visitors, it must attend to various maintenance activities. They can be scheduled at a particular time like sending a newsletter at Friday midnight, or routine background tasks such as scanning uploaded files for viruses. Some sites might offer real-time updates or push notifications through WebSockets that cannot be handled by the WSGI model.
+ ابزار Celery  از مکانیسم‌های انتشار/اشتراک (pub/sub) برای انتقال دیتای درونی خود استفاده می‌کند، مانند Redis در ارسال پیام.
 
-Some of the typical kinds of asynchronous tasks are:
 
-- Sending a single or mass emails/SMS
-- Calling web services
-- Slow SQL queries
-- Logging activity
-- Media encoding or decoding
-- Parsing a large corpus of text
-- Web scraping
-- Sending newsletters
-- Machine learning tasks ![](52pt3k0t.002.png) Image processing
+## الگوی Polling
 
-As you can see, every non-trivial Django project will need infrastructure to manage asynchronous tasks. You might also find your code running several times faster with a single process when you switch to asynchronous code (refer to the _Understanding asyncio_ section for a dramatic example of speedup). This is because all the time you were waiting for an I/O task to complete is now better utilized running other tasks.
+الگوریتم polling همانطور که از نامش پیداست  شامل بررسی دوره ای یک سرویس برای هر رویداد جدید توسط کلاینت است. این الگو در اغلب موارد نامناسب ترین ابزار برای ارتباط ناهمزمان (asynchronous) می باشد زیرا الگوی polling میزان استفاده از سرویس را افزایش می دهد و شرایط برای مقیاس پذیری سخت می شود. با این حال، ممکن است این تنها راه حل عملی در یک سیستم قدیمی باشد.
 
-**Pitfalls of asynchronous code**
+یک سیستم polling به شرح زیر کار می کند:
 
-Asynchronous programming might sound very compelling, but it is very difficult to master.
+1. کلاینت یک سرویس را صدا می‌کند
+2. این صدازدن رویدادها و وضعیت جدیدی برای task بر می گرداند
+3. کلاینت منتظر می ماند و مرحله دوم را در فواصل زمانی تکرار می کند
 
-There are several pitfalls that you need to be aware of, such as the following:
+ هنگام بازیابی وضعیت سرویس ممکن است درجاتی از تاخیر همزمان وجود داشته باشد. ممکن است کلاینت تا رسیدن ریسپانس مسدود شود. از این رو، گاهی اوقات از این الگو به عنوان **busy-waiting** یاد می شود.
 
-- **Race condition**: If two or more threads of code modify the same data, the order in which they get executed can affect the final value. This race can lead to data being in an undetermined state.
-- **Starvation**: Indefinite waiting by one thread due to other threads coming in.
-- **Deadlock**: If a thread is waiting for a resource that another thread has locked, and vice versa at the same time, then both threads are stuck in a deadlock.
-- **Debugging challenge**: It is very hard to reproduce a bug in asynchronous code due to the non-deterministic timing of a multithreaded program.
-- **Order preservation**: There might be dependencies between sections of code that might not be observed when the execution order varies.
+## راه حل های ناهمزمانی در جنگو
 
-In Python, it might be impossible to completely avoid such pitfalls, but we can follow some best practices to eliminate them for most practical purposes. They will be covered in the _Celery best practices_ section.
+بقیه این فصل سیستم‌های asynchronous محبوب زیر را که در کنار جنگو استفاده می‌شوند، با موارد استفاده متفاوت آن ها پوشش می‌دهد. آنها به شرح زیر فهرست شده اند:
 
-**Asynchronous patterns**
+- ابزار Celery:  مدل worker مبتنی بر نخ برای انجام محاسبات در خارج
+از یک فرآیند جنگو
+- ماژول asyncio: ماژول داخلی پایتون برای اجرای همزمان چندین کار در یک نخ
+- فریمورک django channel:  معماری مشابه صف پیام در زمان واقعی برای مدیریت رویدادهای I/O مانند WebSockets
 
-Let's look at various general patterns that have been used in web applications.
+بیایید ابتدا محبوب ترین و قوی ترین راه حل برای اجرای وظایف به صورت ناهمزمان(asynchronous) را درک کنیم: Celey
 
-**Endpoint callback pattern**
 
-In this pattern, when a caller calls a service, it specifies an endpoint to be called when the operation is completed. This is similar to specifying callbacks in some programming languages like JavaScript. When used purely as an HTTP callback, it is called a **WebHook**.
+## کار کردن با  Celery
 
-The process is roughly as follows:
+ابزار Celery یک مدیر صف وظایف ناهمزمان با ویژگی های غنی است. در اینجا، یک وظیفه به یک فراخوانی اشاره دارد که هنگام اجرا، فعالیت را به صورت ناهمزمان انجام می دهد. Celey توسط چندین سازمان معروف از جمله اینستاگرام و موزیلا برای انجام میلیون ها کار در روز در تولید استفاده می شود.
 
-1. The client calls a service through a channel such as REST, RPC, or UDP. It also provides its own endpoint to notify when the result becomes ready.
-1. The call returns immediately.
-1. When the task is completed, the service calls the defined endpoint to notify the initial sender.
+هنگام نصب Celery، باید اجزای مختلفی مانند broker و جایی برای ذخیره دیتا را انتخاب کنید. اگر گیج شده اید، توصیه می کنم Redis را نصب کنید و برای شروع از مکان دخیره دیتا صرفنظر کنید. از آنجایی که Redis به صورت in-memorty کار می کند، اگر پیام های شما بزرگتر هستند و نیاز به ماندگاری دارند، باید به جای آن از RabbitMQ استفاده کنید. برای شروع می‌توانید مراحل اول با celery و استفاده از celery با جنگو را در راهنمای کاربر celery دنبال کنید.
 
-Remember that the service provider or receiver must be able to access the sender. For sensitive data, there must be some form of authentication to identify the sender and encryption to protect the channel from eavesdropping.
 
-This pattern is quite popular and implemented by various web applications, such as GitHub, PayPal, Twilio, and more. These providers usually have an API to manage subscriptions to these WebHooks, unless you have a broker to perform such mediation.
+در جنگو، تسک های Celery معمولاً در یک فایل جداگانه به نام tasks.py در کنار فایل های یک app می‌آید.
 
-**Publish-subscribe pattern**
-
-This pattern is a more general form of the endpoint callback pattern. Here, a broker acts as an intermediary between the actual sender and recipients. Yes, multiple recipients can subscribe to a _topic_ i.e. a named logical group of channels published by anyone.
-
-In this case, the process of communication is as follows:
-
-1. One or more listeners will inform a broker process that they are interested in subscribing to a topic
-1. A publisher will post a message to the broker under the relevant topic
-1. The broker dispatches the message to all the subscribers
-
-A broker has the advantage of fully decoupling the sender and receiver in many senses. Additionally, the broker can perform many additional tasks, such as message enrichment, transformation, or filtering. This pattern is quite scalable and, hence, popular in enterprise middleware.
-
-Celery internally uses publish/subscribe mechanisms for several of its backend transports, such as Redis for sending messages.
-
-**Polling pattern**
-
-Polling, as the name suggests, involves the client periodically checking a service for any new events. This is often the least desirable means of asynchronous communication as polling increases system utilization and becomes difficult to scale. Yet, it might be the only feasible solution in a legacy system.
-
-A polling system works as follows:
-
-1. The client calls a service
-1. The call returns immediately with new events or the status of the task
-1. The client waits and repeats step two at periodic intervals
-
-There might be some degree of synchronous delay while retrieving the status of the service. The client might be blocking until the response arrives. Hence, it is sometimes referred to as **busy-waiting**.
-
-**Asynchronous solutions for Django**
-
-The rest of this chapter will cover the following popular asynchronous systems used with Django, with somewhat different use cases. They are as listed as follows:
-
-- **Celery**: Worker threads-based model for handling computation outside the Django process
-- **asyncio**: Python built-in module for concurrently executing multiple tasks within the same thread
-- **Django Channels**: Real-time message queue-like architecture to manage I/O events such as WebSockets
-
-Let's first understand the most popular and robust solution for running tasks asynchronously: Celery.
-
-**Working with Celery**
-
-Celery is a feature-rich asynchronous task queue manager. Here, a task refers to a callable that, when executed, will perform the activity asynchronously. Celery is used in production by several well-known organizations including Instagram and Mozilla, for handling millions of tasks a day.
-
-While installing Celery, you will need to pick and choose various components such as a broker and result store. If you are confused, I would recommend installing Redis and skipping a result store for starters. As Redis works in-memory, if your messages are larger and need persistence, you should use RabbitMQ instead. You can follow the [First Steps](http://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html)
-
-[with Celery and](http://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html) Using[ Celery with Django topics in the](http://docs.celeryproject.org/en/latest/django/first-steps-with-django.html) Celery User Guide to get started.
-
-In Django, Celery jobs are usually mentioned in a separate file named tasks.py within the respective app directory.
-
-Here's what a typical Celery task looks like:
-
-\ # tasks.py
+در اینجا یک کار ساده celery  می ببینید:
 
 ```python
+# tasks.py
 @shared_task
 def fetch_feed(feed_id):
     feed_obj = models.Feed.objects.get(id=feed_id)
     feed_obj.page = retrieve_page(feed_obj.feed_url)
     feed_obj.retrieved = timezone.now()
     feed_obj.save()
+‍‍‍
 ```
+این تسک محتوای یک فید RSS را بازیابی کرده و در پایگاه داده ذخیره می کند.
 
-This task retrieves the content of an RSS feed and saves it to the database.
+به نظر می رسد یک تابع عادی پایتون است (حتی اگر مربوط به یک کلاس باشد)، جز دکوریتور @shared_task. این یک تسک celery را مشخص می کند. یک تسک مشترک(shared task) می تواند توسط اپ های دیگر در همان پروژه استفاده شود. این کار را با ایجاد نمونه های مستقل از کار در هر برنامه ثبت شده، قابل استفاده مجدد می کند.
 
-It looks like a normal Python function (even though it will be internally wrapped by a class), except for the @shared_task decorator. This defines a Celery task. A shared task can be used by other apps within the same project. It makes the task reusable by creating independent instances of the task in each registered app.
-
-To invoke this task, you can use the delay() method, as follows:
+برای فراخوانی این تسک می توانید از متد delay() به صورت زیر استفاده کنید:
 
 ```python
 >>> from tasks import fetch_feed
 >>> fetch_feed.delay(feed_id=some_feed.id)
 ```
 
-Unlike a normal function call, the execution does not jump to fetch_feed or block until the function returns. Instead, it returns immediately with an AsyncResult instance. This can be used to check the status and return value of the task.
+برخلاف فراخوانی تابع عادی سریعا فانکشن اجرا نمی شود و بقیه درخواست ها تا زمانی که این تابع مقداری را برگرداند مسدود نمی شوند. در عوض بالافاصله یک آبجکت از نوع AsyncResult بر میگردد. این آبجکت می تواند برای بررسی وضعیت فانکشن و گرفتن مقدار بازگشتی تابع استفاده شود.
 
-To find out how and when it is invoked, let's look at how Celery works.
+برای اینکه بفهمیم تابع ما چگونه و چه زمانی فراخوانی می شود، بیایید به نحوه عملکرد Celery نگاهی بیندازیم.
 
-**How Celery works**
-
-Celery can be somewhat difficult to understand due its distributed architecture. Here's a high-level diagram showing a typical Django-Celery setup:
+## ابزار celery  چگونه کار می کند
+درک celery به دلیل معماری توزیع شده آن تا حدودی دشوار است. در اینجا یک نمودار سطح بالا وجود دارد که یک کانفیگ ساده Django-Celery را نشان می دهد:
 
 ![](/08-%20Working%20Asynchronously/images/image-000.png)
 
-How a typical Django Celery setup works
+زمانی که یک درخواست می رسد، می توان یک Celery task را برای رسیدگی به آن آن فعال کرد.Celery بلافاصله بدون مسدود کردن بقیه درخواست ها یک مقداری برمی‌گردد. در واقع، اجرای کار به پایان نرسیده است، اما یک پیام task وارد یک صف task (یا یکی از بسیاری از صف های موجود) شده است.
 
-When a request arrives, you can trigger a Celery task while handling it. The task invocation returns immediately without blocking the process. In fact, the task has not finished execution, but a task message has entered a task queue (or one of the many possible task queues).
+کارگران سلری(workers) فرآیندهای جداگانه ای هستند که بر صف ها نظارت می کنند که اگر یک task جدید رسید آن ها را اجرا کنند. آن ها انجام یک کار (task)  را برعهده میگیرند و یک پیام برگشت (acknowledgment) به صف میفرستند تا این task از صف ما حذف شود. سپس آن task را اجرا کنند پس از انجام این task این فرآیند تکرار می شود و worker یک task جدید را برای اجرا انتخاب می کند.
 
-Workers are separate processes that monitor the task queue for new tasks and actually execute them. They pick up a task message and send an acknowledgment to the queue so that the message is removed. Then they execute the task. Once completed, the process repeats, and it will try to pick up another task for execution.
+یک worker می‌تواند هنگام اجرای یک کار زمانبر یا کارهایی که درگیر I/O هستند مسدود شود و دیگر task جدیدی قبول نکند، اما طراحی جنگو به گونه ایست این کار بر روی فرآیند خود جنگو تأثیر نمی‌گذارد. وقتی کار worker تکمیل شد می توان نتیجه task را در جایی ذخیره کرد در بسیاری از موارد ذخیره نتیجه پایان یک task اهمیتی ندارد و میتوان آن را نادیده گرفت.
 
-A worker can get blocked executing a slow task or waiting for I/O, but it does not affect the Django process by design. When the task is completed, you may configure a result store to store the results persistently. In many cases, the side effect of the task is needed and the returned result is ignored, so the result store is not required.
+همچنین می‌توان با استفاده از چیزی که Celery آن را فرآیند celery beat می‌نامد، یک کار را برنامه‌ریزی کرد. می‌توانید آن را طوری پیکربندی کنید که در بازه‌های زمانی معینی، مانند هر 10 ثانیه یا در شروع یک روز هفته، کاری را آغاز کند. این ویژگی برای کارهای تعمیر و نگهداری مانند تهیه نسخه پشتیبان یا بررسی سلامت یک سرویس وب عالی است.
 
-A task can also be scheduled to run periodically using what Celery calls a Celery beat process. You can configure it to kick off tasks at certain time intervals, such as every 10 seconds or at the start of a day of the week. This is great for maintenance jobs such as backups or polling the health of a web service.
+ابزار Celery به خوبی پشتیبانی می‌شود، مقیاس‌پذیر است و به خوبی با جنگو کار می‌کند، اما ممکن است برای کارهای ناهمزمان بی‌اهمیت بیش از حد دست و پا گیر باشد. در چنین مواردی، من استفاده از کانال‌های جنگو یا RQ را توصیه می‌کنم، یک صف ساده‌تر مبتنی بر Redis. با این حال، best practiceهایی که در بخش بعدی مورد بحث قرار می‌گیرند، ممکن است در مورد آنها نیز اعمال شود.
 
-Celery is well-supported, scalable, and works well with Django, but it might be too cumbersome for trivial asynchronous tasks. In such cases, I would recommend using Django Channels or RQ, a simpler Redis-based task queue. However, the best practices discussed in the next section might apply to them as well.
+## Celery best practices
 
-**Celery best practices**
+شما دیده اید که چگونه Celery می تواند بار سنگین جنگو را تحمل کند، اما کار با Celery به دلیل مجموعه ویژگی های غنی آن کاملاً با جنگو متفاوت است. هزاران best practice درداکیومنت ها ذکر شده و در چندین وبلاگ به اشتراک گذاشته شده است.
 
-You have seen how Celery can take a lot of the heavy lifting from Django, but working with Celery is quite different from Django due to its rich feature set. There are tons of best practices mentioned in the documentation and shared in several blog posts.
+اگر قبلاً با مفاهیم آشنا هستید و می خواهید یک چک لیست سریع داشته باشید، چک لیست celery task را در http://celerytaskschecklist.com بررسی کنید. در غیر این صورت، برای درک اینکه چگونه از celery بهترین بهره را ببرید، این آموزش را ادامه دهید.
 
-If you are already familiar with the concepts and want a quick checklist, check out the Celery tasks checklist at [http://celerytaskschecklist.com/. Otherwise, ](http://celerytaskschecklist.com/)read on to understand how to get the best out of Celery.
+### Handling failure
 
-**Handling failure**
+هر نوع خطا می تواند هنگام اجرای یک task در Celery اتفاق بیفتند. اگر مکانیزمی برای مدیریت این خطاها نباشد واین خطاها ممکن است شناسایی نشود  اغلب، یک کاری که انجام نشود موقتی است، مانند یک API (که خارج از کنترل ما است) یا تمام شدن حافظه. در چنین مواردی، بهتر است صبر کنید و دوباره کار را امتحان کنید.
 
-All sorts of exceptions can happen while executing a Celery task. In the absence of a well- defined exception handling and retry mechanism, they can go undetected. Often, a job failure is temporary, such as an unresponsive API (which is beyond our control) or running out of memory. In such cases, it is better to wait and retry the task.
-
-In Celery, you can choose to retry automatically or manually. Celery makes it easy to fine- tune its automatic retry mechanism. In the following example, we specify multiple retry parameters:
+در Celery، می‌توانید انتخاب کنید که به صورت خودکار یا دستی در صورت خطا دوباره امتحان کند.
+Celery تنظیم دقیق مکانیسم الگوریتم امتحان مجدد خودکار خود را آسان می کند. در مثال زیر، چندین پارامتر برای تلاش مجدد را مشخص می کنیم:
 
 ```python
 @shared_task(autoretry_for=(GatewayError,),
@@ -182,17 +185,17 @@ In Celery, you can choose to retry automatically or manually. Celery makes it ea
                   ...
 ```
 
-The autoretry_for argument lists all the exceptions for which Celery should automatically retry. In this case, it is just the GatewayError exception. You may also mention the exception base class here to autoretry_for all exceptions.
+آرگومان autoretry_for همه مواردی که در صورت خطا Celery باید به طور خودکار برای آنها امتحان کند فهرست می کند. در این مورد، فقط یک خطای GatewayError است. همچنین می توانید کلاس پایه خطا را در اینجا به autoretry_for  همه ی خطاها ذکر کنید.
 
-The retry_backoff argument specifies the initial wait period before the first retry, that is, 60 seconds. Each time a retry fails, the waiting period gets doubled, so the waiting period becomes 120, 240, and 360 seconds, until the maximum retry limit of 5 is reached.
+آرگومان retry_backoff مدت زمان انتظار اولیه را قبل از اولین تلاش مجدد،  (60 ثانیه) مشخص می کند. هر بار که تلاش مجدد با شکست مواجه می شود، دوره انتظار دو برابر می شود، بنابراین دوره انتظار به 120، 240 و 360 ثانیه تبدیل می شود تا زمانی که به حداکثر محدودیت تلاش مجدد 5 برسد.
 
-This technique of waiting longer and longer for a retry is called **exponential backoff**. This is ideal for interacting with an external server as we are giving it sufficient time to recover in case of a server overload.
+این تکنیک انتظار طولانی‌تر و طولانی‌تر برای تلاش مجدد، exponential backoff نامیده می‌شود. این برای تعامل با یک سرور خارجی ایده آل است زیرا ما به سرور خارجی زمان کافی برای بازیابی می دهیم.
 
-A random jitter is added to avoid the problem of **thundering herds**. If a large number of tasks have the same retry pattern and request a resource at the same time, it might make it unusable.
+یک نوسان تصادفی برای جلوگیری از مشکلی موسوم به  thundering herds  اضافه شده است. اگر تعداد زیادی از کارها الگوی تکرار مجدد یکسانی داشته باشند و در همان زمان منبعی را درخواست کنند، ممکن است آن را غیرقابل استفاده کند.
 
-Hence, a random number is added to the waiting period so that such collisions do not occur.
+از این رو، یک عدد تصادفی به دوره انتظار اضافه می شود تا چنین اتفاقاتی رخ ندهد.
 
-Here's an example of manually retrying in case of an exception:
+در اینجا مثالی از تلاش مجدد دستی در صورت خطا آورده شده است:
 
 ```python
 @shared_task(bind=True)
@@ -204,72 +207,82 @@ Here's an example of manually retrying in case of an exception:
             raise self.retry(exc=exc)
 ```
 
-Note the bind argument to the task decorator and a new self argument to the task, which will be the task instance. If an exception occurs, you can call the self.retry method to attempt a retry manually. The exc argument is used to pass the exception information that can be used in logs.
+به آرگومان bind در دکوریتور و یک آرگومان self جدید برای task توجه کنید که یک آبجکت از task خواهد بود. اگر خطایی رخ داد، می‌توانید به صورت دستی دوباره متد self.retry صدا کنید. آرگومان exc برای ارسال اطلاعات خطا که می تواند در لاگ ها استفاده شود آمده است.
 
-Last but not least, ensure that you log all your exceptions. You can use the standard Python logging module or the print function (which will be redirected to logs) for this. Use a tool such as Sentry to track and automate error handling.
+آخرین موردی که باید بررسی کنید که کم اهمیت هم نیست این است است که تمام خطاها جایی ثبت شود. برای این کار می توانید از ماژول لاگ استاندارد پایتون یا تابع چاپ (که به لاگ ها هدایت می شود) استفاده کنید. از ابزاری مانند Sentry برای ردیابی و مدیریت خودکار خطا استفاده کنید.
 
-**Idempotent tasks**
 
-As we saw, Celery tasks may be restarted several times, especially if you have enabled late acknowledgments. This makes it important to control the side effects of a task. Hence, Celery recommends that all tasks should be _idempotent_. Idempotence is a mathematical property of a function that assures that it will return the same result if invoked with the same arguments, no matter how many times you call it.
+### تسک های خودتوان
 
-You might have seen simple examples of idempotent functions in the Celery documentation itself, such as this:
+همانطور که دیدیم، کارهای Celery ممکن است چندین بار مجدداً راه اندازی شوند، به خصوص اگر acknowledgment با تاخیر را فعال کرده باشید. این امر کنترل side effect  را یک کار را مهم می کند. از این رو، celery توصیه می کند که همه کارها باید خودتوان باشد. خودتوان یک امر ریاضی است
+ویژگی یک تابع که است که اطمینان می دهد اگر با همان آرگومان ها فراخوانی شود، بدون توجه به اینکه چند بار آن را فراخوانی کنید، همان نتیجه را برمی گرداند.
+
+ممکن است نمونه‌های ساده‌ای از عملکردهای بی‌توان را در خود مستندات Celery دیده باشید، مانند این:
 
 ```python
 @app.task def add(x, y):
 
     return x + y
 ```
+مهم نیست که چند بار این تابع را فراخوانی کنیم، نتیجه add(2,2) همیشه 4 است.
 
-No matter how many times we call this function, the result of add(2, 2) is always 4.
+با این حال، درک تفاوت بین یک عملکرد بی‌توان و عملکردی که عوارض جانبی ندارد (عملکرد خالص یا پوچ) مهم است. عارضه جانبی یک idempotent یکسان خواهد بود، صرف نظر از اینکه یک بار یا چند بار خوانده شده باشد
 
-However, it is important to understand the difference between an idempotent function and a function having no side effects (a pure or _nullipotent_ function). The side effect of an idempotent will be the same, regardless of whether it was called once or several times. For example, a task that always places a fresh order when called is not idempotent, but a task that cancels an existing order is idempotent. Operations that only read the state of the world and do not have any side effects are nullipotent.
+با این حال درک تفاوت یک یک فانکشن خود توان و یک فانکشن معمولی که side effects ندارد مهم است. موضوع side effects یک فانکشن خودتوان یصرف نظر از اینکه چندبار صدا زده شود یکسان خواهد بود.
 
-As Celery architecture relies on tasks being idempotent, it is important to try to study all the side effects of a non-idempotent task and convert it into an idempotent task. You can do this by either checking whether the tasks have been executed previously (if it was, then abort) or storing the result in a unique location based on the arguments. An example of the latter is given in the _Avoid writing to shared or global state_ section.
+برای مثال، تسکی که همیشه هنگام فراخوانی یک آبجکت از نوع order ایجاد می کند، یک فانکشن خودتوان نیست، اما تسکی که یک سفارش موجود را لغو می کند، خودتوان است. عملیات هایی که فقط حالت اشیا را می خوانند و هیچ اثر جانبی(side effect) ندارند، یک فانکشن خودتوان نیستند.
 
-Finally, call your task multiple times to test whether it leaves your system in the same state.
+از آنجایی که معماری celery متکی بر تسک های خودتوان است، مهم است که سعی کنید تمام عوارض جانبی یک تسکی که خودتوان نیست را مطالعه کنید و آن را به یک کار غیر خودتوان تبدیل کنید. می‌توانید این کار را با بررسی اینکه آیا تسک ها قبلاً اجرا شده‌اند (اگر اجرا شده‌اند، پس تسک حذف شده است) یا با بررسی اینکه آیا نتیجه تسک  در یک آدرس یونیک بر اساس آرگومان‌ها ذخیره شده است یا نه انجام دهید. در قسمت های بعدی کتاب (بخش Avoid writing to shared or global state) یک مثال ازین مورد آورده شده است.
 
-**Avoid writing to shared or global state**
+در نتیجه، تسک خود را چندین بار صدا کنید تا بررسی کنید که آیا سیستم شما در همان حالت باقی می ماند یا خیر.
 
-In a concurrent system, you can have several readers; however, the moment you have many writers accessing a shared state, you become vulnerable to the dreaded race conditions or deadlocks. It takes some planning and ingenuity to avoid all that.
+### از نوشتن در دیتابیس در فانکشن هایی به صورت shared یا global خودداری کنید
 
-First, let's try to understand a race condition. Consider a Celery task _A_ that performs some impressive image processing (such as matching your face to a celebrity). In a batch run, it picks the ten oldest uploaded images and updates a global counter.
+در یک سیستم همزمان، می توانید چندین خواننده داشته باشید. با این حال، لحظه‌ای که نویسندگان زیادی به یک وضعیت مشترک دسترسی پیدا می‌کنند، ممکن است دچار بن بست (deadlocks) یا شرایط رقابتی(race condition) آسیب‌پذیر می‌شوید. برای پرهیز از همه اینها کمی برنامه ریزی و نبوغ لازم است.
 
-It first reads the counter's value from a database, increments it by the number of successful image matches and then overwrites the old value with the new value. Imagine that we start another identical task _B_ in parallel to speed up the conversions.
+ابتدا بیایید سعی کنیم شرایط رقابتی(race condition) را درک کنیم. یک تسک celery به نام A را در نظر بگیرید که پردازش تصویر انجام می دهد (مانند تطبیق چهره شما با یک فرد مشهور). این تسک، ده تصویر قدیمی آپلود شده را انتخاب می کند و یک شمارنده global را آپدیت می کند.
 
-Now, if _A_ and _B_ reads the counter at the exact same time, they will overwrite each other's value by the end of the task, so the final value will be based on who writes in the end. In fact, the global counter's value will be highly dependent on the order in which the tasks are executed. Thus, race conditions result in invalid or corrupt data.
 
-Of course, the real issue is that the tasks are not aware of each other and a simple lock might resolve it, but locks or other synchronization primitives have problems of their own, such as starvation or deadlocks.
+ابتدا مقدار شمارنده را از یک پایگاه داده می خواند، آن را با تعداد تطابق تصویر موفق افزایش می دهد و سپس مقدار قدیمی را با مقدار جدید بازنویسی می کند. تصور کنید که یک کار یکسان دیگر B را به موازات شروع می کنیم تا سرعت تبدیل ها را افزایش دهیم.
 
-A practical solution will be to insert the status of each image into a table indexed with the unique identifier of an image like its hash value or file path:
+
+حال اگر A و B شمارنده را دقیقاً همزمان از روی دیتابیس بخوانند، تا پایان کار مقدار یکدیگر را بازنویسی می کنند، بنابراین مقدار نهایی بر اساس اینکه چه کسی در پایان می نویسد خواهد بود. در واقع، مقدار شمارنده global بسیار به ترتیب اجرای وظایف بستگی دارد. بنابراین، این کار باعث ایجاد شرایط مسابقه منجر به داده های نامعتبر یا خراب می شود.
+
+البته، مسئله واقعی این است که تسک ها از یکدیگر آگاه نیستند و ایجاد یک lock ساده ممکن است آن را حل کند، اما lock ها یا سایر اصول اولیه همگام سازی مشکلات خاص خود را دارند، مانند گرسنگی(starvation) یا بن بست (Deadlock).
+
+یک راه حل عملی، درج وضعیت هر تصویر در یک جدول دیتابیس است که با شناسه منحصر به فرد یک تصویر مانند مقدار هش یا مسیر فایل آن ایندکس گذاری شده است:
+
 
 | **Image hash**          | **Competed at**           | **Matched image path** |
 | ----------------------- | ------------------------- | ---------------------- |
 | SHA256: b4337bc45a8f... | 2018-02-09T15:15:11+05:30 | /celeb/7112.jpg        |
 | SHA256:550cd6e1e8702... | 2018-02-09T15:17:24+05:30 | /celeb/3529.jpg        |
 
-You can find the total number of successful matches by counting rows in this table. Additionally, this approach allows you to break down the successful matches by date or time.
+شما می توانید تعداد کل عکس هایی که با hash تطابق دارند را با شمارش ردیف های این جدول بیابید. علاوه بر این، این رویکرد به شما امکان می دهد تطابق های موفق را بر اساس تاریخ یا زمان تقسیم کنید
 
-The race conditions are avoided, as we do not overwrite a global state. The only possibility of a shared state being overwritten is when two or more tasks pick up the same image for processing. Even if this happens, there is no data corruption as the result is the same and the result of the last task to finish will prevail.
+با این کار دیگر شرایط رقابتی (race condition) نخواهیم داشت، زیرا ما یک وضعیت global را بازنویسی نمی کنیم. تنها امکان بازنویسی یک حالت مشترک زمانی است که دو یا چند کار تصویر یکسانی را برای پردازش انتخاب کنند. حتی اگر این اتفاق بیفتد، هیچ خرابی داده وجود ندارد زیرا نتیجه یکسان است و
+نتیجه آخرین کاری که باید تمام شود نتیجه نهایی خواهد شد.
 
-**Database updates without race conditions**
+### به روز رسانی پایگاه داده بدون شرایط رقابتی(race condition)
 
-You might come across situations where updating a shared state is unavoidable. You can use row-level locks if your database supports it or Django F() objects. Notably, MySQL using MyISAM engine does not have support for row-level locks.
+ممکن است با موقعیت‌هایی مواجه شوید که به‌روزرسانی وضعیت مشترک اجتناب‌ناپذیر باشد. اگر دیتابیس شما از قابلیت row-level locks پشتیبانی کند میتوانید ازین مورد یا از اشیا Django F() استفاده کنید قایل ذکر است دیتابیس mysql چون از موتور MyISAM استفاده می کند این قابلیت را پشتیبانی نمی کند.
 
-Row-level locks are done in Django by calling select_for_update() on your QuerySet within a transaction. Consider this example:
+از قابلیت row-level locks  در جنگو با استفاده از متد  select_for_update() در کوئری ست میتوانید استفاده کنید. مثال زیر را ببینید:
+
 
 ```python
 with transaction.atomic():
-    feed = Feed.objects.select\_for\_update().get(id=id)
+    feed = Feed.objects.select_for_update().get(id=id)
     feed.html = sanitize(feed.html)
     feed.save()
 ```
 
-By using select_for_update, we lock the Feed object's row until the transaction is done.
-If another thread or process has already locked the same row, the query will be waiting or
-blocked until the lock is freed. This behavior can be changed to throw an exception or skip
-it if locked, using the select_for_update keyword parameters.
+با استفاده از select_for_update() ما سطر های آبجکت Feed اصطلاحا قفل (lock) میکند که تا زمانی که ترنزکشن ما تمام نشد اجازه ایجاد و تغییر در دیتابیس نداشته باشیم.
 
-If the operation on the field can be done within the database using SQL, it is better to use F() expressions to avoid a race condition. F() expressions avoid the need to pull the value from the database to Python memory and back. Consider the following instance:
+اگر نخ یا فرآیند دیگری قبلاً همان ردیف را قفل کرده باشد، کوئری منتظر می ماند یا کوِئری تا زمانی که lock در دیتابیس تمام شود مسدود می شود. این رفتار را می توان با استفاده از پارامترهای کلمه کلیدی select_for_update تغییر داد تا یک خطا ایجاد کند یا در صورت قفل از آن رد شود.
+
+اگر عملیات روی یک فیلد را بتوان در دیتابیس انجام داد بهتر است از فانکشن  F() برای جلوگیری از شرایط رقابتی(race condition) استفاده شود. فانکشن F() از گرفتن دیتا از دیتابیس و انتقال به مموری پایتون برای انجامیک عملیات جلوگیری می کند و این کار را مستقیم بر روی دیتابیس انجام می دهد. به مثال زیر توجه کنید:
+
 
 ```python
 from django.db.models import F
@@ -278,25 +291,27 @@ feed.subscribers = F('subscribers') + 1
 feed.save()
 ```
 
-It is only when the save() operation is performed that the increment operation is converted to an SQL expression and executed within the database. At no point is the number of feed subscribers retrieved from the database. As the database updates the new value based on the old, there is hardly a chance for a race condition between multiple threads.
+زمانی که save( ) صدا زده می شود عملیات اضافه کردن مقدار 1 به subscribers در خوددیتابیس انجام می شود و در هیچ کجا دیتایی از آبجکت Feed از دیتابیس گرفته نمی شود و مستقیما مقدار آپدیت می شودئ و احتمال وقوع شرایط رقابتی(race condition) بسیار کم است.
 
-**Avoid passing complex objects to tasks**
+ ### از انتقال اشیا پیچیده به task خودداری کنید
 
-It is easy to forget that each time we call a Celery task, the arguments get serialized before it enters the queue. Hence, it is not advisable to send a Django ORM object or any large object that might clog up the queues.
+ به راحتی می توان فراموش کرد که هر بار که ما یک task Celery را فراخوانی می کنیم، آرگومان ها قبل از اینکه وارد صف شوند سریالایز می شوند. از این رو، ارسال یک شی ORM جنگو یا هر شی بزرگی که ممکن است صف ها را مسدود کند، توصیه نمی شود.
 
-There is another good reason to avoid sending a database object. Due to the asynchronous nature of execution, the data can be outdated by the time the task has begun execution. The record might have changed or even deleted.
+دلیل خوب دیگری برای اینکه از ارسال یک شی پایگاه داده به تسک ها. با توجه به ماهیت ناهمزمان تسک ها، داده‌ها می‌توانند تا زمانی که تسک ها انجام شوند قدیمی شوند. رکورد ممکن است تغییر کرده یا حتی حذف شده باشد.
 
-So, always pass a primary key or lookup value and retrieve the latest value of the object from the database. Celery documents refer to this as the responsibility of asserting that the world lies with the task. Ensure that your world is the present one, not the past.
+بنابراین، همیشه یک کلید اصلی(primary key) یا مقدار جستجو(lookup value) را ارسال کنید و آخرین مقدار شی را از پایگاه داده بازیابی کنید. داکیومنت celery به این امر اشاره می کند که وظیفه اپلیکیشن بر عهده آن است. مطمئن شوید اپلیکیشن شما یک اپلیکیشن بروز است، نه یک اپلیکیشن قدیمی.
 
-**Understanding asyncio**
+## درک asyncio
 
-asyncio is a co-operative multitasking library available in Python since version 3.6. Celery is fantastic for running concurrent tasks out of a process, but there are certain times you will need to run multiple execution threads within the same process.
+ ماژول asyncio یک کتابخانه چندوظیفه ای مشترک است که از نسخه 3.6 در پایتون موجود است. ابزار  Celery برای اجرای وظایف همزمان خارج از یک فرآیند فوق‌العاده است، اما زمان‌های خاصی وجود دارد که باید چندین نخ(thread) اجرایی را در یک فرآیند اجرا کنید.
 
-If you are not familiar with async/await concepts (say from JavaScript or C#), it involves a bit of a steep learning curve. However, it is well worth your time, as it can speed up your code tremendously (unless it is completely CPU-bound). Moreover, it helps in understanding other libraries built on top of them, such as Django Channels.
+اگر با مفاهیم async/wait آشنا نیستید (مثلاً در جاوااسکریپت یا سی شارپ)، این موضوع شامل کمی منحنی یادگیری (موضوعی تقریبا سخت برای یادگیری) است. با این حال، ارزش وقت شما را دارد، زیرا می تواند سرعت کد شما را به شدت افزایش دهد (مگر اینکه کاملاً به CPU محدود شده باشد). علاوه بر این موارد celery به درک سایر کتابخانه های ساخته شده وابسته به این ابزار مثل django-channels کمک می کند.
 
-All asyncio programs are driven by an event loop, which is pretty much an infinite loop that calls all registered coroutines in some order. Each coroutine operates cooperatively by yielding control to fellow coroutines at well-defined places. This is called awaiting.
+همه برنامه‌های asyncio توسط یک حلقه رویداد هدایت می‌شوند، این حلقه تقریباً یک حلقه بی‌نهایت است که همه [کوروتین‌](https://docs.python.org/3/library/asyncio-task.html)های ثبت‌شده را به ترتیب فراخوانی می‌کند. هر کوروتین با دادن کنترل(yield) به کوروتین های همکار در مکان های تعریف شده، به صورت مشارکتی عمل می کند.به این عمل awaiting گفته می شود.
 
-A coroutine is like a special function that can suspend and resume execution. It works in the same way as lightweight threads. Native coroutines use the async and await keywords, as follows:
+یک کوروتین مانند یک تابع است که می تواند اجرای یک برنامه را به حالت تعلیق درآورد و یا از سر بگیرد و مانند نخ (thread) های سبک کار میکند.
+
+هر کوروتین ذاتی از کلمات کلیدی async و await به مانند کد زیر استفاده می کند:
 
 ```python
 import asyncio
@@ -307,33 +322,33 @@ if __name__ == '__main__':
     loop.run_until_complete(sleeper_coroutine())
 ```
 
-This is a minimal example of an event loop running one coroutine named sleeper_coroutine. When invoked, this coroutine runs until the await statement and yields control back to the event loop. This is usually where an I/O activity occurs.
+این یک نمونه حداقلی از یک حلقه رویداد است که یک کوروتین به نام sleeper_coroutine را اجرا می کند. هنگامی که تابع فراخوانی می شود، این coroutine تا دستور await اجرا می شود و کنترل را به حلقه رویداد باز می گرداند. این معمولاً جایی است که یک عملیات I/O رخ می دهد.
 
-The control comes back to the coroutine at the same line when the activity being awaited is completed (after 5 seconds). Then, the coroutine returns or is considered completed.
+هنگامی که عملیات مورد انتظار تکمیل شد (پس از 5 ثانیه)، کنترل در همان خط کوروتین باز می گردد. سپس، کوروتین برگشت داده می شود یا تکمیل شده در نظر گرفته می شود.
 
-**asyncio versus threads**
 
-If you have worked on the multithreaded code, then you might wonder, why not just use threads? There are several reasons why threads are not popular in Python.
+## asyncio دربرابر threads
 
-Firstly, threads need to be synchronized while accessing shared resources, or we will have race conditions. There are several types of synchronization primitives like locks but essentially, they involve waiting, which degrades performance and can cause deadlocks or starvation.
+اگر روی کد چند نخی کار کرده اید، ممکن است تعجب کنید که چرا نباید فقط از نخ ها استفاده کرد؟ دلایل متعددی وجود دارد که چرا نخ ها در پایتون محبوب نیستند.
 
-coroutine has well-defined places where execution is handed over. As a result, you can make changes to a shared state as long as you leave it in a known state. For instance, you can retrieve a field from a database, perform calculations, and overwrite the field without worrying that another coroutine might have interrupted you in between.
+در مرحله اول، نخ ها باید در مواقع دسترسی به منابع مشترک همگام(sync) شوند، در غیر این صورت شرایط رقابتی (race condition) پیش می آید. انواع مختلفی از همگام سازی اولیه مانند قفل کردن(lock) وجود دارد، اما اساسا، آنها شامل انتظار(waiting) هستند، که عملکرد را کاهش می دهد و می تواند باعث ایجاد شرایط بن بست یا گرسنگی(deadlocks, starvation) شود.
 
-Secondly, coroutines are lightweight. Each coroutine needs significantly less memory than a thread. If you can run a maximum of hundreds of threads, you might be able to run tens of thousands of coroutines, given the same memory. Thread switching also takes
+کوروتین آدرس کاملاً مشخصی دارد که در آنجا اجرا میشوند. در نتیجه، تا زمانی که کوروتین در  حالت شناخته شده(known state) باشند، می توانید تغییراتی در یک حالت اشتراکی ایجاد کنید. به عنوان مثال، می‌توانید یک فیلد را از یک پایگاه داده بازیابی کنید، محاسبات را انجام دهید، و فیلد را بازنویسی کنید، بدون اینکه نگران باشید که یک برنامه دیگر در این بین ارتباط شما را قطع کرده باشد.
 
-some time (a few milliseconds). This means you might be able to run more tasks or serve more concurrent users.
+دوم اینکه کوروتین ها سبک هستند. هر کوروتین به طور قابل توجهی به حافظه کمتری نسبت به یک نخ نیاز دارد. اگر بتوانید حداکثر صدها نخ را اجرا کنید، با توجه به حافظه یکسان بین کوروتین و نخ، با این حافظه می توانید ده ها هزار کوروتین را اجرا کنید. سوئیچ کردن بین نخ ها هم مقداری زمان می برد (چند میلی ثانیه). این بدان معنی است که د این زمانی که برای سوِیچ تلف می شود میتوانید کارهای بیشتری را انجام دهید یا به کاربران همزمان بیشتری سرویس دهید.
 
-The downsides of coroutines is that you cannot mix blocking and non-blocking code. So once you enter the event loop, the rest of the code must be written in an asynchronous style, even the libraries you use. This might make using some older libraries with synchronous code slightly difficult.
+از نکات منفی کوروتین ها می توان به این اشاره کرد که نمیتوان همزمان از شیوه blocking and non-blocking در کد استفاده کرد. بنابراین هنگامی که وارد حلقه رویداد می شوید، بقیه کدها باید به سبک ناهمزمان نوشته شوند، حتی کتابخانه هایی که استفاده می کنید. این ممکن است استفاده از برخی کتابخانه های قدیمی با کد همزمان را کمی دچار مشکل کند.
 
-**The classic web-scraper example**
+## مثالی از یک نمونه قدیمی برای وب اسکرپینگ
 
-Let's look at an example of how we can convert synchronous code into asynchronous. We will look at a web scraper that downloads pages from a couple of URLs and measures their size. This is a popular example because it is very I/O bound and shows a significant speedup when handled concurrently.
+بیایید به مثالی نگاه کنیم که چگونه می توانیم کدهای همزمان را به ناهمزمان تبدیل کنیم. ما به یک وب اسکرپر نگاه خواهیم کرد که صفحات را از چند URL بارگیری می کند و اندازه آنها را اندازه می گیرد. این یک مثال مناسب است زیرا تعداد زیادی عملیات ورودی/خروجی در این مثال داریم و هنگام استفاده کانکارنسی سرعت کار به مقدار قابل توجهی افزایش می باید.
 
-**Synchronous web-scraping**
+### وب اسگرپینگ به صورت همزمان (Synchronous)
 
-The synchronous scraper only uses Python standard libraries such as urllib. It downloads the home page of three popular sites and a fourth site whose loading time can be delayed to simulate a slow connection. It prints the respective page sizes and the total running time.
+اسکرپ کردن به صورت همزمان فقط از کتابخانه های استاندارد پایتون مانند urllib استفاده می کند.تکه کد پایین صفحه اصلی سه سایت محبوب دانلود می کند و یک سایت دیگر  که زمان بارگذاری آن را می توان برای شبیه سازی یک اتصال کُند به تاخیر انداخت. این کد اندازه صفحات مربوطه و کل زمان اجرا را چاپ می کند.
 
-Here's the code for the synchronous scraper located at src/extras/sync.py:
+
+کد در آدرس src/extras/sync.py نیز آورده شده است:
 
 """Synchronously download a list of webpages and time it"""
 
@@ -361,11 +376,14 @@ if __name__ == '__main__':
     print("Ran in {:6.3f} secs".format(time() - start_time))
 ```
 
-On a test laptop, this code took 17.1 seconds to run. It is the cumulative loading time of each site. Let's see how asynchronous code runs.
+در یک لپ تاپ آزمایشی، اجرای این کد 17.1 ثانیه طول کشید. این زمان بارگذاری کلی هر سایت است. بیایید ببینیم کد ناهمزمان چگونه اجرا می شود.
 
-**Asynchronous web-scraping**
+### وب اسگرپینگ به صورت ناهمزمان (Asynchronous)
 
-This asyncio code requires an installation of a few Python asynchronous network libraries, such as aiohttp and aiodns. They are mentioned in the docstring. Here's the code for the asynchronous scraper at src/extras/async.py; it is structured to be as close as possible to the synchronous version so that it's easier to compare:
+این کد asyncio نیاز به نصب چند کتابخانه ناهمزمان پایتون، مانند aiohttp و aiodns دارد. آنها در مستندات ذکر شده اند.
+
+
+کد زیر در آدرس src/extras/async.py نیز آورده شده است. ساختار کد به گونه ای است که تا حد امکان به نسخه  sync  نزدیک باشد تا مقایسه آن آسان تر باشد:
 
 """Asynchronously download a list of webpages and time it Dependencies: Make sure you install aiohttp
 
@@ -403,71 +421,67 @@ if __name__ == '__main__':
     print("Ran in {:6.3f} secs".format(time() - start_time))
 ```
 
-The main function is a coroutine that triggers the creation of a separate coroutine for each website. Then, it waits until all these triggered coroutines are completed. As a best practice, the web session object is passed to avoid recreating new sessions for each page.
+تابع اصلی یک کوروتین است که باعث ایجاد یک کوروتین جداگانه برای هر وب سایت می شود. این کوروتین صبر میکند تا تمام کوروتینهایی که ایجاد شده اند تکیمل شوند و به پایان برسند.  به عنوان یک best practices آبجکت session ایجاد شده است و به عنوان آرگومان پاس داده می شود تا از ساخت مجدد یک session برای هر صفحه جلوگیری شود.
 
-The total running time of this program on the same test laptop is 7.5 s. This is a speedup of 2.3x on a single core. This surprising result can be better understood if we can visualize how the time was spent, as shown in the following diagram:
+کل زمان اجرای این برنامه روی همان لپ تاپ آزمایشی 7.5 ثانیه است. این افزایش سرعت 2.3 برابری روی یک هسته است. همانطور که در نمودار زیر نشان داده شده است، اگر بتوانیم نحوه صرف زمان را تجسم کنیم، این نتیجه شگفت انگیز را بهتر می توان درک کرد:
 
 ![](/08-%20Working%20Asynchronously/images/image-001.jpg)
 
-A simplistic representation comparing tasks in the synchronous and asynchronous scrapers
+اسکرپینگ به صورت synchronous به راحتی قایل درک است .اسکراپر سنکرون به راحتی قابل درک است. هر کار منتظر تکمیل کار قبلی است. هر کار به زمان CPU بسیار کمی نیاز دارد و بیشتر زمان در انتظار رسیدن داده ها از شبکه صرف می شود. در نتیجه، وظایف به طور متوالی مانند یک آبشار انجام می شوند.
 
-The **Synchronous scraper** is easy to understand. Each task is waiting for the previous task to complete. Each task needs very little CPU time and the majority of the time is spent waiting for the data to arrive from the network. As a result, the tasks cascade sequentially like a waterfall.
+از طرف دیگر، اسکرپینگ به صورت Asynchronous اولین وظیفه را شروع می کند و به محض اینکه شروع به انتظار برای I/O کرد، به کار بعدی سوئیچ می کند. CPU به ندرت کاری انجام نمی دهد زیرا به محض شروع انتظار، اجرا به حلقه رویداد برمی گردد. در نهایت، I/O در همان مدت زمان کامل می شود، اما به دلیل چندگانه شدن فعالیت، زمان کلی صرف شده به شدت کاهش می یابد.
 
-On the other hand, the **Asynchronous scraper** starts the first task and, as soon as it starts waiting for I/O, it switches to the next task. The CPU is hardly idle as the execution goes back to the event loop as soon as the waiting starts. Eventually, the I/O completes in the same amount of time, but due to the multiplexing of activity, the overall time taken is drastically reduced.
+در واقع، کد ناهمزمان را می توان بیشتر سرعت بخشید. حلقه رویداد کتابخانه استاندارد asyncio با پایتون خام نوشته شده و به عنوان پیاده سازی مرجع ارائه می شود. می‌توانید پیاده‌سازی‌های سریع‌تری مانند [uvloop](http://uvloop.readthedocs.io/) را برای افزایش سرعت بیشتر در نظر بگیرید.
 
-In fact, the asynchronous code can be sped up further. The standard asyncio event loop is written in pure Python and provided as a reference implementation. You can consider faster implementations such as [uvloop to](http://uvloop.readthedocs.io/) speed things up further.
+## همزمانی(Concurrency) به معنای موازی(parallelism) نیست
 
-**Concurrency is not parallelism**
+همزمانی توانایی انجام کارهای دیگر در زمانیکه شما منتظر اتمام کار فعلی هستید می باشد.  تصور کنید که در حال پختن غذاهای زیادی برای مهمانان هستید. در حالی که منتظر  برای پختن چیزی هستید، می توانید کارهای دیگری مانند پوست کندن پیاز یا بریدن سبزیجات را انجام دهید.برای ایجاد یک قیاس در دنیای ابرقهرمانان یک ابرقهرمان ممکن است در یک مکان با چند نفر بجنگد، زیرا اکثر آنها پس از یک ضربه بهبود پیدا میکنند، یا مجددا به ابرقهرمان برای رویارویی میرسند(یا منتظر نوبت خود می مانند)، که باعث می‌شود قهرمان ما ضربه‌ها را یکی پس از دیگری وارد کند.
 
-**Concurrency** is the ability to perform other tasks while you are waiting on the current task. Imagine that you are cooking a lot of dishes for some guests. While waiting for something to cook, you are free to do other things like peeling onions or cutting vegetables. To make an analogy in the world of superheroes, a superhero might battle several bad guys at one place because most would be either recovering from a blow, arriving (or _ahem_ waiting for their turn), which leaves our hero to deliver blows one at a time.
 
-**Parallelism** is when two or more execution engines are performing a task. Continuing on our analogy, this is when two or more superheroes battle enemies as a team. This is not only a great cinema franchise opportunity, but also more productive than a single hero working at maximum efficiency.
+موازی سازی زمانی است که دو یا چند موتور اجرایی در حال انجام یک کار هستند. در ادامه قیاس ما، این زمانی است که دو یا چند ابرقهرمان به عنوان یک تیم با دشمنان مبارزه می کنند. این نه تنها یک فرصت عالی برای فرانچایز سینما است، بلکه سازنده تر از یک قهرمان تک نفره است که با حداکثر کارایی کار می کند.
 
-It is very easy to confuse concurrency and parallelism because they can happen at the same time. You could be concurrently running tasks without parallelism or vice versa, but they refer to two different things. Concurrency is a way of structuring your programs, while parallelism refers to how it is executed.
+اشتباه گرفتن همزمانی و موازی بودن بسیار آسان است زیرا می توانند همزمان اتفاق بیفتند. شما می توانید همزمان وظایف را بدون موازی سازی یا برعکس انجام دهید، اما آنها به دو چیز متفاوت اشاره دارند. همزمانی روشی برای ساختاربندی برنامه های شما است، در حالی که موازی سازی به نحوه اجرای آن اشاره دارد.
 
-Due to the **global interpreter lock** (**GIL**), we cannot run more than one thread of the Python interpreter (to be specific, the standard CPython interpreter) at a time, even in multicore systems. This limits the amount of parallelism that we can achieve with a single instance of the Python process.
+به دلیل ویژگی global interpreter lock (GIL) پایتون ما نمی‌توانیم بیش از یک رشته از مفسر پایتون (به طور خاص، مفسر استاندارد CPython) را در یک زمان اجرا کنیم، حتی در سیستم‌های چند هسته‌ای. این ویزگی باعث می شود مقدار موازی‌سازی را که می‌توانیم با یک نمونه از فرآیند پایتون به دست آوریم، محدود کند.
 
-Optimal usage of your computing resources requires both concurrency and parallelism. Concurrency will help you avoid blocking the processor core while waiting for, say, I/O events, while parallelism will help to distribute work among all the available cores.
+استفاده بهینه از منابع محاسباتی شما به parallelism و concurrency  نیاز دارد. concurrency به شما کمک می‌کند از مسدود کردن هسته پردازنده در زمان انتظار مثلاً رویدادهای I/O جلوگیری کنید، در حالی که parallelism به توزیع کار بین تمام هسته‌های موجود cpu کمک می‌کند.
 
-In both cases, you are not executing synchronously, that is, waiting for a task to finish before moving on to another task. Asynchronous systems might seem to be the most optimal; however, they are harder to build and reason about.
+بر خلاف تصور در هر دو مورد parallelism و concurrency شما به صورت همزمان اجرا نمی‌کنید، یعنی قبل از اینکه به کار دیگری بروید، منتظر پایان کار هستید.سیستم های ناهمزمان ممکن است بهینه ترین به نظر برسد. با این حال، ساختن و استدلال کردن آنها دشوارتر است.
 
-**Entering Channels**
+## ورود به کانال ها
 
-Django Channels was originally created to solve the problem of handling asynchronous communication protocols, such as WebSockets, for example. More and more web applications were providing real-time capabilities such as chat and push notifications. Various hacks were created to make Django support requirements including running separate socket servers or proxy servers.
+ماژول django channles در ابتدا برای حل مشکل مدیریت پروتکل های ارتباطی ناهمزمان، مانند WebSockets ایجاد شد.وب اپلیکیشن ها رفته رفته قابلیت هایی مانند چت و اعلان های آنی را ارائه کردند. برای حل این مشکل روش های مختلفی برای پشتیبانی نیازمندی های این قابلیت ها در جنگو اراِه شده است مثل  اجرای سرورهای سوکت جداگانه یا سرورهای پراکسی.
 
-Channels is an official Django project, not just for handling WebSockets and other forms of bi-directional communication but also for running background tasks asynchronously.
+پروژه Channels یک پروژه رسمی جنگو است،این پروژه نه فقط برای مدیریت WebSocket ها و دیگر فرم های ارتباط دو طرفه، بلکه برای اجرای وظایف پس زمینه به صورت ناهمزمان هم کابرد دارد. 
 
-As at the time of writing, Django Channels 2 is out, which is a complete rewrite based on Python 3's async/await-based coroutines.
+ در زمانی نگارش مقاله، Django Channels 2 منتشر شد، بر روی مقاله یک بازنویسی کامل بر اساس کوروتین های async/wait Python 3 است.
 
-Here's a simplified block diagram of a typical Channels setup:
+در اینجا یک بلوک دیاگرام ساده از راه اندازی کانال های معمولی آمده است:
 
 ![](/08-%20Working%20Asynchronously/images/image-002.png)
 
-How a typical Django Channels infrastructure works
+یک کلاینت، مانند یک مرورگر وب، هم HTTP/HTTPS و هم WebSocket را به یک سرور Asynchronous Server Gateway Interface (ASGI) مانند Daphene ارسال می کند. مانند وب سرور ASGI ،WSGI یک روش متداول برای تعامل برنامه های سمت سرور و دیگر اپلیکیشن ها به صورت Asynchronous هست.
 
-A client, such as a web browser, sends both HTTP/HTTPS and WebSocket traffic to
+مانند یک برنامه متداول جنگو، ترافیک HTTP به صورت synchronous مدیریت می‌شود، یعنی وقتی مرورگر درخواستی را ارسال می‌کند، منتظر می‌ماند تا به جنگو هدایت شود و پاسخی ارسال شود. با این حال، زمانی که ترافیک WebSocket اتفاق می افتد بسیار جالب تر می شود، زیرا می تواند از هر جهت فعال شود.
 
-an **Asynchronous Server Gateway Interface** (**ASGI**) server such as Daphene. Like WSGI, the ASGI specification is a common way for application servers and applications to interact with each other asynchronously.
+هنگامی که یک اتصال WebSocket برقرار شد، یک مرورگر می تواند پیام ارسال یا دریافت کند.یک پیام ارسال شده به یک روتر از نوع پروتکل می رسد که بر اساس پروتکل حامل، کنترلر روتر بعدی را تعیین می کند. از این رو، می توانید یک روتر برای HTTP و دیگری برای پیام های WebSocket تعریف کنید.
 
-Like a typical Django application, HTTP traffic is handled synchronously, that is, when the browser sends a request, it waits until it is routed to Django and a response is sent back. However, it gets a lot more interesting when WebSocket traffic happens, because it can be triggered from either direction.
+این روترها بسیار شبیه به URLهای جنگو هستند، اما پیام‌های دریافتی را به یک consumer  (به‌جای یک view)  می‌رسانند.یک consumer مانند یک کنترل کننده رویداد است که به رویدادها واکنش نشان می دهد. همچنین می‌تواند پیام‌ها را به مرورگر ارسال کند و در نتیجه یک ارتباط کاملاً دوطرفه را میتواند در خود جای دهد.
 
-Once a WebSocket connection is established, a browser can send or receive messages. A sent message reaches the protocol type router that determines the next routing handler based on its transport protocol. Hence, you can define a router for HTTP and another for WebSocket messages.
+یک consumer کلاسی است که می توانید متدهای آن را به عنوان توابع معمولی پایتون (synchronous) یا به صورت انتظار (asynchronous) بنویسید.یک کد asynchronous  نباید با کد synchronous  ترکیب شود، بنابراین توابع تبدیلی برای تبدیل از synchronous به asynchronous و بالعکس وجود دارد. به یاد داشته باشید که قسمت های مختلف جنگو synchronous هستند.  یک consumer  در واقع یک برنامه معتبر ASGI است.
 
-These routers are very similar to Django's URL mappers, but map the incoming messages to a consumer (rather than a view). A consumer is like an event handler that reacts to events. It can also send messages back to the browser, thereby containing the logic for a fully bi-directional communication.
+تاکنون از لایه Channel استفاده نکرده ایم. از قضا می توانید برنامه های Channel را بدون استفاده از Channels بنویسید! با این حال، آنها منحصرا مفید نیستند زیرا به جز نمونه برداری  (polling) دیتابیس هیچ مسیر ارتباطی آسانی بین نمونه های برنامه وجود ندارد. کانال ها دقیقاً همین را ارائه می دهند، پیام رسانی سریع point-to-point و انتشار در بین نمونه های برنامه.
 
-A consumer is a class whose methods you may choose to write either as normal Python functions (synchronous) or as awaitables (asynchronous). An asynchronous code should not mix with synchronous code, so there are conversion functions to convert from async to sync and back. Remember that the Django parts are synchronous. A consumer is, in fact, a valid ASGI application.
+یک کانال مانند یک لوله است. یک فرستنده از یک طرف پیامی به این لوله می فرستد و در انتهای دیگر به شنونده می رسد. یک گروه مجموعه ای از کانال ها را تعریف می کند که همگی به یک موضوع گوش می دهند. هر consumer به کانالی که خودش تولید کرده با ویژگی(attribute) self.channel_name به آن دسترسی دارد گوش(listen) می دهد.
 
-So far, we have not used the Channel layer. Ironically, you can write Channel applications without using Channels! However, they are not particularly useful as there is no easy communication path between application instances, other than polling a database. Channels provide exactly that, a fast point-to-point and broadcast messaging between application instances.
+علاوه بر موضوع انتقال پیام، می‌توانید با ارسال پیام، یک consumer را فعال کنید که به کانال گوش می‌دهد و در نتیجه یک کار که در پس‌زمینه اجرا میشود را شروع کنید. این به عنوان یک سیستم پس زمینه بسیار سریع و ساده کار می کند.
 
-A channel is like a pipe. A sender sends a message to this pipe from one end, and it reaches a listener at the other end. A group defines a group of Channels who are all listening to a topic. Every consumer listens to their own autogenerated channel accessed by its self.channel_name attribute.
 
-In addition to transports, you can trigger a consumer listening to a channel by sending a message, thereby starting a background task. This works as a very quick and simple background worker system.
+## گوش دادن به اعلان ها با WebSockets
 
-**Listening to notifications with WebSockets**
+به جای مثال چت معمولی، بیایید به مثالی بهتر نگاه کنیم که یک شبکه اجتماعی بهتر channelها را نشان می دهد . یک اپلیکیشن اطلاع رسانی.  این برنامه هر زمان که نوع خاصی از یک مدل در دیتابیس ذخیره شود را شناسایی می‌کند و یک اعلان را به همه مشتریان (یعنی مرورگرهای همه کاربران متصل) در زمان واقعی ارسال می‌کند.
 
-Instead of the usual chat example, let's look at an example better suited to a social network to illustrate Channels—a notification app. The app will detect whenever a certain type of model is saved and push a notification to all clients (that is, browsers of all the connected users) in real time.
-
-Assuming that Channels is properly installed and configured, we need to define all the protocol type routes in the routing.py file, as follows:
+با فرض اینکه Channels به درستی نصب و پیکربندی شده باشد، باید تمام مسیرهای از نوع پروتکل را در فایل routing.py به صورت زیر تعریف کنیم:
 
 ```python
 from channels.routing import ProtocolTypeRouter, URLRouter
@@ -480,7 +494,9 @@ application = ProtocolTypeRouter({
 })
 ```
 
-HTTP requests are sent to Django, by default. This leads us to the code of the consumer, residing within the notification app itself as consumers.py:
+
+درخواست های HTTP به طور پیش فرض به جنگو ارسال می شود. این ما را به تکه کد consumer هدایت می کند که در خود برنامه اعلان به عنوان customers.py قرار دارد:
+
 
 ```python
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
@@ -496,15 +512,16 @@ async def name_gossip(self, event):
     await self.send_json(event)
 ```
 
-For convenience, we are using a generic consumer class called AsyncJsonWebsocketConsumer, which handles WebSocket communication by translating to and from the JSON format.
+برای راحتی، ما از یک کلاس consumer عمومی به نام AsyncJsonWebsocketConsumer استفاده می کنیم که ارتباطات WebSocket را با  سریالایز کردن به فرمت JSON و بالعکس مدیریت می کند.
 
-The connect method simply accepts a connection and adds its channel to the gossip Channel group. Now, any message posted to this group will invoke an appropriately named class method of this consumer.
+متد connect به سادگی یک اتصال را می پذیرد و کانال آن را به گروه gossip Channel اضافه می کند. اکنون، هر پیامی که به این گروه ارسال شود، با نام مناسب متدش consumer را فراخوانی می کند.
 
-We are only interested in messages that have the name.gossip type; hence, we have created a method called name_gossip (dots are translated into underscores). This method simply sends the given event object to the WebSocket, which is received by the browser.
 
-The disconnect method ensures that the consumer's Channel is removed from the group when the connection is closed. Thus, we will have only active channels in the group.
+ما فقط پیام هایی را میپذریم که از نوع name.gossip باشند. از این رو، ما روشی به نام name_gossip ایجاد کرده‌ایم (نقاط به زیرخط ترجمه شده اند) این روش به سادگی شی ءای که دارای یک رویداد (event) باشد را به WebSocket ارسال می کند که توسط مرورگر دریافت می شود.
 
-The only remaining bit of the puzzle is what triggers the event. We have the following code in the signals.py file of the app:
+متد disconnect تضمین می کند که کانال consumer از گروهی که ایجاد کرده بودیم حذف می شود زمانی که اتصال بسته می شود. بنابراین ما فقط channel های فعال در گروه خواهیم داشت.
+
+با آغاز رویداد(event) پازل ما تکمیل می شود. کد زیر را در فایل signals.py داریم:
 
 ```python
 from .post.models import Post
@@ -516,7 +533,7 @@ from channels.layers import get_channel_layer
 def notify_post_save(sender, **kwargs):
     if "instance" in kwargs:
     instance = kwargs["instance"]
-\    # check if it is a new post
+    # check if it is a new post
     ...
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
@@ -526,26 +543,31 @@ def notify_post_save(sender, **kwargs):
                   "message": instance.message})
 ```
 
-We are adding a hook to be called whenever a Post object (it can be any object for that matter) is saved. As we are only interested in new posts, we check and ignore the edits of the existing posts.
+ما یک hook اضافه می کنیم تا این  hook زمانی که یک شی Post (که می تواند هر شیئی برای آن موضوع باشد) ایجاد شد صدا زده شود. پس
+از آنجایی که ما فقط به پست های جدید علاقه مند هستیم، ویرایش  پست های موجود را بررسی کرده و نادیده می گیریم.
 
-Before we send anything to a channel, we need to retrieve the channel_layer. Then, we need to use the group_send method to send the message to the gossip group. However, this is an asynchronous method, and we are in the Django world, so it is happening synchronously. Hence, we wrap the call using an async_to_sync converter, making it essentially block until the async function returns.
+قبل از ارسال هر چیزی به کانال، باید channel_layer را بازیابی کنیم. سپس باید از روش group_send برای ارسال پیام به گروه gossip استفاده کنیم. با این حال، این یک متد asynchronous است و ما در دنیای جنگو هستیم، بنابراین به صورت synchronous اتفاق می‌افتد. از این رو، ما فانکشن را با استفاده از مبدل async_to_sync تبدیل می کنیم و آن را تا زمانی که تابع async مقداری را برگرداند مسدود می کنیم.
 
-As you might have noted, Channels uses the publish-subscribe pattern. The design of channels deliberately avoids waiting for an event and, hence, prevents deadlocks. By basing on asyncio, we can build true asynchronous applications with Django.
 
-**Differences from Celery**
+همانطور که ممکن است توجه کرده باشید، Channels از الگوی انتشار-اشتراک(sub/pub) استفاده می کند. طراحی کانال ها عمداً از انتظار برای یک رویداد اجتناب می کند و از این رو از بن بست(Deadlock) جلوگیری می کند. با استفاده از asyncio، می‌توانیم برنامه‌های asynchronous واقعی را با جنگو بسازیم.
 
-With the ability to run background tasks using workers, you might naturally be confused if Channels can replace Celery. There are primarily two major differences: message delivery guarantees and task statuses.
+## تفاوت ها با ابزار celery
 
-Channels, currently implemented with a Redis backend, provide an at best one-off guarantee, while Celery provides an at least one-off guarantee. This essentially means that Celery will retry when a delivery fails until it receives a successful acknowledgment. In the case of Channels, it is pretty much fire-and-forget.
 
-Secondly, Channels does not provide information on the status of a task out of the box. We need to build such functionality ourselves, for instance by updating the database. Celery tasks status can be queried and persisted.
+با توانایی اجرای وظایف در پشت صحنه(background) با استفاده از workerها ممکن است به طور طبیعی گیج شوید که شاید Channels بتواند جایگزین Celery شود. در درجه اول دو تفاوت عمده وجود دارد: تضمین های تحویل پیام و وضعیت وظایف.
 
-To sum up, you can use Channels instead of Celery for some less critical use cases. However, for a more robust and proven solution, you should rely on Celery.
+کانال‌هایی که در حال حاضر با یک Backend Redis پیاده‌سازی می‌شوند، در بهترین حالت برای یکبار ضمانت ارسال پیام را ارائه می‌دهند، در حالی که Celery حداقل یک ضمانت را ارائه می‌دهد. این اساساً به این معنی است که Celery زمانی که تحویل ناموفق باشد تا زمانی که پیغام موفقیت آمیز دریافت کند دوباره تلاش خواهد کرد. در مورد کانال ها، تقریباً این اتفاق نمی افتد.
 
-**Summary**
+ثانیاً، Channels اطلاعاتی در مورد وضعیت یک کار خارج از وظایفش ارائه نمی دهد. ما باید خودمان چنین عملکردی را بسازیم به عنوان مثال با به روز رسانی پایگاه داده. وضعیت وظایف Celery را می توان پرس و جو کرد و آن ها حفظشان کرد.
 
-In this chapter, we looked at various ways to support asynchronous execution in Django. They provide powerful abstractions on top of Django to create applications that can support push notifications, display the progress of a slow task, communicate with other users, or run background tasks.
+برای جمع‌بندی، می‌توانید از Channels به جای Celery برای موارد استفاده کمتر مهم استفاده کنید. با این حال، برای یک راه حل قوی تر و اثبات شده، باید به Celery اعتماد کنید.
 
-Traditionally, Celery has been the tool of choice for asynchronous activities. However, Channels provide a lighter and more tightly integrated solution. Both have their uses and can be used in the same project. Use the right tool for the job!
+## خلاصه
 
-In the next chapter, we will look at what RESTful APIs means and how we can implement them in Django using current best practices.
+در این فصل، روش‌های مختلفی را برای پشتیبانی از اجرای ناهمزمان(asynchronous) در جنگو بررسی کردیم. آنها انتزاعات قدرتمندی را در جنگو برای ایجاد برنامه‌هایی ارائه می‌کنند که می‌توانند از اعلان‌های آنی پشتیبانی کنند، پیشرفت یک کار آهسته را نمایش دهند، با سایر کاربران ارتباط برقرار کنند یا کارهای پشت صحنه (background) را اجرا کنند.
+
+از زمان گذشته، Celery ابزار انتخابی برای فعالیت های ناهمزمان(asynchronous) بوده است. با این حال، کانال ها راه حل سبک تر و محکم تری را ارائه می دهند. هر دو کاربرد خود را دارند و می توان از آنها در یک پروژه استفاده کرد. در نتیجه از ابزار مناسب برای کار استفاده کنید!
+
+در فصل بعدی، به معنای RESTful API ها و نحوه پیاده سازی آن ها در جنگو با استفاده از بهترین شیوه های فعلی خواهیم پرداخت.
+
+</div>
