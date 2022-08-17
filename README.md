@@ -214,7 +214,7 @@
 |            اتمام       |  Rahimz        |05- Templates                       |
 |             ۱ شهریور      |  sajjad ebrahimi moghaddam        |06- Admin Interface                 |
 |             ۱ شهریور      |  amirajoodani        |07- Forms                           |
-|           ۲۰ مرداد        |  Khalil Farashiani       |08- Working Asynchronously          |
+|            اتمام        |  Khalil Farashiani       |08- Working Asynchronously          |
 |          اتمام         |  Hamed Daneshvar       |09- Creating APIs                   |
 |              ۱ شهریور     |  Fereydoon jafari babookani       |10- Dealing with Legacy Code        |
 |            اتمام       |  Rahimz       |11- Testing and Debugging           |
