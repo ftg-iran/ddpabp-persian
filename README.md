@@ -213,7 +213,7 @@
 |         اتمام          |  Hamed Daneshvar       |04- Views and URLs                  |
 |            اتمام       |  Rahimz        |05- Templates                       |
 |             ۱ شهریور      |  sajjad ebrahimi moghaddam        |06- Admin Interface                 |
-|             ۱ شهریور      |  amirajoodani        |07- Forms                           |
+|             اتمام      |  amirajoodani        |07- Forms                           |
 |            اتمام        |  Khalil Farashiani       |08- Working Asynchronously          |
 |          اتمام         |  Hamed Daneshvar       |09- Creating APIs                   |
 |              ۱ شهریور     |  Fereydoon jafari babookani       |10- Dealing with Legacy Code        |
