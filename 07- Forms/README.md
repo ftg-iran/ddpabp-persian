@@ -1,47 +1,40 @@
-# Forms
+<b>فرم ها :</b><br>
+در این فصل به مباحث زیر می پردازیم:<br>
 
-In this chapter, we will discuss the following topics:
-- Form workflow
-- Untrusted input
-- Form processing with class-based views
-- Working with CRUD views
+•	نحوه کارکرد فرم ها<br> 
+•	ورودی غیر قابل اعتماد<br>
+•	پردازش فرم با (CBV)Class Based View<br> 
+•	کار با ویوهای CRUD<br>
 
-Let's set aside Django forms and talk about web forms in general. Forms are not just long,
-boring pages with several fields that you have to fill in. Forms are everywhere. We use
-them every day. Forms power everything from Google's search box to Facebook's Like
-button.
+بیایید فرم های جنگو را کنار بگذاریم و به طور کلی در مورد فرم های وب صحبت کنیم. فرم ها فقط صفحات طولانی و خسته کننده با چندین فیلد نیستند که باید آنها را پر کنید. فرم ها همه جا هستند. ما هر روز از آنها استفاده می کنیم. فرم‌ها همه چیز را از کادر جستجوی Google گرفته تا دکمه لایک فیس‌بوک را شامل می شوند . 
 
-Django abstracts most of the grunt work while working with forms such as validation or presentation. It also implements various security best practices. However, forms are also common sources of confusion because they could be in one of several states. Let's examine them more closely.
+جنگو  کارهای  پچیده  رادر هنگام کار با  فرم هایی مانند اعتبار سنجی یا نمایشی به صورت خلاصه انجام می دهد . همچنین بهترین شیوه های امنیتی مختلف را پیاده سازی می کند. با این حال، فرم ها می توانند یاعث سردرگمی شوند  زیرا ممکن است چندین حالت مختلف باشند. بیایید آنها را دقیق تر بررسی کنیم.
 
 
-### How forms work
-Forms can be tricky to understand because interacting with them takes more than one
-request-response cycle. In the simplest scenario, you need to present an empty form, which
-the user then fills in correctly and submits. Conversely, they might enter some invalid data,
-in which case the form needs to be resubmitted until the entire form is valid.
-
-From this scenario, we can see that a form can be one of several states, changing between
-them:
-
-- **Empty form (unfilled form)**: This form is called an unbound form in Django
-- **Submitted form with errors**: This form is called a bound form but not a valid form
-- **Submitted form without errors**: This form is called a bound and valid form
 
 
-*Tip: The users will never see the form in the submitted form without errors state. They don't have to. Typically, submitting a valid form should take the users to a success page.*
+<b>فرم ها چگونه کار می کنند </b><br>
+درک فرم ها ممکن است مشکل باشد زیرا تعامل با آنها بیش از یک چرخه درخواست-پاسخ طول می کشد. در ساده ترین حالت، شما باید یک فرم خالی ارائه دهید که کاربر آن را به درستی پر کرده و ارسال  کند. برعکس، آنها ممکن است برخی از داده‌های نامعتبر را وارد کنند، در این صورت، فرم باید دوباره ارسال شود تا کل فرم معتبر باشد.
 
-### Forms in Django
+در این سناریو می بینیم که یک فرم می تواند یکی از چندین حالت زیر  باشد و بین آنها تغییر می کند:
 
-Django's form class instances contain the state of each field and, by summarizing them up a level, of the form itself. The form has two important state attributes, which are as follows:
 
-- `is_bound`: If this returns false, then it is an unbound form, that is, a fresh form
-with empty or default field values. If it returns true, then the form is bound, that
-is, at least one field has been set with a user input.
-- `is_valid()`: If this returns true, then every field in the bound form has valid
-data. If false, then there is some invalid data in at least one field or the form is not
-bound.
+•	فرم خالی (فرم پر نشده): به این فرم در جنگو فرم بدون چهارچوب (unbound form) گفته می شود.<br>
+•	فرم ارسال شده با خطا: به این فرم فرم محدود(bound form) می گویند اما فرم معتبر نیست .<br>
+•	فرم ارسال شده بدون خطا: به این فرم فرم محدود(bound form) و معتبر(valid form) می گویند .<br>
 
-For example, imagine that you need a simple form that accepts a user's name and age. The `forms` class can be defined as follows (refer to the code in `formschapter/forms.py`):
+نکته: کاربران هرگز فرمی که در وضعیت خطا نباشد را مجدد نخواهند دید . به طور معمول، ارسال یک فرم معتبر باید کاربران را به یک صفحه موفقیت آمیز هدایت کند.
+
+
+<b>فرم ها در جنگو</b><br>
+
+نمونه های کلاس فرم جنگو شامل وضعیت هر فیلد و با خلاصه کردن آنها در یک سطح، خود فرم است. فرم دارای دو ویژگی مهم  است که به شرح زیر است:
+
+محدود شده (is_bound): اگر این مقدار false را برگرداند، یک فرم بدون قید است، یعنی یک فرم تازه با مقادیر فیلد خالی یا پیش فرض. اگر مقدار true را برگرداند، فرم محدود است، یعنی حداقل یک فیلد با ورودی کاربر تنظیم شده است.<br>
+
+ معتبر (is_valid): اگر این مقدار true را برگرداند، هر فیلد در فرم محدود دارای داده معتبر است. اگر نادرست باشد، حداقل در یک فیلد تعدادی داده نامعتبر وجود دارد یا فرم محدود نشده است.
+
+
 
 ```python
 from django import forms
@@ -50,7 +43,7 @@ class PersonDetailsForm(forms.Form):
     age = forms.IntegerField()
 ```
 
-This class can be initiated in a bound or unbound manner, as shown in the following code:
+این کلاس را می توان به صورت محدود یا بدون کران آغاز کرد، همانطور که در کد زیر نشان داده شده است:
 
 ```bash
 >>> f = PersonDetailsForm()
@@ -71,69 +64,60 @@ value="30" required id="id_age" /></p>
 True
 ```
 
-Note how the HTML representation changes to include the value attributes with the bound data in them.
+توجه داشته باشید که چگونه نمایش HTML تغییر می کند تا ویژگی های مقادیر را با داده های محدود شده در آنها شامل شود. فقط زمانی می توان فرم را محدود کرد که آبجکت <br>فرم را در سازنده آن ایجاد کنید. چگونه ورودی کاربر به یک شی دیکشنری مانند که حاوی مقادیر برای هر فیلد فرم است ختم می شود؟
+برای فهمیدن این موضوع، باید نحوه تعامل کاربر با یک فرم را بدانید. در نمودار زیر، کاربر فرم مشخصات یک شخص را باز می کند، ابتدا آن را به اشتباه پر می کند، ارسال می کند و سپس با اطلاعات معتبر دوباره ارسال می کند:
 
-The form can be bound only when you create the form object in the constructor. How does the user input end up in a dictionary-like object that contains values for each form field?
 
-To find this out, you need to understand how a user interacts with a form. In the following
-diagram, a user opens a person's details form, fills it incorrectly at first, submits it, and then
-resubmits it with the valid information:
+![Typical of submitting and processing a form](form1.png)
+همانطور که در نمودار قبل نشان داده شده است، زمانی که کاربر فرم را ارسال می کند، view که قابل فراخوانی است تمام داده های فرم را در داخل request.POST (نمونه ای از QueryDict) دریافت می کند. فرم با این شی که حالت دیکشنری دارد مقداردهی اولیه می شود، به این صورت که مانند یک فرهنگ لغت رفتار می کند و کمی هم عملکرد اضافی دارد.
+فرم ها را می توان به گونه ای تعریف کرد که بتوانند داده های فرم را به دو روش مختلف ارسال کنند: GET یا POST. فرم های تعریف شده با METHOD="GET" داده های فرم کدگذاری شده را  در خود URL را ارسال می کنند. به عنوان مثال، هنگامی که یک جستجوی Google ارسال می کنید، URL شما ورودی فرم شما را خواهد داشت، یعنی رشته جستجو به طور قابل مشاهده در URL جاسازی شده است، مانند ?q=Cat+Pictures. روش GET برای فرم‌های خیلی ساده و ضعیف استفاده می‌شود که هیچ کار مفیدی در جهان  نمی‌کنند (یا به عبارت ساده‌تر، پردازش چند بار فرم اثری مشابه یک بار پردازش ان را دارد). در بیشتر موارد  این بدان معنی است که فقط برای بازیابی داده ها استفاده می شود.
 
-![Typical of submitting and processing a form](1.png)
+با این حال، اکثریت قریب به اتفاق فرم ها با METHOD="POST" تعریف می شوند. در این حالت داده های فرم به همراه بدنه درخواست HTTP ارسال می شود و توسط کاربر دیده نمی شود. آنها برای هر چیزی که شامل یک اثر جانبی است، مانند ایجاد یا به روز رسانی داده ها استفاده می شود.
 
-As shown in the preceding diagram, when the user submits the form, the view callable gets all the form data inside `request.POST` (an instance of `QueryDict`). The form gets initialized with this dictionary-like object, referred to in this way as it behaves like a dictionary and has a bit of extra functionality.
+بسته به نوع فرمی که تعریف کرده اید، وقتی کاربر فرم را ارسال می کند، view داده های فرم را در request.GET یا request.POST دریافت می کند. همانطور که قبلا ذکر شد، هر یک از آنها مانند یک دیکشنری خواهد بود، بنابراین می توانید آن را به سازنده کلاس فرم خود ارسال کنید تا یک آبجکت فرم محدود شده را دریافت کنید.
 
-Forms can be defined so that they can send the form data in two different ways: `GET` or `POST`. Forms defined with `METHOD="GET"` send the form data encoded in the URL itself. For example, when you submit a Google search, your URL will have your form input, that is, the search string visibly embedded in the URL, such as `?q=Cat+Pictures`. The `GET` method is used for idempotent forms, which do not make any lasting changes to the state of the world (or to be more pedantic, processing the form multiple times has the same effect as processing it once). For most cases, this means that it is used only to retrieve data.
-
-However, the vast majority of forms are defined with `METHOD="POST"`. In this case, the form data is sent along with the body of the HTTP request, and it is not seen by the user. They are used for anything that involves a side effect, such as creating or updating data.
-
-Depending on the type of form you have defined, the view will receive the form data in `request.GET` or `request.POST`, when the user submits the form. As mentioned earlier, either of them will be like a dictionary, so you can pass it to your `form` class constructor to get a bound form object.
 
 <br>
 
-**The Breach**
+<b>نقض امنیتی :</b><br>
 
-Steve was curled up and snoring heavily in his large three-seater couch.
-For the last few weeks, he had been spending more than 12 hours at the office, and tonight was no exception. His phone lying on the carpet beeped. At first, he said something incoherent, still deep in sleep. Then, it beeped again and again, with increasing urgency.
+استیو روی کاناپه بزرگ سه نفره خود خمیده بود و به شدت خروپف می کرد. در چند هفته گذشته، او بیش از 12 ساعت را در دفتر سپری کرده بود و امشب نیز از این قاعده مستثنی نبود. تلفنش که روی فرش افتاده بود بوق زد. ابتدا چیزی نامنسجم گفت که هنوز در خواب بود. سپس، بارها و بارها، با اضطرار فزاینده، بوق زد.
 
-By the fifth beep, Steve awoke with a start. He frantically searched all over his couch, and finally located his phone on the floor. The screen showed a brightly colored bar chart. Every bar seemed to touch the top line except one. He pulled out his laptop and logged into the SuperBook server. The site was up and none of the logs indicated any unusual activity. However, the external services didn't look that good.
+با صدای پنجم، استیو از خواب بیدار شد. او دیوانه وار تمام مبل خود را جستجو کرد و سرانجام گوشی خود را روی زمین پیدا کرد. صفحه نمایش نمودار میله ای با رنگ روشن را نشان می داد. به نظر می‌رسید که هر نوار به جز یکی، خط بالایی را لمس می‌کند. لپ تاپ خود را بیرون آورد و وارد سرور SuperBook شد. سایت فعال بود و هیچ یک از گزارش‌ها فعالیت غیرعادی را نشان نمی‌داد. با این حال، خدمات خارجی چندان خوب به نظر نمی رسید.
 
-The phone at the other end seemed to ring for eternity until a croaky voice answered, *"Hello, Steve?"*. Half an hour later, Jacob was able to zero down the problem to an unresponsive superhero verification service. *"Isn't that running on Sauron?"* asked Steve. There was a brief hesitation. *"I am afraid so,"* replied Jacob.
+به نظر می رسید که تلفن آن طرف تا ابد زنگ می زند تا اینکه صدای عصبی پاسخ داد: "سلام استیو؟". نیم ساعت بعد، جاکوب توانست مشکل یک سرویس تأیید صحت که پاسخگو نبود را برطرف کند. "آیا این دویدن روی سائورون (Sauron) نیست؟" از استیو پرسید. یک تردید کوتاه وجود داشت. جاکوب پاسخ داد: من می ترسم.
 
-Steve had a sinking feeling at the pit of his stomach. Sauron, a mainframe application, was their first line of defense against cyber attacks and other kinds of possible attack. It was three in the morning when he alerted the mission control team. Jacob kept chatting with him the whole time. He was running every available diagnostic tool. There was no sign of any security breach.
+شکم استیو در حال غرغر کردن بود . Sauron، یک اپلیکیشن mainframe است که اولین خط دفاعی آنها در برابر حملات سایبری و انواع دیگر حملات احتمالی بود. ساعت سه بامداد بود که به تیم کنترل ماموریت هشدار داد. جاکوب در تمام مدت با او چت می کرد. او همه ابزارهای تشخیصی موجود را اجرا می کرد. هیچ نشانه ای از نقض امنیتی وجود نداشت.
 
-Steve tried to calm him down. He reassured him that perhaps it was a temporary overload, and that he should get some rest. However, he knew that Jacob wouldn't stop until he found what was wrong. He also knew that it was not typical of Sauron to have a temporary overload. Feeling extremely exhausted, he slipped back to sleep.
+استیو سعی کرد او را آرام کند. او به جاکوب اطمینان داد که شاید این یک بار اضافی موقتی است و نیاز بخ کاهش باردارد . با این حال، او می دانست که جاکوب تا زمانی که اشتباه را پیدا نکند، متوقف نخواهد شد. او همچنین می دانست که برای سائورون معمولی نیست که اضافه بار موقت داشته باشد. با احساس خستگی شدید، دوباره به خواب رفت.
 
-Next morning, as Steve hurried to his office building holding a bagel, he heard a deafening roar. He turned and looked up to see a massive spaceship looming over him. Instinctively, he ducked behind a hedge. On the other side of the hedge, he could hear several heavy metallic objects clanging onto the ground. Just then, his cell phone rang. It was Jacob. Something had moved closer to him. As Steve looked up, he saw a nearly 10-foot-tall robot, colored orange and black, pointing what looked like a weapon directly down at him.
+صبح روز بعد، هنگامی که استیو در حالی که یک نان شیرینی در دست داشت با عجله به سمت ساختمان اداری خود می رفت، صدای غرش کر کننده ای را شنید. او برگشت و به بالا نگاه کرد تا یک سفینه فضایی عظیم را دید که بر فراز او قرار داشت. به طور غریزی پشت پرچینی خم شد. در طرف دیگر پرچین، او می توانست چندین شی فلزی سنگین را بشنود که به زمین می چسبیدند. همون موقع تلفن همراهش زنگ خورد. جاکوب بود. چیزی به او نزدیکتر شده بود. همانطور که استیو به بالا نگاه کرد، یک ربات قد تقریباً 10 فوتی، نارنجی و مشکی رنگی را دید که چیزی شبیه یک سلاح را مستقیماً به سمت او نشانه رفته بود.
+تلفنش همچنان زنگ می خورد. گلگوله ها به اطراف او می خوردند . او تماس را پذیرفت.
 
-His phone was still ringing. He darted out into the open, barely missing the sputtering shower of bullets around him. He took the call.
+"هی استیو، حدس بزن چی، فهمیدم واقعا چه اتفاقی افتاده است." استیو با کنایه گفت: «من عاشق اینم که بدونم . 
 
-"Hey Steve, guess what, I found out what actually happened." "I am dying to know," Steve quipped.
+"یادتان می آید که ما از ویجت فرم UserHoller برای جمع آوری بازخورد مشتریان استفاده کرده بودیم؟ ظاهراً داده های آنها چندان تمیز نبود. منظورم چندین سوء استفاده جدی است. سلام، صدای پس زمینه زیادی وجود دارد. آیا آن تلویزیون است؟" استیو به سمت تابلوی بزرگی شیرجه زد که روی آن نوشته شده بود "نقطه مونتاژ ایمن".
 
-"Remember that we had used UserHoller's form widget to collect customer feedback? Apparently, their data was not that clean. I mean several serious exploits. Hey, there is a lot of background noise. Is that the TV?"
-Steve dived towards a large sign that said "Safe Assembly Point".
+او فریاد زد: "فقط نادیده بگیر. به من بگو چه اتفاقی افتاده است."
 
-"Just ignore it. Tell me what happened," he screamed.
+"خوب. بنابراین، وقتی ادمین ما صفحه بازخورد را باز کرد، لپ تاپ او باید آلوده شده باشد. این کرم می تواند به سیستم های دیگری که به آنها دسترسی دارد، به ویژه سائورون، برسد. باید بگویم استیو، این یک حمله بسیار هدفمند است. کسی که می داند که سیستم امنیتی ما به خوبی این را طراحی کرده است. من احساس می کنم چیزی ترسناک در راه است."
 
-"Okay. So, when our admin opened the feedback page, his laptop must have gotten infected. The worm could reach the other systems he has access to, specifically, Sauron. I must say Steve, this is a very targeted attack. Someone who knows our security system quite well has designed this. I have a feeling something scary is coming our way."
+در آن سوی چمن، روباتی یک SUV را برداشت و به سمت استیو پرتاب کرد. دستانش را بالا آورد و چشمانش را بست. توده فلزی در حال چرخش چند فوت بالاتر از او یخ زد.
 
-Across the lawn, a robot picked up an SUV and hurled it toward Steve. He raised his hands and shut his eyes. The spinning mass of metal froze a few feet above him.
+"تماس مهم؟" هگزا در حالی که ماشین را رها کرد پرسید
 
-"Important call?" asked Hexa as she dropped the car
+استیو التماس کرد: "آره، لطفا مرا از اینجا بیرون کن."
 
-"Yeah, please get me out of here," Steve begged.
 
-### Why does data need cleaning?
+<b>چرا داده ها نیاز به تمیز کردن دارند؟</b><br>در نهایت ما ، باید داده های پاک شده را از فرم دریافت کنید. آیا این به این معنی است که مقادیری که کاربر وارد کرده تمیز نبوده است؟ بله به دو دلیل
 
-Eventually, you need to get the cleaned data from the form. Does this mean that the values that the user entered were not clean? Yes, for two reasons.
+اولاً، به هر چیزی که از دنیای بیرون می آید، در ابتدا نباید اعتماد کرد. کاربران مخرب می توانند از طریق فرمی  انواع سوء استفاده ها را بکنند  که می تواند امنیت سایت شما را تضعیف کند. بنابراین، قبل از استفاده از هر داده فرم، باید پاک سازی شود.
 
-First, anything that comes from the outside world should not be trusted initially. Malicious users can enter all sorts of exploits through a form that can undermine the security of your site. So, any form data must be sanitized before you use it.
+بهترین روش: هرگز به ورودی کاربر اعتماد نکنید.
 
-**Best Practice**: Never trust the user input.
+ثانیاً، مقادیر فیلد در request.POST و request.GET فقط رشته هستند. حتی اگر فیلد فرم شما را بتوان به عنوان یک عدد صحیح (مثلاً سن) یا تاریخ (مثلاً تولد) تعریف کرد، مرورگر آنها را به عنوان رشته به ویوی شما ارسال می کند. همیشه، شما می خواهید قبل از استفاده آنها را به انواع پایتون مناسب تبدیل کنید. کلاس form این تبدیل را به طور خودکار برای شما در حین تمیز کردن انجام می دهد.
+بیایید این را در عمل ببینیم:
 
-Secondly, the field values in `request.POST` and `request.GET` are just strings. Even if your form field can be defined as an integer (say, age) or date (say, birthday), the browser would send them as strings to your view. Invariably, you would like to convert them to the appropriate Python types before use. The `form` class does this conversion automatically for you while cleaning.
-
-Let's see this in action:
 ```bash
 >>> fill = {"name": "Blitz", "age": "30"}
 >>> g = PersonDetailsForm(fill)
@@ -144,20 +128,21 @@ True
 >>> type(g.cleaned_data["age"])
 int
 ```
+مقدار age به عنوان یک رشته (احتمالاً از request.POST) به کلاس فرم منتقل شد. پس از اعتبارسنجی، داده های پاک شده حاوی سن به شکل عدد صحیح است. این دقیقا همان چیزی است که شما انتظار دارید. فرم‌ها سعی می‌کنند این واقعیت را که رشته‌ها حاوی مقادیر مختلف باشند را انتزاع کنند و اشیاء پایتون تمیزی را در اختیار شما قرار دهند که بتوانید از آنها استفاده کنید.
+نکته: همیشه از cleaned_data فرم خود به جای داده های خام کاربر استفاده کنید.
 
-The `age` value was passed as a string (possibly from request.POST) to the form class. After validation, the cleaned data contains the age in the integer form. This is exactly what you would expect. Forms try to abstract away the fact that strings are passed around and give you clean Python objects that you can use.
 
-*Tip: Always use the `cleaned_data` from your form rather than raw data from the user.*
+<b>نمایش فرم ها : </b><br>
 
-### Displaying forms
+فرم های جنگو همچنین به شما کمک می کنند تا یک نمایش HTML از فرم خود ایجاد کنید. آنها از سه نمایش مختلف پشتیبانی می کنند: as_p (به عنوان برچسب پاراگراف)، as_ul (به عنوان آیتم های لیست نامرتب)، و as_table (به عنوان یک جدول).
 
-Django forms also help you create an HTML representation of your form. They support three different representations: as_p (as paragraph tags), as_ul (as unordered list items), and as_table (as, unsurprisingly, a table).
+کد قالب، کد HTML تولید شده و رندر مرورگر برای هر یک از این نمایش ها در جدول زیر خلاصه شده است:
 
-The template code, generated HTML code, and browser rendering for each of these representations have been summarized in the following table:
 
 ![](2.png)
 
-Note that the HTML representation gives only the `form` fields. This makes it easier to include multiple Django forms in a single HTML form. However, this also means that the template designer has a fair bit of boilerplate to write for each form, as shown in the following code:
+توجه داشته باشید که ویوی HTML فقط فیلدهای فرم را می دهد. این کار گنجاندن چندین فرم جنگو را در یک فرم HTML ساده تر می کند. با این حال، این بدان معناست که طراح قالب، همانطور که در کد زیر نشان داده شده است، برای هر فرم مقدار مناسبی می تواند اختیار کند :
+
 ```html
 <form method="post">
     {% csrf_token %}
@@ -166,23 +151,23 @@ Note that the HTML representation gives only the `form` fields. This makes it ea
 </form>
 ```
 
-*Tip: To make the HTML representation complete, you need to add the surrounding `form` tags, a `csrf_token`, the `table` or `ul` tags, and the Submit **button**.*
+نکته: برای کامل کردن نمایش HTML، باید تگ های فرم ، یک csrf_token، تگ جدول یا ul و دکمه ارسال را اضافه کنید.
 
-### Time to be crisp
+<b>زمان استفاده از crispy است : </b><br>
 
-It can get tiresome when writing so much boilerplate for each form in your templates. The `django-crispy-forms` package makes the form template code more crisp (that is, concise). It moves all the presentation and layout into the Django form itself. This way, you can write more Python code and less HTML.
+زمانی که برای هر فرم در قالب‌هایتان تعداد زیادی کد html بنویسید، ممکن است خسته‌کننده شود. بسته django-crispy-forms کد قالب فرم را واضح تر می کند (یعنی مختصر). تمام ارائه و طرح‌بندی را به خود فرم جنگو منتقل می‌کند. به این ترتیب می توانید کدهای پایتون بیشتری بنویسید و HTML کمتری بنویسید.
+جدول زیر نشان می دهد که تگ قالب crispy فرم کامل تری ایجاد می کند و ظاهر بسیار بومی تر به سبک بوت استرپ است:
 
-The following table shows that the crispy form template tag generates a more complete form, and the appearance is much more native to the Bootstrap style:
 
 ![](3.png)
 
-So, how do you get crisper forms? You will need to install the `django-crispy-forms` package and add it to your `INSTALLED_APPS`. If you use Bootstrap 4, then you will need to mention this in your settings:
+بنابراین، چگونه می توانید فرم های Crispy را دریافت کنید؟ شما باید بسته django-crispy-forms را نصب کرده و به INSTALLED_APPS خود اضافه کنید. اگر از Bootstrap 4 استفاده می کنید، باید این را در تنظیمات خود ذکر کنید:
 
 ```python
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 ```
 
-The form initialization will need to mention a helper attribute of the FormHelper type. The following code in formschapter/forms.py is intended to be minimal and uses the default layout:
+مقداردهی اولیه فرم نیاز به ذکر یک ویژگی کمکی از نوع FormHelper دارد. کد زیر در formschapter/forms.py در نظر گرفته شده است که حداقل باشد و از طرح بندی پیش فرض استفاده می کند:
 
 ```python
 from crispy_forms.helper import FormHelper
@@ -195,18 +180,19 @@ class PersonDetailsForm(forms.Form):
         self.helper = FormHelper(self)
         self.helper.layout.append(Submit('submit', 'Submit'))
 ```
-For more details, read the `django-crispy-forms` package `documentation`.
+برای جزئیات بیشتر، مستندات بسته django-crispy-forms را بخوانید.
 
-### Understanding CSRF
-You must have noticed something called a **cross-site request forgery (CSRF)** token in the form templates. What does it do? It is a security mechanism against CSRF attacks for your forms.
+<b>آشنایی با CSRF</b><br>
+حتما متوجه چیزی به نام توکن جعل درخواست متقابل (CSRF) در قالب‌های فرم شده‌اید. چه کار میکند؟ این یک مکانیسم امنیتی در برابر حملات CSRF برای فرم های شما است.
 
-It works by injecting a server-generated random string called a CSRF token, unique to a user's session. Every time a form is submitted, it must have a hidden field that contains this token. This token ensures that the form was generated for the user by the original site, and proves that it is not a fake form created by an attacker with similar fields.
+این با تزریق یک رشته تصادفی تولید شده توسط سرور به نام توکن CSRF، منحصر به فرد برای session کاربر کار می کند. هر بار که یک فرم ارسال می شود، باید یک فیلد مخفی داشته باشد که حاوی این نشانه باشد. این توکن تضمین می کند که فرم توسط سایت اصلی برای کاربر ایجاد شده است و ثابت می کند که یک فرم جعلی ایجاد شده توسط مهاجم با فیلدهای مشابه نیست.
+توکن‌های CSRF برای فرم‌هایی که از روش GET استفاده می‌کنند توصیه نمی‌شوند، زیرا اقدامات GET نباید وضعیت سرور را تغییر دهد. علاوه بر این، فرم‌هایی که از طریق GET ارسال می‌شوند، نشانه CSRF را در URLها نشان می‌دهند. از آنجایی که آدرس‌های اینترنتی دارای ریسک بالاتری برای لاگ شدن یا  shoulder-sniffed هستند، بهتر است از CSRF در فرم‌هایی با استفاده از روش POST استفاده کنید.
 
-CSRF tokens are not recommended for forms using the `GET` method because the `GET` actions should not change the server state. Moreover, forms submitted via `GET` would expose the CSRF token in the URLs. Since URLs have a higher risk of being logged or shoulder-sniffed, it is better to use CSRF in forms using the `POST` method.
 
-### Form processing with class-based views
+<b>پردازش فرم ها با Class Based View  (CBV) :</b><br>
 
-We can essentially process a form by subclassing the View class itself:
+اساساً می‌توانیم یک فرم را با زیر کلاس‌بندی خود کلاس View پردازش کنیم:
+
 ```python
 class ClassBasedFormView(generic.View):
     template_name = 'form.html'
@@ -225,11 +211,12 @@ class ClassBasedFormView(generic.View):
             return render(request, self.template_name, {'form': form})
 ```
 
-Compare this code with the sequence diagram that we saw previously. The three scenarios have been separately handled.
+این کد را با نمودار توالی که قبلاً دیدیم مقایسه کنید. سه سناریو به طور جداگانه بررسی شده است.
 
-Every form is expected to follow the `post/redirect/get (PRG)` pattern. If the submitted form is found to be valid, then it must issue a redirect. This prevents duplicate form submissions.
+انتظار می رود هر فرم از الگوی ارسال/تغییر مسیر/دریافت (PRG) پیروی کند. اگر فرم ارسالی معتبر تشخیص داده شود، باید یک تغییر مسیر صادر کند. این از ارسال فرم های تکراری جلوگیری می کند.
 
-However, this is not a very DRY code. The `form` class name and `template_name` attributes have been repeated. Using a generic class-based view such as `FormView` can reduce the redundancy of form processing. The following code will give you the same functionality as the previous one, and in fewer lines of code:
+با این حال، این یک کد بسیار DRY نیست. ویژگی های کلاس فرم و template_name تکرار شده اند. استفاده از یک نمای کلی مبتنی بر کلاس مانند FormView می تواند افزونگی پردازش فرم را کاهش دهد. کد زیر عملکردی مشابه کد قبلی و در خطوط کد کمتری به شما می دهد:
+
 ```python
 from django.urls import reverse_lazy
 
@@ -238,25 +225,25 @@ class GenericFormView(generic.FormView):
     form_class = PersonDetailsForm
     success_url = reverse_lazy("success")
 ```
-We need to use `reverse_lazy` in this case because the URL patterns are not loaded when the `View` file is imported.
+در این مورد باید از reverse_lazy استفاده کنیم زیرا الگوهای URL هنگام وارد کردن فایل View بارگذاری نمی شوند.
 
-### Form patterns
-Let's take a look at some of the common patterns that are used when working with forms.
+<b>الگوهای فرم : </b><br>
+بیایید نگاهی به برخی از الگوهای رایجی که هنگام کار با فرم ها استفاده می شود بیندازیم.
 
-### Pattern – dynamic form generation
-**Problem:** Adding form fields dynamically or changing form fields from what has been declared.
+<b>الگو – ساخت فرم های داینامیک </b><br>
+<b>مشکل</b>: افزودن فیلدهای فرم به صورت پویا یا تغییر فیلدهای فرم از آنچه اعلام شده است.<br>
+<b>راه حل</b>: در طول مقداردهی اولیه فرم، فیلدها را اضافه یا تغییر دهید.
 
-**Solution:** Add or change fields during initialization of the form.
 
-### Problem details
-Forms are usually defined in a declarative style, with form fields listed as class fields. However, sometimes we do not know the number or type of these fields in advance. This calls for the form to be dynamically generated. This pattern is sometimes called dynamic form or runtime form generation.
+<b>جزییات مشکل: </b><br>
+فرم ها معمولاً به سبک declarative تعریف می شوند و فیلدهای فرم به عنوان فیلدهای کلاس فهرست می شوند. اما گاهی اوقات تعداد یا نوع این فیلدها را از قبل نمی دانیم. این امر مستلزم آن است که فرم به صورت پویا تولید شود. این الگو را گاهی فرم پویا یا تولید فرم زمان اجرا می نامند.
+تصور کنید یک سیستم چک کردن مسافر برای پرواز از یک فرودگاه. این سیستم امکان ارتقاء بلیط های کلاس اقتصادی را به درجه یک فراهم می کند. اگر صندلی های درجه یک باقی مانده است، باید گزینه دیگری را به کاربر نشان دهد و از او بپرسد که آیا مایل به ارتقا به درجه یک هستند یا خیر. با این حال، این فیلد اختیاری را نمی توان اعلام کرد زیرا به همه کاربران نشان داده نمی شود. چنین فرم های پویا را می توان با این الگو اداره کرد.
 
-Imagine a passenger check-in system for a flight from an airport. The system allows for the upgrade of economy-class tickets to first class. If there are any first-class seats left, then it should show an additional option to the user, asking whether they would like to upgrade to first class. However, this optional field cannot be declared since it will not be shown to all users. Such dynamic forms can be handled by this pattern.
+<b>راه حل مشکل: </b><br>
+هر نمونه فرم دارای یک ویژگی به نام فیلدها است که دیکشنری است که تمام فیلدهای فرم را در خود جای می دهد. این را می توان در زمان اجرا تغییر داد. افزودن یا تغییر فیلدها را می توان در طول مقداردهی اولیه فرم انجام داد.
 
-### Solution details
-Every form instance has an attribute called `fields`, which is a dictionary that holds all the `form` fields. This can be modified at runtime. Adding or changing the fields can be done during form initialization itself.
+به عنوان مثال، اگر فقط در صورتی نیاز به افزودن یک چک باکس به فرم جزئیات کاربر داشته باشیم که آرگومان کلمه کلیدی به نام "ارتقا" در زمان اولیه سازی فرم درست باشد، آن را به صورت زیر پیاده سازی می کنیم:
 
-For example, if we need to add a checkbox to a user-details form only if a keyword argument named "upgrade" is true upon form initialization, then we an implement it as follows:
 
 ```python
 class PersonDetailsForm(forms.Form):
@@ -273,12 +260,10 @@ class PersonDetailsForm(forms.Form):
             self.fields["first_class"] = forms.BooleanField(
             label="Fly First Class?")
 ```
-Now, we just need to pass the `PersonDetailsForm(upgrade=True)` keyword argument to make an additional Boolean input field (a checkbox) appear.
+اکنون، فقط باید آرگومان کلمه کلیدی PersonDetailsForm(upgrade=True) را پاس کنیم تا یک فیلد ورودی بولی اضافی (چک باکس) ظاهر شود.
+برای جلوگیری از خطای غیرمنتظره کلمه کلیدی، یک آرگومان کلمه کلیدی تازه معرفی شده باید قبل از فراخوانی super حذف شود یا ظاهر شود.
+اگر برای این مثال از یک کلاس FormView استفاده کنیم، باید آرگومان کلمه کلیدی را با نادیده گرفتن متد get_form_kwargs از کلاس View، همانطور که در کد زیر نشان داده شده است، پاس کنیم:
 
-*A newly introduced keyword argument has to be removed or popped
-before we call `super` to avoid the `unexpected keyword` error.*
-
-If we use a FormView class for this example, then we need to pass the keyword argument by overriding the get_form_kwargs method of the View class, as shown in the following code:
 ```python
 class PersonDetailsEdit(generic.FormView):
     ...
@@ -289,23 +274,21 @@ class PersonDetailsEdit(generic.FormView):
         return kwargs
 ```
 
-This pattern can be used to change any `attribute` of a field at runtime, such as its widget or help text. It works for model forms as well.
-In many cases, a seeming need for dynamic forms can be solved using Django formsets. They are used when a form needs to be repeated in a page. A typical use case for formsets is when designing a data-grid-like view to add elements row by row. This way, you do not need to create a dynamic form with an arbitrary number of rows; you just need to create a form for the row and create multiple rows using a `formset_factory` function.
+از این الگو می توان برای تغییر هر ویژگی یک فیلد در زمان اجرا استفاده کرد، مانند ویجت یا متن راهنما. برای فرم های مدل نیز کار می کند. در بسیاری از موارد، نیاز ظاهری به فرم های پویا را می توان با استفاده از مجموعه فرم های جنگو حل کرد. آنها زمانی استفاده می شوند که یک فرم نیاز به تکرار در یک صفحه داشته باشد. یک مورد معمول استفاده از فرم‌ست‌ها هنگام طراحی نمای شبکه‌ای داده (data-grid)برای افزودن عناصر سطر به ردیف است. به این ترتیب، شما نیازی به ایجاد یک فرم پویا با تعداد دلخواه ردیف ندارید. شما فقط باید یک فرم برای ردیف ایجاد کنید و با استفاده از تابع formset_factory چندین ردیف ایجاد کنید.
 
-### Pattern – user-based forms
-**Problem:** Forms need to be customized based on the logged-in user.
+<b>الگو : فرم های User-Based</b><br>
+<b>مشکل</b>: فرم ها باید بر اساس کاربر وارد شده سفارشی شوند.<br>
 
-**Solution:** Pass the logged-in user's characteristics as a keyword argument to the form's initializer.
+<b>راه حل</b>: ویژگی های کاربر وارد شده را به عنوان آرگومان کلمه کلیدی به مقداردهی اولیه فرم منتقل کنید.<br>
 
-### Problem details
-A form can be presented in different ways based on the user. Certain users might not need to fill in all the fields, while certain others might need to add additional information. In some cases, you might need to run some checks on the user's eligibility, such as verifying whether they are members of a group, to determine how the form should be constructed.
+<b>جزییات مشکل: </b><br>
+یک فرم می تواند به روش های مختلف بر اساس کاربر ارائه شود. برخی از کاربران ممکن است نیازی به پر کردن تمام فیلدها نداشته باشند، در حالی که برخی دیگر ممکن است نیاز به اضافه کردن اطلاعات اضافی داشته باشند. در برخی موارد، ممکن است لازم باشد برخی بررسی‌ها را در مورد واجد شرایط بودن کاربر انجام دهید، مانند تأیید اینکه آیا آنها اعضای یک گروه هستند یا خیر، تا تعیین کنید فرم چگونه باید ساخته شود.
 
-### Solution details
-As you must have noticed, you can solve this using the solution given in the dynamic form generation pattern. You just need to pass `request.user` or any of their characteristics as a keyword argument to the form. I would recommend the latter to minimize the coupling between the view and the form.
+<b>راه حل مشکل: </b><br>
+همانطور که حتما متوجه شده اید، می توانید با استفاده از راه حل ارائه شده در الگوی تولید فرم پویا این مشکل را حل کنید. شما فقط باید request.user یا هر یک از ویژگی های آنها را به عنوان آرگومان کلمه کلیدی به فرم ارسال کنید. من دومی را برای به حداقل رساندن جفت بین نما و فرم توصیه می کنم.
+مانند مثال قبلی، باید یک چک باکس اضافی را به کاربر نشان دهیم. با این حال، این تنها در صورتی نشان داده می شود که کاربر عضو گروه "VIP" باشد.
+بیایید نگاهی بیندازیم که چگونه نمای مشتق شده GenericFormView این اطلاعات را به فرم ارسال می کند:
 
-As in the previous example, we need to show an additional checkbox to the user. However, this will be shown only if the user is a member of the "`VIP`" group.
-
-Let's take a look at how the `GenericFormView` derived view passes this information to the form:
 ```python
 class GenericFormView(generic.FormView):
 
@@ -320,32 +303,31 @@ class GenericFormView(generic.FormView):
         return kwargs
 ```
 
-Here, we are redefining the `get_form_kwargs` method that `FormView` calls before instantiating a form to return the keyword arguments. This is the ideal point to check whether the user belongs to the `VIP` group and pass the appropriate keyword argument.
+در اینجا، ما در حال تعریف مجدد متد get_form_kwargs هستیم که FormView قبل از نمونه سازی ، یک فرم را برای برگرداندن آرگومان های کلمه کلیدی فراخوانی می کند. این نقطه ایده آل برای بررسی اینکه آیا کاربر به گروه VIP تعلق دارد و آرگومان کلمه کلیدی مناسب را ارسال می کند.
+مانند قبل، فرم می تواند وجود آرگومان کلمه کلیدی vip را بررسی کند (مانند آنچه برای ارتقا انجام دادیم) و یک چک باکس برای ارتقا به کلاس اول ارائه دهد.
 
-As before, the form can check for the presence of the `vip` keyword argument (like we did for `upgrade`) and present a check box for upgrading to first class.
 
-### Pattern – multiple form actions per view
-**Problem:** Handling multiple form actions in a single view or page.
+<b>الگو : اقدامات چندگانه به ازای هر View</b><br>
+<b>مشکل</b>: مدیریت چندین عملکرد فرم در یک نما یا صفحه واحد.<br>
 
-**Solution:** Forms can use separate views to handle form submissions, or a single view can identify the form based on the Submit button's name.
+<b>راه‌حل</b>: فرم‌ها می‌توانند از نماهای جداگانه برای رسیدگی به ارسال‌های فرم استفاده کنند، یا یک نمای واحد می‌تواند فرم را بر اساس نام دکمه ارسال شناسایی کند.<br>
 
-### Problem details
-Django makes it relatively straightforward to combine multiple forms with the same action, like a single Submit button. However, most web pages need to show several actions on the same page. For example, you might want the user to subscribe or unsubscribe from a newsletter using two distinct forms that are shown on the same page.
+<b>جزییات مشکل: </b><br>
+جنگو ترکیب چند فرم را با یک عمل مشابه، مانند یک دکمه ارسال، نسبتاً ساده می کند. با این حال، بیشتر صفحات وب نیاز به نمایش چندین عملکرد در یک صفحه دارند. برای مثال، ممکن است بخواهید کاربر با استفاده از دو فرم مجزا که در همان صفحه نشان داده شده اند، مشترک یا لغو اشتراک در یک خبرنامه شود.
+با این حال، FormView جنگو برای مدیریت تنها یک فرم در هر سناریو طراحی شده است. بسیاری دیگر از دیدگاه‌های مبتنی بر کلاس عمومی نیز این فرض را دارند.
 
-However, Django's `FormView` is designed to handle only one form per view scenario. Many other generic class-based views also share this assumption.
 
-### Solution details
-There are two ways to handle multiple forms: using separate views and using a single view. Let's take a look at the first approach.
+<b>راه حل مشکل: </b><br>
+دو راه برای مدیریت چند فرم وجود دارد: استفاده از نماهای جداگانه و استفاده از یک نمای واحد. بیایید نگاهی به رویکرد اول بیندازیم.
 
-### Separate views for separate actions
-This is a fairly straightforward approach, with each form specifying a different view as its action. For example, take the subscribe and unsubscribe forms. There can be two separate view classes to handle just the `POST` method from their respective forms.
+<b>چندین View برای چندین اقدام (Action) :</b><br>
+این یک رویکرد نسبتاً ساده است و هر فرم دیدگاه متفاوتی را به عنوان عمل خود مشخص می کند. به عنوان مثال، فرم های اشتراک و لغو اشتراک را درنظر بگیرید. می‌توان دو کلاس view مجزا برای مدیریت متد POST از فرم‌های مربوطه وجود خواهد داشت.
 
-### Same view for separate actions
-Perhaps you find splitting the views to handle forms to be unnecessary, or you find handling logically related forms in a common view to be more elegant. Either way, we can work around the limitations of generic class-based views to handle more than one form.
+<b>یک View برای چندین اقدام :</b><br>
+شاید تقسیم نماها برای رسیدگی به فرم‌ها را غیرضروری بدانید، یا مدیریت فرم‌های مرتبط منطقی در یک نمای رایج را زیباتر بدانید. در هر صورت، می‌توانیم محدودیت‌های نماهای مبتنی بر کلاس عمومی را برای مدیریت بیش از یک فرم دور بزنیم.
+در حالی که از یک کلاس view برای چندین فرم استفاده می شود، چالش این است که مشخص کنیم کدام فرم اقدام POST را صادر کرده است. در اینجا از این که نام و مقدار دکمه Submit نیز ارسال می شود، بهره می بریم. اگر دکمه ارسال به صورت منحصر به فرد در فرم ها نامگذاری شده باشد، می توان فرم را در حین پردازش شناسایی کرد.
+در اینجا ما یک SubscribeForm را با استفاده از فرم های ترد تعریف می کنیم تا بتوانیم دکمه Submit را نیز نامگذاری کنیم:
 
-While using the same view class for multiple forms, the challenge is to identify which form issued the `POST` action. Here, we take advantage of the fact that the name and value of the `Submit` button is also submitted. If the `Submit` button is named uniquely across forms, then the form can be identified while processing.
-
-Here, we define a `SubscribeForm` using crispy forms so that we can name the **Submit** button as well:
 ```python
 class SubscribeForm(forms.Form):
     email = forms.EmailField()
@@ -355,10 +337,9 @@ class SubscribeForm(forms.Form):
         self.helper = FormHelper(self)
         self.helper.layout.append(Submit('subscribe_butn', 'Subscribe'))
 ```
+کلاس UnSubscribeForm دقیقاً به همین صورت تعریف شده است (و از این رو حذف می شود)، با این تفاوت که نام دکمه Submit آن unsubscribe_butn است.
+از آنجایی که FormView برای یک فرم طراحی شده است، ما از یک نمای ساده تری مبتنی بر کلاس، مثلا TemplateView، به عنوان پایه نمای خود استفاده خواهیم کرد. بیایید نگاهی به تعریف view و روش دریافت بیندازیم:
 
-The `UnSubscribeForm` class is defined in exactly the same way (and hence is omitted), except that its `Submit` button is named `unsubscribe_butn`.
-
-Since `FormView` is designed for a single form, we will use a simpler class-based view, say `TemplateView`, as the base for our view. Let's take a look at the view definition and the `get` method:
 ```python
 from .forms import SubscribeForm, UnSubscribeForm
 
@@ -373,8 +354,8 @@ class NewsletterView(generic.TemplateView):
         return super().get(request, *args, **kwargs)
 ```
 
-The two forms are inserted as keyword arguments, and thereby enter the template context. We create unbound instances of either form only if they don't already exist, with the help of the setdefault dictionary method. We will soon see why.
-Next, we will take a look at the POST method, which handles submissions from either form:
+این دو فرم به‌عنوان آرگومان‌های کلیدواژه درج می‌شوند و در نتیجه وارد بافت قالب می‌شوند. ما نمونه‌های نامحدودی از هر یک از فرم‌ها را تنها در صورتی ایجاد می‌کنیم که قبلاً وجود نداشته باشند، با کمک روش دیکشنری setdefault. به زودی خواهیم دید که چرا. در مرحله بعد، ما نگاهی به روش POST خواهیم داشت، که ارسال ها را از هر دو فرم مدیریت می کند:
+
 ```python
 def post(self, request, *args, **kwargs):
     form_args = {
@@ -394,30 +375,30 @@ def post(self, request, *args, **kwargs):
     return super().get(request)
 ```
 
-First, the form keyword arguments, such as `data` and `files`, are populated in a `form_args` dictionary. Next, the presence of the first form's **Subscribe** button is checked in `request.POST`. If the button's name is found, then the first form is instantiated.
+ابتدا، آرگومان های کلمه کلیدی فرم، مانند داده ها و فایل ها، در دیکشنری form_args پر می شوند. سپس وجود دکمه اشتراک فرم اول در request.POST بررسی می شود. اگر نام دکمه پیدا شد، اولین فرم نمونه سازی می شود.
 
-If the form fails validation, then the response created by the `GET` method with the first form's instance is returned. In the same way, we look for the second form's **Unsubscribe** button to check whether the second form was submitted.
+اگر فرم اعتبار سنجی ناموفق باشد، پاسخ ایجاد شده توسط متد GET با نمونه فرم اول برگردانده می شود. به همین ترتیب، ما به دنبال دکمه Unsubscribe فرم دوم می گردیم تا بررسی کنیم که آیا فرم دوم ارسال شده است یا خیر.
 
-Instances of the same form in the same view can be implemented in the same way with form prefixes. You can instantiate a form with a prefix argument such as `SubscribeForm(prefix="offers")`. Such an instance will prefix all its form fields with the given argument, effectively working like a form namespace. In general, you can use prefixes to embed multiple forms in the same page.
+نمونه هایی از یک فرم در نمای مشابه را می توان به همان روش با پیشوندهای فرم پیاده سازی کرد. شما می توانید یک فرم را با آرگومان پیشوندی مانند SubscribeForm (prefix="offers") نمونه سازی کنید. چنین نمونه ای تمام فیلدهای فرم خود را با آرگومان داده شده پیشوند می کند و به طور موثر مانند فضای نام فرم کار می کند. به طور کلی، می توانید از پیشوندها برای جاسازی چند فرم در یک صفحه استفاده کنید.
 
-### Pattern – CRUD views
-**Problem:** Writing boilerplate for CRUD interfaces for a model becomes repetitive.
 
-**Solution:** Use generic class-based editing views.
+<b>الگو : نماهای CRUD </b><br>
+<br>مشکل</b>: نوشتن ساختار برای رابط های CRUD ، برای یک مدل تکراری می شود.
+<b>راه حل</b>: استفاده از ویوهای عمومی ادیت برمبنای کلاس (generic class-based editing views)
+<b>جزییات مشکل: </b><br>
+در برنامه های کاربردی وب معمولی، بیشتر زمان صرف نوشتن رابط های CRUD در پایگاه داده می شود. به عنوان مثال، توییتر اساسا شامل ایجاد و خواندن توییت های یکدیگر است. در اینجا، یک توییت، شی پایگاه داده ای است که دستکاری و ذخیره می شود.
+نوشتن چنین رابط هایی از ابتدا می تواند خسته کننده باشد. اگر بتوان رابط های CRUD را به طور خودکار از خود کلاس مدل ایجاد کرد، این الگو به راحتی قابل مدیریت است.
 
-### Problem details
-In conventional web applications, most of the time is spent writing CRUD interfaces to a database. For instance, Twitter essentially involves creating and reading each other's tweets. Here, a tweet would be the database object that is being manipulated and stored.
 
-Writing such interfaces from scratch can get tedious. This pattern can be easily managed if CRUD interfaces can be automatically created from the model class itself.
+<b>راه حل مشکل: </b><br>
+جنگو فرآیند ایجاد نماهای CRUD را با مجموعه ای از چهار نمای کلی مبتنی بر کلاس ساده می کند. آنها را می توان به عملیات مربوطه خود به صورت زیر نگاشت کرد:
+- `CreateView:` نمای  یک فرم خالی برای ایجاد یک نمونه مدل جدید را نمایش می دهد .
+- `DetailView:` این نما جزئیات یک شی را با خواندن از پایگاه داده نشان می دهد .
+- `UpdateView:` این نما به شما امکان می دهد تا جزئیات یک شی را از طریق یک فرم از پیش پر شده به روز کنید 
+- `DeleteView:` این نما یک صفحه تایید را نمایش می دهد و در صورت تایید، شی را از پایگاه داده حذف می کند.
 
-### Solution details
-Django simplifies the process of creating CRUD views with a set of four generic class-based views. They can be mapped to their corresponding operations as follows:
-- `CreateView:` This view displays a blank form to create a new model instance
-- `DetailView:` This view shows an object's details by reading from the database
-- `UpdateView:` This view allows you to update an object's details through a prepopulated form
-- `DeleteView:` This view displays a confirmation page and, on approval, deletes the object from the database
+بیایید به یک مثال ساده نگاهی بیندازیم. ما مدلی داریم که حاوی تاریخ‌های مهم در مورد رویدادهای مورد علاقه همه افرادی است که از سایت ما استفاده می‌کنند. ما باید رابط های ساده CRUD بسازیم تا هر کسی بتواند این تاریخ ها را مشاهده و تغییر دهد. بیایید نگاهی به مدل ImportantDate تعریف شده در formschapter/models.py به شرح زیر بیندازیم:
 
-Let's take a look at a simple example. We have a model that contains important dates about events of interest to everyone using our site. We need to build simple CRUD interfaces so that anyone can view and modify these dates. Let's take a look at the `ImportantDate` model defined in `formschapter/models.py` as follows:
 ```python
 class ImportantDate(models.Model):
     date = models.DateField()
@@ -427,9 +408,9 @@ class ImportantDate(models.Model):
     return reverse('impdate_detail', args=[str(self.pk)])
 ```
 
-The `get_absolute_url()` method is used by the `CreateView` and `UpdateView` classes to redirect after a successful object creation or update. It has been routed to the object's `DetailView`.
+متد get_absolute_url() توسط کلاس های CreateView و UpdateView برای تغییر مسیر پس از ایجاد یا به روز رسانی موفق شی استفاده می شود. به DetailView شی هدایت شده است.
+همانطور که در کد زیر در formschapter/views.py نشان داده شده است، خود نماهای CRUD به اندازه کافی ساده هستند که قابل توضیح باشند:
 
-The CRUD views themselves are simple enough to be self-explanatory, as shown in the following code within `formschapter/views.py`:
 ```python
 class ImpDateDetail(generic.DetailView):
     model = models.ImportantDate
@@ -447,9 +428,10 @@ class ImpDateDelete(generic.DeleteView):
     success_url = reverse_lazy("formschapter:impdate_list")
 ```
 
-In these generic views, the model class is the only mandatory member to be mentioned. However, in the case of `DeleteView`, the `success_url` function needs to be mentioned as well. This is because after deletion, `get_absolute_url` can no longer be used to find out where to redirect users.
+در این نماهای عمومی، کلاس مدل تنها عضو اجباری است که باید ذکر شود. با این حال، در مورد DeleteView، تابع success_url نیز باید ذکر شود. این به این دلیل است که پس از حذف، get_absolute_url دیگر نمی تواند برای یافتن اینکه کاربران را به کجا هدایت کنید استفاده شود.
 
-Defining the `form_class` attribute is not mandatory. If it is omitted, a `ModelForm` method corresponding to the specified model will be created. However, we would like to create our own model form to take advantage of crispy forms, as shown in the following code in `formschapter/forms.py`:
+تعریف ویژگی form_class اجباری نیست. اگر حذف شود، یک متد ModelForm مطابق با مدل مشخص شده ایجاد می شود. با این حال، همانطور که در کد زیر در formschapter/forms.py نشان داده شده است، می‌خواهیم فرم مدل خود را برای استفاده از فرم‌های ترد ایجاد کنیم:
+
 
 ```python
 from django import forms
@@ -467,13 +449,13 @@ class ImportantDateForm(forms.ModelForm):
         self.helper = FormHelper(self)
         self.helper.layout.append(Submit('save', 'Save'))
 ```
-Thanks to crispy forms, we need very little HTML markup in our templates to build these CRUD forms.
+به لطف فرم‌های Crispy، برای ساختن این فرم‌های CRUD به کدنویسی HTML بسیار کمی در قالب‌های خود نیاز داریم.
 
-*Explicitly mentioning the fields of a `ModelForm` method is a best practice. Setting fields to `'__all__'` may be convenient, but can inadvertently expose sensitive data, especially after adding new fields to the model.*
+ذکر صریح فیلدهای  ModelForm بهترین کار است. تنظیم فیلدها روی «__all__» ممکن است راحت باشد، اما می‌تواند به‌طور ناخواسته داده‌های حساس را به‌ویژه پس از افزودن فیلدهای جدید به مدل نشان دهد.
 
-The template paths, by default, are based on the view class and the model names. For brevity, we omitted the template source here. Please refer to the `templates` directory in the `formschapter` app in the SuperBook project. We use the same form for `CreateView` and `UpdateView`.
+مسیرهای قالب، به طور پیش فرض، بر اساس کلاس view و نام مدل هستند. برای اختصار، منبع الگو را در اینجا حذف کردیم. لطفاً به فهرست الگوها در برنامه formschapter در پروژه SuperBook مراجعه کنید. ما از همین فرم برای CreateView و UpdateView استفاده می کنیم.
+در نهایت، نگاهی به formschapter/urls.py می اندازیم، جایی که همه چیز به هم متصل شده است:
 
-Finally, we take a look at `formschapter/urls.py`, where everything is wired up together:
 ```python
 path('impdates/<int:pk>/',
     views.ImpDateDetail.as_view(),
@@ -496,9 +478,9 @@ path('impdates/',
     name="impdate_list"),
 ```
 
-Django generic views are a great way to get started with creating CRUD views for your models. With a few lines of code, you get well-tested model forms and views created for you, rather than doing the boring task yourself.
+نماهای عمومی جنگو یک راه عالی برای شروع با ایجاد نماهای CRUD برای مدل های شما است. با چند خط کد، به جای اینکه خودتان این کار خسته کننده را انجام دهید، فرم های مدل و نماهایی که به خوبی آزمایش شده برای شما ایجاد می شوند، دریافت می کنید.
 
-### Summary
-In this chapter, we looked at how web forms work and how they are abstracted using form classes in Django. We also looked at the various techniques and patterns that are used to save time while working with forms.
+<b>خلاصه</b><br>
+در این فصل، نحوه کار فرم‌های وب و نحوه انتزاع آن‌ها با استفاده از کلاس‌های فرم در جنگو را بررسی کردیم. ما همچنین به تکنیک ها و الگوهای مختلفی که برای صرفه جویی در زمان در حین کار با فرم ها استفاده می شود، نگاه کردیم.
 
-In the next chapter, we will take a look at a systematic approach to work with a legacy Django codebase, and how we can enhance it to meet evolving client needs.
+در فصل بعدی، نگاهی به یک رویکرد سیستماتیک برای کار با پایگاه کد جنگو قدیمی خواهیم داشت، و اینکه چگونه می‌توانیم آن را برای برآورده کردن نیازهای مشتری در حال تکامل افزایش دهیم.
