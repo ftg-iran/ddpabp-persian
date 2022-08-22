@@ -409,10 +409,10 @@ Some of the notable new modules added to Python 3 are as listed:
 - pathlib: Object-oriented filesystem paths
 - statistics: Mathematical statistics functions
 برخی از ماژول های جدید قابل توجه اضافه شده به پایتون 3 به شرح زیر است:
-- اasyncio: ورودی/خروجی ناهمزمان، حلقه رویداد، برنامه‌ها و وظایف
+- asyncio: ورودی/خروجی ناهمزمان، حلقه رویداد، برنامه‌ها و وظایف
 - اسرار: اعداد تصادفی رمزنگاری قوی
-- اunittest.mock: کتابخانه شی ساختگی برای آزمایش
-- اpathlib: مسیرهای سیستم فایل شی گرا
+- unittest.mock: کتابخانه شی ساختگی برای آزمایش
+- pathlib: مسیرهای سیستم فایل شی گرا
 - آمار: توابع آمار ریاضی
 
 
