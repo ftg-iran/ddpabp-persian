@@ -220,7 +220,7 @@
 |            اتمام       |  Rahimz       |11- Testing and Debugging           |
 |            ۱ شهریور       |  Mohammad Amin Orojloo       |12- Security                        |
 |           ۱ شهریور        |  mokarramis        |13- Production-Ready                |
-|              ۲۱ مرداد     |  Hamed Alizade       |Appendix A: Python 2 Versus Python 3|
+|              ۱ شهریور     |  Hamed Alizade       |Appendix A: Python 2 Versus Python 3|
 
 </div>
 
