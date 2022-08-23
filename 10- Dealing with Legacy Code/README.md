@@ -267,43 +267,36 @@ $ python manage.py inspectdb > models.py
 
 در نهایت، شما باید بتوانید تمام داده‌هایی را که در داخل برنامه قدیمی PHP داشتید، در رابط کاربری Django خود مشاهده کنید. من مطمئن هستم که مشاهده این دیتاها در جنگو لبخند به لب شما خواهد آورد.
 
+## آینده نگری<sup>[3](#footnote-3)</sup>  (Future proof)
 
-## Future proofing
+یک پایه کد خوب نوشته شده برای کار کردن لذت بخش است. یک پایگاه کد بد سازماندهی شده و  شکننده معمولاً به عنوان کد قدیمی در نظر گرفته می شود و مانع نوآوری می شود. بنابراین چگونه می توانید شانس در نظر گرفتن برنامه خود را به عنوان کد مورثی کاهش دهید؟ در اینجا چند توصیه وجود دارد:
 
-A well-written code base is a pleasure to work with. A poorly organized and brittle code
-base usually ends up as legacy code and hinders innovation. So how can you reduce the
-chances of your application being considered as legacy? Here are some recommendations:
+- **منسوخ ‌شده‌های جنگو**: منسوخ شده ها به شما می‌گویند که آیا یک ویژگی یا اصطلاح در آینده از جنگو حذف خواهد شد. از جنگو 1.11 آنها به طور پیش فرض غیر فعال هستند. از `python -Wd`  استفاده کنید تا اخطارهای منسوخ شدن نمایش داده شوند.
+- **بررسی کد**: از کیفیت بالای کد اطمینان حاصل کنید و روش برتر را در بررسی ها تشویق کنید.
+- **قالب‌بندی ثابت**: برای کاهش زمان بازبینی، از یک برنامه قالب‌بندی کد مانند `black` جهت مرتب شدن کدها قبل از اجرای آن استفاده کنید
+- **افزایش پوشش کد<sup>[4](#footnote-4)</sup>**: تست های بیشتری بنویسید، به خصوص تست های واحد.
+- **اشاره به نوع<sup>[5](#footnote-5)</sup>**: از سرنخ‌های نوع برای انجام تحلیل ایستای کد  پایتون 3 و کاهش تعداد موارد تست استفاده کنید.
+- **مدیریت پیکربندی**: کنترل نسخه قوی و سایر شیوه های مدیریت پیکربندی را برای انجام پروژه خود در نظر بگیرید تا اطمینان از محیط های قابل تکرار و بازگشت بدون دردسر را داشته باشید. این شامل استفاده از مجموعه ای از ابزارها از Git تا  Ansible است، در حالی که فرهنگ DevOps چابکی دارید.
 
-- **Django deprectations**: Deprectations tell you whether a feature or idiom will be
-discontinued from Django in the future. Since Django 1.11, they are quiet by
-default. Use `python -Wd` so that deprecation warnings do appear.
-- **Code reviews**: Ensure high code quality and encourage best practices in reviews.
-- **Consistent Formatting**: Use a code formatter like `black` before committing code
-to reduce review time
-- Increase code coverage: Write more tests, especially unit tests.
-- **Type hinting**: Use type hinting to perform static analysis of Python 3 code and
-reduce the number of test cases.
-- **Configuration management**: Have strong version control and other
-configuration management practices to ensure replicable environments and
-painless rollbacks. This includes using a host of tools from Git to Ansible, while
-having an agile DevOps culture.
+## خلاصه
+در این فصل، تکنیک‌های مختلفی را برای درک کدهای قدیمی بررسی کردیم. خواندن کد اغلب یک مهارت دست کم گرفته شده است. با این حال، به جای اختراع مجدد چرخ، ما نیاز داریم تا زمانی که ممکن است از کدهای با عملکرد مناسب دوباره استفاده کنیم. در این فصل و در سراسر کتاب، ما بر اهمیت نوشتن موارد تست به عنوان بخشی جدایی ناپذیر از کدنویسی تاکید می کنیم.
 
-## Summary
+در فصل بعدی، در مورد نوشتن موارد تست و کار اغلب خسته کننده اشکال زدایی که به دنبال آن انجام می شود صحبت خواهیم کرد.
 
-In this chapter, we looked at various techniques to understand the legacy code. Reading
-code is often an underrated skill. However, rather than reinventing the wheel, we need to
-judiciously reuse good working code whenever possible. In this chapter, and throughout
-the rest of the book, we emphasize the importance of writing test cases as an integral part of
-coding.
-
-In the next chapter, we will talk about writing test cases and the often frustrating task of
-debugging that follows this.
 
 ---
-
 <a name="footnote-1">1</a>:   محیط، منظور محیط شبکه است که در واقع مرز بین شبکه داخلی امن یک سازمان و هر شبکه خارجی کنترل نشده دیگری مثل اینترنت است.  در اینجا اشاره به نفوذ به داخل شبکه آن سازمان توسط حملات سایبری دارد.
 
 <a name="footnote-2">2</a>:  زمانی از این اصطلاح استفاده می شود که فرد به تئوری های توطئه اعتقاد دارد و یا اصطلاحا اعتقاد به این دارد که رویداد فعلی نتیجه نقشه های مخفی افراد قدرتمند هستند
+
+<a name="footnote-3">3</a>:  ‌ فرآیند پیش‌بینی آینده و ارائه روش‌هایی جهت حداقل شدن شوک‌ها و تنش‌های رخدادها و حوادث آینده است. جهت به خداقل رسیدن تغییرات در کد ها است.
+
+<a name="footnote-4">4</a>:  پوشش کد (Code Coverage) به میزان خط کدی که توسط تست های نوشته شده شما پاس می شوند گفته می شود   
+
+<a name="footnote-5">5</a>: اشاره به نوع (Type hinting) در واقع قابلیتی است که از طریق آن می توانید تعیین کنید که انتظار چه نوع داده ای را از به عنوان نمونه تابع مد نظر خود داریم.
+
+
+
 
 
 
