@@ -205,108 +205,68 @@ $ dot -Tpng models.dot -o models.png
 
 صرف نظر از اینکه ویژگی‌ها را اضافه می‌کنید یا کد خود را مرتب می‌کنید، شما نباید بدون انجام آزمایشات به کد قدیمی کاری خود دست بزنید
 
-## Writing tests before making any changes
+## تست نوشتن قبل از ایجاد هرگونه تغییر
 
-In the *Working Effectively with Legacy Code* book by *Michael Feathers*, legacy code is defined
-as, simply, code without tests. He elaborates that with tests, you can easily modify the
-behavior of the code quickly and verifiably. In the absence of tests, it is impossible to gauge
-whether the change made the code better or worse.
+در کتاب *کارکرد موثر با کد مورثی* (Working Effectively with Legacy Code) توسط *Michael Feathers*، کدهای قدیمی به سادگی به صورت کد بدون آزمون تعریف شده است. او توضیح می‌دهد که با آزمایش‌ها، می‌توانید به راحتی رفتار کد را به سرعت و به‌طور قابل تأیید تغییر دهید. در غیاب آزمایش، نمی توان ارزیابی کرد که آیا این تغییر باعث بهتر یا بدتر شدن کد شده است.
 
-Often, we do not know enough about legacy code to confidently write a test. Michael
-recommends writing tests that preserve and document the existing behavior, which are
-called characterization tests.
 
-Unlike the usual approach of writing tests, while writing a characterization test, you will
-first write a failing test with a dummy output, say X, because you don't know what to
-expect. When the test harness fails with an error, such as **Expected output X but got Y**, you
-will change your test to expect Y. So, now the test will pass, and it becomes a record of the
-code's existing behavior.
+اغلب، ما به اندازه کافی درباره کدهای قدیمی نمی دانیم تا بتوانیم با اطمینان یک تست بنویسیم. مایکل نوشتن تست هایی را توصیه می کند که رفتار موجود را حفظ و مستند کند، که به آنها تست مشخصه‌سازی می گویند.
 
-`We might record buggy behavior as well. After all, this is unfamiliar code.
-Nevertheless, writing such tests are necessary before we start changing
-the code. Later, when we know the specifications and code better, we can
-fix these bugs and update our tests (not necessarily in that order).`
+برخلاف دیدگاه‌های معمول تست‌ نوشتن، هنگام نوشتن تست مشخصه‌سازی ابتدا یک تست شکست با خروجی ساختگی (مثلا X) می‌نویسید، زیرا نمی‌دانید از خروجی چه نتیجه‌ای حاصل می شود. هنگامی که تست با یک خطا از کار می افتد **مثلا خروجی X انتظار می رود اما Y را دریافت می کند**، تست خود را به Y تغییر می دهید. بنابراین، اکنون تست با موفقیت انجام می شود و به یک رکورد از رفتار موجود کد تبدیل می شود.
 
-## Step-by-step process to writing tests
+`ممکن است رفتار باگ‌دار را نیز ثبت کنیم. گذشته از همه اینها، به این کد شناخت کافی نداریم. با این اوصاف، نوشتن چنین تست هایی قبل از شروع تغییر کد ضروری است. بعداً، وقتی مشخصات و کدها را بهتر دانستیم، می‌توانیم این باگ‌ها را برطرف کرده و آزمایش‌های خود را به‌روزرسانی کنیم (نه لزوماً به این ترتیب).`
 
-Writing tests before changing the code is similar to erecting a scaffolding before the
-restoration of an old building. It provides a structural framework that helps you
-confidently undertake repairs.
+## مراحل گام به گام جهت نوشتن تست
 
-You might want to approach this process in a stepwise manner as follows:
+نوشتن تست قبل از تغییر کد شبیه به نصب داربست قبل از مرمت یک ساختمان قدیمی است. این یک چارچوب ساختاری را فراهم می کند که به شما کمک می کند تا تعمیرات را با اطمینان انجام دهید.
 
-1. Identify the area you need to make changes to. Your bug reports can be a good
-guide for narrowing down the problem area. Write characterization tests
-focusing on this area until you have satisfactorily captured its behavior.
+ممکن است بخواهید این فرآیند را به صورت گام به گام به شرح زیر انجام دهید:
 
-2. Look at the changes you need to make and write specific test cases for those.
-Resist the temptation to add new functionality. Prefer smaller unit tests to larger
-and slower integration tests.
+1.	بخشی را که باید در آن تغییرات ایجاد کنید، مشخص کنید. گزارش اشکال شما می تواند راهنمای خوبی برای محدود کردن حوزه مشکل باشد. تست های  مشخصه‌سازی را با تمرکز بر روی این ناحیه بنویسید تا زمانی که رفتار آن را به نحوی که مورد رضایتتان است دریافت کنید.
 
-3. Introduce incremental changes and test in lockstep. If tests break, try to analyze
-whether it was expected. Don't be afraid to break even the characterization tests
-if that behavior is something that was intended to change.
+2.	به تغییراتی که باید ایجاد کنید نگاه کنید و موارد تستی خاص را برای آن ها بنویسید. در برابر وسوسه افزودن قابلیت های جدید مقاومت کنید. سعی کنید که تست های واحد  را به صورت کوچک بنویسید و از نوشتن تست های بزرگ دوری کنید. 
 
-Observe that characterization tests capture all the existing behavior of your code, including
-bugs. Once your code goes into production and users become familiar with it, the bugs can
-become the expected behavior. So these tests serve as a testable documentation of the as-is
-functionality.
+3. تغییرات افزایشی را تعیین کنید و در در یک حالت گام‌به‌گامِ تست کنید. اگر تست‌ها شکست خورد، سعی کنید آن را تجزیه و تحلیل کنید که آیا مورد انتظار بود یا خیر. اگر آن رفتار چیزی است که قصد تغییر آن را داشته اید، از شکست حتی تست های مشخصه‌سازی نترسید.
 
-If you have a good set of granular tests around your code, you can quickly find the effect of
-changing your code. Hence, the value of writing more unit tests with good coverage will
-help you quickly identify the impact of a change.
+توجه داشته باشید که تست های مشخصه تمام رفتارهای موجود کد شما از جمله اشکالات را ثبت می کنند. هنگامی که کد شما وارد مرحله پروداکشن شد و کاربران با آن آشنا شدند، اشکالات می توانند به رفتار مورد انتظار تبدیل شوند. بنابراین این تست ها به عنوان یک مستند قابل آزمایش از عملکرد همانطور که هست عمل می کنند.
 
-On the other hand, if you decide to rewrite by discarding your code but not your data,
-Django can help you considerably.
+اگر مجموعه خوبی از تست های دانه ایی در اطراف کد خود دارید، می توانید به سرعت تأثیر تغییر کد خود را پیدا کنید. از این رو، ارزش نوشتن تست های واحد بیشتر با پوشش خوب به شما کمک می کند تا تأثیر یک تغییر را سریع تشخیص دهید.
 
-## Legacy database integration
+از سوی دیگر، اگر تصمیم به بازنویسی با حذف کد خود دارید، اما نه داده های خود، جنگو می تواند کمک قابل توجهی به شما کند.
 
-There is an entire section on legacy databases in Django documentation and rightly so, as
-you will run into them many times. Data is more important than code, and databases are
-the repositories of data in most enterprises.
+## یکپارچگی دیتابیس میراثی
 
-You can modernize a legacy application written in other languages or frameworks by
-importing their database structure into Django. As an immediate advantage, you can use
-the Django admin interface to view and change your legacy data.
 
-Django makes this easy with the `inspectdb` management command, which looks as
-follows:
+یک بخش کامل در مورد پایگاه داده های قدیمی در اسناد جنگو وجود دارد و این کار درستی است، زیرا بارها با آنها برخورد خواهید کرد. داده ها مهم تر از کد هستند و پایگاه های داده مخازن داده ها در اکثر شرکت ها هستند.
+
+شما می توانید یک برنامه قدیمی را که به زبان ها یا فریم ورک های دیگر نوشته شده است، با وارد کردن ساختار پایگاه داده آنها به جنگو مدرن کنید. به عنوان یک مزیت ، می توانید از رابط مدیریت جنگو برای مشاهده و تغییر داده های قدیمی خود استفاده کنید.
+
+جنگو با دستور مدیریت `inspectdb` که به صورت زیر است این کار را آسان می کند:
+
 
 ```bash
 $ python manage.py inspectdb > models.py
 ```
 
-This command, if run while your settings are configured to use the legacy database, can
-automatically generate the Python code that will go into your models file. By default, these
-models are unmanaged, that is, `managed = False`. In this state, Django will not control
-the model's creation, modification, or deletion.
+اگر این دستور در حالی اجرا شود که تنظیمات شما برای استفاده از پایگاه داده قدیمی پیکربندی شده است، می تواند به طور خودکار کد پایتون را ایجاد کند که در بخش فایل مدل های شما می رود. به طور پیش فرض، این مدل ها بدون مدیریت هستند، یعنی `managed = False`. در این حالت، جنگو ایجاد، اصلاح یا حذف مدل را کنترل نخواهد کرد.
 
-Here are some best practices if you are using this approach to integrate in a legacy
-database:
+اگر از این رویکرد برای ادغام یک پایگاه داده قدیمی استفاده می کنید، در اینجا بهترین روش ها آورده شده است:
 
-- Know the limitations of Django ORM beforehand. Currently, multicolumn
-(composite) primary keys and NoSQL databases are not supported.
+- از قبل محدودیت های ORM جنگو را بشناسید. در حال حاضر، کلیدهای اولیه چند ستونی (کامپوزیت) و پایگاه داده های NoSQL پشتیبانی نمی شوند.
 
-- Don't forget to manually clean up the generated models; for example, remove the
-redundant `id` fields since Django creates them automatically.
+- فراموش نکنید که مدل های تولید شده را به صورت دستی اصلاح کنید. به عنوان مثال، فیلدهای `id` اضافی را حذف کنید زیرا جنگو آنها را به طور خودکار ایجاد می کند.
 
-- Foreign key relationships may have to be manually defined. In some databases,
-the autogenerated models will have them as integer fields (suffixed with `_id`).
+- روابط کلید خارجی ممکن است به صورت دستی تعریف شوند. در برخی پایگاه‌های داده، مدل‌های تولید شده به صورت خودکار دارای فیلدهای عدد صحیح (با پسوند `_id`) هستند.
 
-- Organize your models into separate apps. Later, it will be easier to add the views,
-forms, and tests in the appropriate folders.
+- مدل های خود را در برنامه های جداگانه سازماندهی کنید. بعداً افزودن نماها، فرم‌ها و تست‌ها در پوشه‌های مناسب آسان‌تر خواهد بود.
 
-- Remember that running the migrations will create Django's administrative tables
-(`django_*` and `auth_*`) in the legacy database
+- به یاد داشته باشید که اجرای migrations، جداول مدیریت جنگو (`django_*` و `auth_*`) را در پایگاه داده قدیمی ایجاد می کند.
 
-In an ideal world, your autogenerated models will immediately start working, but in
-practice, it takes a lot of trial and error. Sometimes, the data type that Django inferred
-might not match your expectations. In other cases, you might want to add additional meta-
-information, such as `unique_together`, to your model.
+در حالت ایده‌آل، باید بتوان از مدل‌های تولید خودکار بلافاصله استفاده کرد، اما در عمل، آزمون و خطای زیادی می‌طلبد. گاهی اوقات، نوع داده ای که جنگو استنباط می کند ممکن است با انتظارات شما مطابقت نداشته باشد. در موارد دیگر، ممکن است بخواهید متا اطلاعات اضافی، مانند `unique_together` را به مدل خود اضافه کنید.
 
-Eventually, you should be able to see all the data that was locked inside that aging PHP
-application in your familiar Django admin interface. I am sure this will bring a smile to
-your face.
+
+در نهایت، شما باید بتوانید تمام داده‌هایی را که در داخل برنامه قدیمی PHP داشتید، در رابط کاربری Django خود مشاهده کنید. من مطمئن هستم که مشاهده این دیتاها در جنگو لبخند به لب شما خواهد آورد.
+
 
 ## Future proofing
 
