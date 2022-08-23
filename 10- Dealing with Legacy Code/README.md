@@ -105,19 +105,15 @@ VERSION = (1, 5, 9, 'final', 0)
 
 همانطور که در `فصل 13`(آمادگی برای محیط پروداکشن) خواهید خواند، محل کد منبع را می توان با بررسی فایل پیکربندی وب سرور خود پیدا نمایید. در اینجا، متغیر محیطی `DJANGO_SETTINGS_MODULE` را می‌بینید که روی مسیر ماژول تنظیم شده است، یا درخواست را به سرور WSGI ارسال می‌کند که برای اشاره به فایل `project.wsgi` شما پیکربندی خواهد شد.
 
-## Starting with urls.py
+## شروع با urls.py
 
-Even if you have access to the entire source code of a Django site, figuring out how it works
-across various apps can be daunting. Often, it is best to start from the root `URLconf` located
-in the `urls.py`, file since it is literally a map that ties every request to the respective views.
+حتی اگر به کل کد منبع یک سایت جنگو دسترسی داشته باشید، فهمیدن نحوه عملکرد آن در برنامه های مختلف می تواند دشوار باشد. اغلب، بهتر است از `URLconf` واقع در فایل `urls.py` شروع کنید، زیرا به معنای واقعی کلمه یک نقشه است که هر درخواست را به نماهای مربوطه مرتبط می کند.
 
-With normal Python programs, I often start reading from the start of its execution–say,
-from the top-level main module or wherever the `__main__` check idiom starts. In the case
-of Django applications, I usually start with `urls.py` since it is easier to follow the flow of
-execution based on the various URL patterns a site has.
 
-In Linux, you can use the following `find` command to locate the `settings.py` file and the
-corresponding line specifying the `urls.py` root:
+با برنامه‌های معمولی پایتون، من اغلب از ابتدای اجرای آن شروع به خواندن می‌کنم – مثلاً از ماژول اصلی سطح بالا یا هرجا که اصطلاح چک `__main__` شروع می‌شود. در مورد برنامه‌های جنگو، من معمولاً با `urls.py` شروع می‌کنم زیرا دنبال کردن جریان اجرای کد بر اساس الگوهای URL مختلف یک سایت آسان‌تر است.
+
+در لینوکس، می توانید از دستور `find` به صورت زیر برای یافتن محل فایل `settings.py` و خط مربوطه که ریشه `urls.py` را مشخص می کند استفاده کنید:
+
 
 ```bash
 $ find . -iname settings.py -exec grep -H 'ROOT_URLCONF' {} \;
@@ -126,145 +122,88 @@ $ ls projectname/urls.py
 projectname/urls.py
 ```
 
-## Jumping around the code
+## پرش در اطراف کد
 
-Reading code sometimes feels like browsing the web without the hyperlinks. When you
-encounter a function or variable defined elsewhere, you will need to jump to the file that
-contains that definition. Some IDEs can do this automatically for you as long as you tell it
-which files to track as part of the project.
+گاهی اوقات خواندن کد مانند مرور صفحات وب بدون لینک است. هنگامی که با یک تابع یا متغیری روبرو می شوید که در جای دیگری تعریف شده است، باید به فایلی که حاوی آن تعریف است بروید. برخی از IDE ها می توانند این کار را به صورت خودکار برای شما انجام دهند به شرطی که به آن ها بگویید که کدام فایل ها را به عنوان بخشی از پروژه ردیابی کند.
 
-If you use Emacs or Vim instead, you can create a TAGS file to quickly navigate between
-files. Go to the project root and run a tool called **Exuberant Ctags**, as follows:
+اگر به جای آن از Emacs یا Vim استفاده می کنید، می توانید یک فایل TAGS برای پیمایش سریع بین فایل ها ایجاد کنید. به پوشه اصلی پروژه بروید و ابزاری به نام  **Exuberant Ctags** را به صورت زیر اجرا کنید:
 
 ```bash
 find . -iname "*.py" -print | etags -
 ```
+این یک فایل به نام TAGS ایجاد می کند که حاوی اطلاعات موقعیت است، جایی که هر واحد نحوی، مانند کلاس ها و توابع، تعریف شده است. در Emacs، می توانید تعریف تگ را پیدا کنید، جایی که مکان نما (یا نقطه همانطور که در Emacs نامیده می شود) با استفاده از فرمان `M-` است. 
 
-This creates a file called TAGS that contains the location information, where every syntactic
-unit, such as classes and functions, is defined. In Emacs, you can find the definition of the
-tag, where your cursor (or point as it is called in Emacs) is at using the `M-`. command.
+در حالی که استفاده از یک فایل تگ برای کد بزرگ بسیار سریع است، اما کاملاً ابتدایی است و از یک محیط مجازی (جایی که بیشتر تعاریف ممکن است قرار داشته باشند) آگاه نیست. یک جایگزین عالی استفاده از بسته `elpy` در Emacs است. می توان آن را برای شناسایی یک محیط مجازی پیکربندی کرد. پرش به تعریف یک عنصر نحوی با استفاده از همان فرمان `M-` است. با این حال، جستجو به فایل برچسب محدود نمی‌شود، بنابراین می‌توانید به طور یکپارچه به تعریف کلاس در کد منبع جنگو بروید. اکثر IDE ها این ویژگی را تحت نام `Navigate/Go
+to definition` ارائه می کنند. 
 
-While using a tag file is extremely fast for large code bases, it is quite basic and is not aware
-of a virtual environment (where most definitions might be located). An excellent alternative
-is to use the `elpy` package in Emacs. It can be configured to detect a virtual environment.
-Jumping to a definition of a syntactic element is using the same `M-`. command. However,
-the search is not restricted to the tag file, so you can even jump to a class definition within
-the Django source code seamlessly. Most IDEs provide this feature under the `Navigate/Go
-to definition` name.
+## درک کردن پایه‌ی کد
 
-## Understanding the code base
-
-It is quite rare to find legacy code with good documentation. Even if you do, the
-documentation might be out of sync with the code in subtle ways that can lead to further
-issues. Often, the best guide to understanding the application's functionality is the
-executable test cases and the code itself.
-
-The official Django documentation has been organized according to versions at
-[https://docs.djangoproject.com](https://docs.djangoproject.com). On any page, you can quickly switch to the
-corresponding page in the previous versions of Django with a selector in the bottom right-
-hand section of the page:
+یافتن کد قدیمی با مستندات خوب بسیار نادر است. حتی اگر این کار را انجام دهید، ممکن است اسناد تا حدی با کد هماهنگ نباشد که می‌تواند منجر به مشکلات بیشتر شود. اغلب، بهترین راهنما برای درک عملکرد برنامه، اجرای کدهای تست و یا اجرای خود کد است. اسناد رسمی جنگو بر اساس نسخه هایی در [https://docs.djangoproject.com](https://docs.djangoproject.com) سازماندهی شده است. در هر صفحه‌ای، می‌توانید به سرعت به صفحه مربوطه در نسخه‌های قبلی جنگو (با یک انتخابگر در قسمت پایین سمت راست صفحه) بروید: 
 
 ![image 01](1.png)
 
-In the same way, documentation for any Django package hosted on [readthedocs.org](http://readthedocs.org) can
-also be traced back to its previous versions.
+به همین ترتیب، اسناد مربوط به هر بسته جنگو که در  [readthedocs.org](http://readthedocs.org)  میزبانی شده است را نیز می توان به نسخه های قبلی آن ریشه‌یابی کرد.
 
-For example, you can select the documentation of `django-braces` all the way back to
-v1.0.0 by clicking on the selector in the bottom left-hand section of the page:
+به عنوان مثال، می توانید با کلیک بر روی انتخابگر در قسمت پایین سمت چپ صفحه، مستندات `django-braces` را تا نسخه 1.0.0 انتخاب کنید:
+
 
 ![image 02](2.png)
 
-## Creating the big picture
+## ایجاد تصویر کلی
 
-Most people find it easier to understand an application if you show them a high-level
-diagram. While this is ideally created by someone who understands the workings of the
-application, there are tools that can create very helpful high-level depictions of a Django
-application.
+بیشتر مردم با مشاهده نمودار سطح بالا از یک برنامه کاربردی راحت تر آن را درک می کنند. در حالی که این به طور ایده‌آل توسط شخصی ایجاد می‌شود که عملکرد برنامه را می‌فهمد، ابزارهایی وجود دارند که می‌توانند تصاویر بسیار مفیدی در سطح بالا از یک برنامه جنگو ایجاد کنند.
 
-A graphical overview of all models in your apps can be generated by the `graph_models`
-management command, which is provided by the `django-command-extensions`
-package. As shown in the following diagram, the model classes and their relationships can
-be understood at a glance:
+با دستور مدیریت `graph_models` که توسط بسته `django-command-extensions` ارائه می شود، می توان یک نمای کلی گرافیکی از همه مدل ها در برنامه های شما ایجاد کرد. همانطور که در نمودار زیر نشان داده شده است، کلاس های مدل و روابط آنها را می توان در یک نگاه درک کرد:
 
 ![image 03](3.png)
 
-This visualization is actually created using PyGraphviz. This can get really large for
-projects of even medium complexity. Hence, it might be easier if the applications are
-logically grouped and visualized separately.
+این تجسم در واقع با استفاده از PyGraphviz ایجاد می شود. این می تواند برای پروژه های حتی با پیچیدگی متوسط واقعاً بزرگ باشد. از این رو، اگر برنامه ها به طور منطقی گروه بندی شده و جداگانه تجسم شوند، ممکن است آسان تر باشد.
 
-## PyGraphviz installation and usage
 
-If you find the installation of PyGraphviz challenging, then don't worry, you are not alone.
-Recently, I faced numerous issues while installing on Ubuntu, ranging from Python 3
-incompatibility to incomplete documentation. To save your time, I have listed the steps that
-worked for me to reach a working setup:
+## نصب و استفاده از PyGraphviz
 
-1. On Ubuntu, you will need the following packages installed to install
+اگر فکر مکنید که نصب PyGraphviz چالش برانگیز است، نگران نباشید، شما تنها نیستید. اخیراً هنگام نصب در اوبونتو با مشکلات متعددی مواجه شدم، از ناسازگاری پایتون 3 تا اسناد ناقص. برای صرفه جویی در وقت شما، مراحلی را که برای رسیدن به یک راه‌اندازی صحیح نیاز است، لیست کرده‌ام:
+
+1.	در اوبونتو، برای نصب PyGraphviz به بسته های زیر نیاز دارید:
 PyGraphviz:
 
 ```bash
 $ sudo apt-get install python-dev graphviz libgraphviz-dev pkg-config
 ```
 
-2. Now, activate your virtual environment and run pip to install the development
-version of PyGraphviz directly from GitHub, which supports Python 3:
+2.	اکنون محیط مجازی خود را فعال کنید و pip را اجرا کنید تا نسخه توسعه PyGraphviz را مستقیماً از GitHub که از Python 3 پشتیبانی می کند نصب کنید:
 
 ```bash
 $ pip install
 git+http://github.com/pygraphviz/pygraphviz.git#egg=pygraphviz
 ```
 
-3. Next, install `django-extensions` and add it to your `INSTALLED_APPS`. Now,
-you are all set.
+3.	سپس،`django-extensions` را نصب کنید و آن را به `INSTALLED_APPS` خود اضافه کنید. اکنون، شما آماده اید.
 
-4. Here's a sample used to create a GraphViz dot file for just two apps and to
-convert it to a PNG image for viewing:
+4.	در اینجا نمونه ای وجود دارد که برای ایجاد یک فایل GraphViz با پسوند dot فقط برای دو برنامه و تبدیل آن به یک تصویر با پسوند PNG برای مشاهده استفاده می شود:
 
 ```bash
 $ python manage.py graph_models app1 app2 > models.dot
 $ dot -Tpng models.dot -o models.png
 ```
 
-## Incremental change or a full rewrite?
+## تغییرات افزایشی یا نوشتن مجدد به صورت کامل؟
 
-Often, you will be handed over legacy code by the application owners in the earnest hope
-that most of it can be used right away or after a couple of minor tweaks. However, reading
-and understanding a huge and often outdated code base is not an easy job. Unsurprisingly,
-most programmers prefer working on greenfield development.
+اغلب، کدهای قدیمی توسط صاحبان برنامه به شما تحویل داده می شود به این امید که بیشتر آن می تواند فوراً یا پس از چند تغییر جزئی استفاده شود. با این حال، خواندن و درک یک پایگاه کد عظیم و اغلب قدیمی کار آسانی نیست. جای تعجب نیست که بیشتر برنامه نویسان کار روی greenfield  را ترجیح می دهند.
 
-In the best case scenario, the legacy code ought to be easily testable, well documented, and
-flexible to work in modern environments so that you can start making incremental changes
-in no time. In the worst case, you might recommend discarding the existing code and go for
-a full rewrite. Alternatively, as it is in most cases, the short-term approach will be to keep
-making incremental changes, and a parallel long-term effort might be underway for a
-complete reimplementation.
+در بهترین حالت، کد قدیمی باید به راحتی قابل آزمایش، به خوبی مستند و انعطاف پذیر باشد تا در محیط های مدرن کار کند تا بتوانید در کمترین زمان تغییرات تدریجی را شروع کنید. در بدترین حالت، ممکن است توصیه کنید کد موجود را دور بیندازید و به بازنویسی کامل بروید. روش دیگر، همانطور که در بیشتر موارد وجود دارد، رویکرد کوتاه‌مدت ادامه ایجاد تغییرات تدریجی است و ممکن است یک تلاش بلندمدت موازی برای اجرای مجدد کامل انجام شود.
 
-A general rule of thumb to follow while taking such decisions is that if the cost of rewriting
-the application and maintaining the application is lower than the cost of maintaining the
-old application over time, it is recommended to go for a rewrite. Care must be taken to
-account for all the factors, such as the time taken to get new programmers up to speed, and
-the cost of maintaining outdated hardware.
+یک قانون کلی که هنگام اتخاذ چنین تصمیماتی باید رعایت شود این است که اگر هزینه بازنویسی برنامه و نگهداری برنامه کمتر از هزینه نگهداری برنامه قدیمی در طول زمان است، توصیه می شود به سراغ بازنویسی بروید. باید مراقب تمام عوامل، مانند زمان صرف شده برای به روز رسانی برنامه نویسان جدید، و هزینه نگهداری سخت افزار قدیمی باشید.
 
-Sometimes, the complexity of the application domain becomes a huge barrier against a
-rewrite, since a lot of knowledge learned in the process of building the older code gets lost.
-Often, this dependency on the legacy code itself is a sign of poor design in the application,
-like failing to externalize the business rules from the application logic.
+گاهی اوقات، پیچیدگی حوزه برنامه به مانع بزرگی در برابر بازنویسی تبدیل می شود، زیرا بسیاری از دانش‌های آموخته شده در فرآیند ساخت کدهای قدیمی از بین می رود. اغلب، این وابستگی به کد قدیمی خود نشانه ای از طراحی ضعیف در برنامه است، مانند شکست در برون‌سپاری قوانین تجاری از منطق برنامه.
 
-The worst form of a rewrite you can probably undertake is a conversion or a mechanical
-translation from one language to another without taking any advantage of the existing best
-practices. In other words, you lost the opportunity to modernize the code base by removing
-years of cruft.
+بدترین شکل بازنویسی که احتمالاً می توانید انجام دهید تبدیل یا ترجمه مکانیکی از یک زبان به زبان دیگر بدون استفاده از بهترین شیوه های موجود است. به عبارت دیگر، شما فرصت مدرن سازی پایه کد را با حذف سال‌ها شکست از دست دادید.
 
-Code should be seen as a liability and not as an asset. As counter-intuitive as it might
-sound, if you can achieve your business goals with a smaller amount of code, you have
-dramatically increased your productivity. Having less code to test, debug, and maintain can
-not only reduce ongoing costs, but also make your organization more agile and flexible to
-change.
+کد باید به عنوان یک بدهی و نه به عنوان یک دارایی در نظر گرفته شود. هرچقدر هم که ممکن است غیر شهودی به نظر برسد، اگر بتوانید با مقدار کمتری کد به اهداف تجاری خود برسید، بهره وری خود را به طرز چشمگیری افزایش داده اید. داشتن کد کمتر برای آزمایش، اشکال زدایی و نگهداری نه تنها می تواند هزینه های جاری را کاهش دهد، بلکه سازمان شما را در برابر تغییرات چابک تر و انعطاف پذیرتر می کند.
 
-`Code is a liability, not an asset. Less code is more maintainable.`
+`کد یک بدهی است، نه یک دارایی. کد کمتر قابل نگهداری است.`
 
-Irrespective of whether you are adding features or trimming your code, you must not touch
-your working legacy code without tests in place.
+صرف نظر از اینکه ویژگی‌ها را اضافه می‌کنید یا کد خود را مرتب می‌کنید، شما نباید بدون انجام آزمایشات به کد قدیمی کاری خود دست بزنید
 
 ## Writing tests before making any changes
 
