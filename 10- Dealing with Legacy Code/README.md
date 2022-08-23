@@ -43,44 +43,33 @@
 ایوان با صدای بلند با خود گفت: "حتما کلاه فویل خود را خواهم آورد<sup>[2](#footnote-2)</sup>
 . "
 
-## Finding the Django Version
 
-Ideally, every project will have a `requirements.txt` or `setup.py` file at the root directory, and it will have the exact Version of Django used for that project. Let's look for a
-line similar to this:
+## یافتن نسخه جنگو
+
+در حالت ایده آل، هر پروژه ای یک فایل requirements.txt یا setup.py در دایرکتوری اصلی خود دارد، و داخل آن نسخه دقیق جنگو استفاده شده وجود دارد. 
  
  `Django==1.5.9`
 
-The version number is mentioned precisely (rather than `Django>=1.5.9`),
-which is called **pinning**. Pinning every package is considered a good
-practice since it reduces surprises and makes your build more
-deterministic.
+شماره نسخه دقیقا ذکر شده است (به جای Django>=1.5.9) که به آن پینینگ می گویند. پینینگ هر بسته یک عمل خوب در نظر گرفته می‌شود، زیرا مشکلات پیش‌بینی نشده را کاهش می‌دهد و ساخت پروژه  شما را قطعی‌تر می‌کند.
 
-As a best practice, it is advisable to create a completely repeatable environment for a
-project. This includes having a requirements file with all transitive dependencies listed,
-pinning, and with `--hash` digests. `--hash` digests of the packages look like this:
+
+به عنوان بهترین روش، ایجاد یک محیط کاملاً تکرارپذیر برای یک پروژه توصیه می شود. این محیط شامل داشتن یک فایل نیازمندی‌ها با تمام وابستگی‌های مختلف لیست شده(پینینگ) به همراه خروجی یک تابع هش است. –خروجی تابع هش بسته‌ها به این صورت است:
 
 `Django==1.5.9 --hash=sha256:2cf24dba5fb0a30e26e83b2ac5...`
 
-Hashes protect against remote tampering and save the need to create private package index
-servers containing approved packages.
-Unfortunately, there are real-world code bases where the `requirements.txt` file was not
-updated or even completely missing. In such cases, you will need to probe for various
-telltale signs to find out the exact version.
+هش ها در برابر دستکاری از راه دور محافظت می کنند و نیاز به ایجاد سرورهای فهرست بسته خصوصی حاوی بسته های تایید شده را کاهش می دهند. متأسفانه، پایگاه‌های کد در دنیا واقعی هستند که در آن‌ها فایل requires.txt به‌روزرسانی نشده یا حتی اصلاً وجود ندارد. در چنین مواردی، برای یافتن نسخه دقیق باید علائم مختلف را بررسی کنید.
 
-## Activating the virtual environment
+## فعال سازی محیط مجازی
 
-In most cases, a Django project will be deployed within a virtual environment. Once you
-locate the virtual environment for the project, you can activate it by jumping to that
-directory and running the activated script for your OS.
+در بیشتر موارد، یک پروژه جنگو در یک محیط مجازی دیپلوی  می شود. هنگامی که محیط مجازی پروژه را پیدا کردید، می توانید آن را با رفتن به آن دایرکتوری و اجرای اسکریپت فعال شده برای سیستم عامل خود فعال کنید.
 
-For Linux, the command is as follows:
+برای لینوکس، دستور به صورت زیر است:
 
 ```bash
 $ source venv_path/bin/activate
 ```
 
-Once the virtual environment is active, start a Python shell and query the Django Version,
-as shown:
+هنگامی که محیط مجازی فعال شد، یک شل پایتون را راه اندازی کنید و نسخه جنگو را با دستورات زیر، همانطور که در زیر نشان داده شده است مشاهده خواهید کرد:
 
 ```bash
 $ python
@@ -88,18 +77,13 @@ $ python
 >>> print(django.get_version())
 1.5.9
 ```
-
-The Django Version used in this case is Version `1.5.9`.
-Alternatively, you can run the `manage.py` script in the project to get a similar output:
+نسخه جنگو استفاده شده در این مورد نسخه `1.5.9` است. همچنین، می‌توانید اسکریپت `manage.py` را در پروژه اجرا کنید تا خروجی مشابهی دریافت کنید:
 
 ```bash
 $ python manage.py --version
 1.5.9
 ```
-
-However, this option will not be available if the legacy project source snapshot was sent to
-you in an undeployed form. If the virtual environment (and packages) was also included,
-you can easily locate the version number (in the form of a tuple) in the `__init__.py` file of the Django directory. Consider the given example:
+با این حال، اگر سورس کد پروژه قدیمی به صورت دیپلوی نشده برای شما ارسال شده باشد، این گزینه در دسترس نخواهد بود. اگر محیط مجازی (و بسته ها) نیز گنجانده شده بود، می توانید به راحتی شماره نسخه (به شکل یک تاپل) را در فایل `__init__.py` دایرکتوری جنگو پیدا کنید. مثال داده شده را در نظر بگیرید:
 
 ```bash
 $ cd envs/foo_env/lib/python2.7/site-packages/django
@@ -108,31 +92,18 @@ VERSION = (1, 5, 9, 'final', 0)
 ...
 ```
 
-If all these methods fail, you will need to go through the release notes of the past Django
-Versions to determine the identifiable changes (for example, the `AUTH_PROFILE_MODULE`
-setting was deprecated since version 1.5) and match them to your legacy code. Once you
-pinpoint the correct Django Version, then you can move on to analyzing the code.
+اگر به کمک روش‌های ذکر شده موفق به یافتن نسخه جنگو نشدید، باید یادداشت‌های نسخه‌های منتشر شده قدیمی جنگو را مرور کنید تا تغییرات قابل شناسایی را تعیین کنید (به عنوان مثال، تنظیم `AUTH_PROFILE_MODULE` از نسخه 1.5 منسوخ شده است) و آنها را با کد خود مطابقت دهید. هنگامی که نسخه صحیح جنگو را مشخص کردید، می توانید به سراغ تجزیه و تحلیل کد بروید.
 
-[Pipenv](https://docs.pipenv.org/), a recent but [officially recommended](https://packaging.python.org/tutorials/managing-dependencies/#installing-pipenv) Python packaging tool, aims to solve many of these problems. It combines the functionality of `pip` and `virtualenv` so that when you install a package, it updates its requirements file (called pipenv) automatically. Last but not least, it enables repeatable builds using a `Pipenv.lock` file, which is fully pinned and
-includes hashes.
 
-## Where are the files? This is not PHP
+[Pipenv](https://docs.pipenv.org/), یک ابزار جدید بسته بندی پایتون است اما ،[ به طور رسمی توصیه شده است](https://packaging.python.org/tutorials/managing-dependencies/#installing-pipenv) چرا که بسیاری از این مشکلات را حل می‌کند. این ابزار عملکرد `pip` و `virtualenv` را با هم ترکیب می کند به طوری که وقتی یک بسته را نصب می کنید، فایل مورد نیاز آن (به نام pipenv) را به طور خودکار به روز می کند نکته مهم آخر اینکه، بیلدهای تکرار پذیر با استفاده از یک فایل `Pipenv.lock`، که کاملاً پین شده و شامل هش است، فعال می‌کند.
 
-One of the most difficult ideas to get used to, especially if you are from the PHP or
-ASP.NET world, is that the source files are not located in your web server's document root
-directory, which is usually named `wwwroot` or `public_html`. Additionally, there is no
-direct relationship between the code's directory structure and the website's URL structure.
+## فایل ها کجا هستند؟ این PHP نیست
 
-In fact, you will find that your Django website's source code is stored in an obscure path
-such as `/opt/webapps/my-django-app`. Why is this? Among many good reasons, it is
-often more secure to move your confidential data outside your public web root. This way, a
-web crawler will not be able to accidentally stumble into your source code directory.
+یکی از سخت‌ترین تصورها برای عادت کردن (مخصوصاً اگر اهل دنیای PHP یا ASP.NET هستید) این است که فایل‌های منبع در دایرکتوری ریشه پوشه وب سرور شما( که معمولاً `wwwroot` یا `public_html` نامیده می‌شود) قرار نگیرند. علاوه بر این، هیچ رابطه مستقیمی بین ساختار دایرکتوری کد و ساختار URL وب سایت وجود ندارد.
 
-As you will read in `Chapter 13`, _Production-Ready_, the location of the source code can be
-found by examining your web server's configuration file. Here, you will find either the
-`DJANGO_SETTINGS_MODULE` environment variable being set to the module's path, or it will
-pass on the request to a WSGI server that will be configured to point to
-your `project.wsgi` file.
+در واقع، متوجه خواهید شد که کد منبع وب سایت جنگو شما در یک مسیر مبهم مانند `/opt/webapps/my-django-app` ذخیره شده است. چرا اینطور هست؟ در میان بسیاری از دلایل خوب، انتقال داده های محرمانه خود به خارج از ریشه وب عمومی شما اغلب ایمن تر است. به این ترتیب، یک خزنده وب نمی تواند به طور تصادفی به لیست کد منبع شما برخورد کند.
+
+همانطور که در `فصل 13`(آمادگی برای محیط پروداکشن) خواهید خواند، محل کد منبع را می توان با بررسی فایل پیکربندی وب سرور خود پیدا نمایید. در اینجا، متغیر محیطی `DJANGO_SETTINGS_MODULE` را می‌بینید که روی مسیر ماژول تنظیم شده است، یا درخواست را به سرور WSGI ارسال می‌کند که برای اشاره به فایل `project.wsgi` شما پیکربندی خواهد شد.
 
 ## Starting with urls.py
 
