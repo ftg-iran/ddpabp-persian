@@ -1,83 +1,47 @@
-# Dealing with Legacy Code
+# سرو کار داشتن با کد مورثی
 
-In this chapter, we will discuss the following topics:
+در این فصل، ما در مورد موضوعات زیر صحبت خواهیم کرد:
 
-- Reading a Django code base
-- Discovering relevant documentation
-- Incremental changes versus full rewrites
-- Writing tests before changing code
-- Legacy database integration
+- یک کد اولیه جنگو را می خوانیم
+-	بررسی اسناد مرتبط
+- تغییرات افزایشی در مقابل بازنویسی کامل
+- تست نوشتن قبل از ایجاد هر گونه تغییر
+- اتصال دیتابیس  موروثی
 
-It sounds exciting when you are asked to join a project. Powerful new tools and cutting-
-edge technologies might await you. However, quite often, you are asked to work with an
-existing, possibly ancient, code base.
+وقتی از شما در خواست می شود تا به یک پروژه ملحق بشوید، هیجان انگیز به نظر میرسد. چرا که ابزارهای قدرتمند جدید و فناوری‌های پیشرفته احتمالا در انتظار شما است. اما با این حال، اغلب از شما درخواست می شود که با یک مجموعه ای از کدهای موجود که احتمالا قدیمی است کار کنید.
 
-To be fair, Django has not been around for that long. However, projects written for older
-versions of Django are sufficiently different to cause concern. Sometimes, having the entire
-source code and documentation might not be enough.
+در تعبیری  منصفانه ، از پیدایش جنگو مدت زمان زیادی نمی گذرد. به هر حال، پروژه‌های نوشته شده برای نسخه‌های قدیمی جنگو به اندازه کافی متفاوت هستند که باعث نگرانی می‌شود. گاهی اوقات، داشتن همه کدهای منبع و اسناد مرتبط با آن شاید کافی نباشد.
 
-If you are asked to recreate the environment, you might need to fumble with the OS
-configuration, database settings, and running services locally or on the network. There are
-so many pieces to this puzzle that you might wonder how and where to start.
+اگر از شما خواسته شد که محیط را دوباره ایجاد کنید ممکن است که لازم باشد تا شما با پیکربندی سیستم عامل، تنظیمات پایگاه داده و اجرای سرویس‌ها به صورت محلی و یا در بستر شبکه کار کنید. بخش های مختلفی برای انجام این پازل وجود دارد که ممکن است تعجب کنید که چطور و از کجا باید شروع کنید.
 
-Understanding the Django version used in the code is a key piece of information. As
-Django evolved, everything from the default project structure to the recommended best
-practices have changed. Therefore, identifying which Version of Django was used is a vital
-piece in understanding it.
+پی بردن به اینکه در پروژه از چه نسخه ای از جنگو استفاده شده است یک نکته کلیدی است. با تکامل جنگو، همه چیز از ساختار پروژه پیش‌فرض گرفته تا بهترین روش‌های توصیه شده تغییر کرده است. بنابراین تشخیص اینکه از کدام نسخه جنگو استفاده شده است، یک بخش حیاتی در درک آن است.
 
-***Change of guards***
+***تغییر نگهبانان***
 
-Sitting patiently on the ridiculously short beanbags in the training room,
-the SuperBook team waited for Hart. He had convened an emergency go-
-live meeting. Nobody understood the emergency part since go-live was at
-least three months away.
+تیم superBook صبورانه روی کیسه‌های لوبیای کوتاه مسخره در اتاق تمرین نشسته و منتظر هارت بودند. او یک جلسه اضطراری حضوری تشکیل داده بود. هیچ کس بخش اضطراری را درک نکرد، زیرا حداقل سه ماه از شروع به کار آنها گذشته بود.
 
-Madam O rushed in holding a large designer coffee mug in one hand and
-a bunch of printouts of what looked like project timelines in the other.
-Without looking up she said, "We are late, so I will get straight to the
-point. In the light of last week's attacks, the board has decided to
-summarily expedite the SuperBook project and has set the deadline to the
-end of next month. Any questions?"
+خانم O با عجله در حالی که یک لیوان قهوه با طراحی بزرگ در یک دست داشت و در دست دیگر مشتی پرینت از چیزی که شبیه جدول زمانی پروژه بود وارد شد. او بدون اینکه به بالا نگاه کند، گفت: "خیلی زمان نداریم، بنابراین مستقیماً به سر اصل مطلب می‌روم. با توجه به حملات هفته گذشته، هیئت مدیره تصمیم گرفته است که پروژه SuperBook سریعا به جمع بندی برسد و مهلت را تا پایان ماه آینده تعیین کرده است. سوالی هست؟"
 
-"Yeah," said Brad, "Where is Hart?" Madam O hesitated and replied,
-"Well, he resigned. Being the head of IT security, he took moral
-responsibility for the perimeter breach." Steve, evidently shocked, was
-shaking his head. "I am sorry," she continued, "But I have been assigned to
-head SuperBook and ensure that we have no roadblocks to meet the new
-deadline."
+برد گفت: بسیار خب، هارت کجاست؟ خانم O مکث کرد، و پاسخ داد: "خوب استعفا داد. او به عنوان رئیس امنیت فناوری اطلاعات مسئولیت اخلاقی رخنه محیطی <sup>[1](#footnote-1)</sup> را بر عهده گرفت." استیو که ظاهراً شوکه شده بود، سرش را تکان می داد. او ادامه داد: متاسفم، اما من به عنوان سرپرست SuperBook گمارده شده‌ام و باید اطمینان حاصل کنم که هیچ مانعی برای انجام پروژه تا موعد مقرر نداریم.
 
-There was a collective groan. Undeterred, Madam O took one of the sheets
-and began, "It says here that the remote archive module is the most high-
-priority item in the incomplete status. I believe Evan is working on this."
+یک ناله جمعی شنیده شد. خانم O که دلسرد نشد، یکی از برگه ها را گرفت و گفت، "اینجا می گوید که ماژول بایگانی از راه دور در وضعیت ناقص بالاترین اولویت را دارد. من معتقدم که ایوان روی این موضوع کار می کند."
+ایوان از انتهای اتاق گفت: "درست است." او به دیگران لبخند زد: "تقریباً آنجاست." خانم O از بالای لبه عینکش نگاه کرد و خیلی مؤدبانه لبخند زد.
 
-"That's correct," said Evan from the far end of the room. "Nearly there," he
-smiled at others, as they shifted focus to him. Madam O peered above the
-rim of her glasses and smiled almost too politely.
+ایوان از انتهای اتاق گفت: "درست است." او به دیگران لبخند زد: "تقریباً آنجاست." خانم O از بالای لبه عینکش نگاه کرد و خیلی مؤدبانه لبخند زد.
 
-"Considering that we already have an extremely well-tested and working
-archiver in our Sentinel code base, I would recommend that you leverage
-that instead of creating another redundant system."
+"با توجه به اینکه ما در حال حاضر یک بایگانی بسیار آزمایش شده و کارآمد در پایگاه کد سنتینل خود داریم، توصیه می کنم به جای ایجاد یک سیستم اضافی دیگر، از آن استفاده کنید."
 
-"But," Steve interrupted, "it is hardly redundant. We can improve over a
-legacy archiver, can't we? If it isn't broken, then don't fix it", replied
-Madam O tersely. He said, "He is working on it," said Brad almost
-shouting, "What about all that work he has already finished?"
+استیو حرفش را قطع کرد، "این کار خیلی اضافه‌ای است. ما می توانیم نسبت به بایگانی کننده قدیمی پیشرفت کنیم، نه؟ اگر خراب نیست، پس نیازی به اصلاح ندارد". خانم O خیلی خلاصه پاسخ داد. برد با صدای بلندگفت  "او دارد روی آن کار می کند" "در مورد همه کارهایی که قبلاً به پایان رسانده است؟"
 
-"Evan, how much of the work have you completed so far?" asked O,
-rather impatiently. "About 12 percent," he replied looking defensive.
-Everyone looked at him incredulously. "What? That was the hardest 12
-percent" he added.
+خانم O با بی حوصلگی پرسید. "ایوان، چه مقدار از کار را تا کنون تکمیل کرده ای؟" او با حالت دفاعی پاسخ داد: «حدود 12 درصد». همه با ناباوری به او نگاه کردند.  او گفت : "چی؟ این 12 درصد سخت‌ترین بخش کار بود."
 
-O continued the rest of the meeting in the same pattern. Everybody's work
-was re-prioritized and shoe-horned to fit the new deadline. As she picked
-up her papers, ready to leave, she paused and removed her glasses.
+خانم O ادامه جلسه را با همین حالت ادامه داد. کار همه دوباره اولویت‌بندی شد و متناسب با مهلت زمانی جدید، فشرده شد. همانطور که کاغذهایش را برداشت، آماده رفتن بود، مکثی کرد و عینکش را برداشت و گفت:
 
-"I know what all of you are thinking... literally, but you need to know that
-we had no choice about the deadline. All I can tell you now is that the
-world is counting on you to meet that date, somehow or other." Putting
-her glasses back on, she left the room.
 
-"I am definitely going to bring my tinfoil hat," said Evan loudly to himself.
+"من به معنای واقعی کلمه می دانم که همه شما به چه چیزی فکر می کنید ، اما باید بدانید که ما هیچ انتخابی در مورد  تعیین ضرب الاجل نداشتیم. تنها چیزی که اکنون می توانم به شما بگویم این است که جهان برای رسیدن به آن تاریخ، به هر نحوی، روی شما حساب می کند" عینکش را دوباره گذاشت و از اتاق خارج شد.
+
+ایوان با صدای بلند با خود گفت: "حتما کلاه فویل خود را خواهم آورد<sup>[2](#footnote-2)</sup>
+. "
 
 ## Finding the Django Version
 
@@ -464,4 +428,12 @@ coding.
 
 In the next chapter, we will talk about writing test cases and the often frustrating task of
 debugging that follows this.
+
+---
+
+<a name="footnote-1">1</a>:   محیط، منظور محیط شبکه است که در واقع مرز بین شبکه داخلی امن یک سازمان و هر شبکه خارجی کنترل نشده دیگری مثل اینترنت است.  در اینجا اشاره به نفوذ به داخل شبکه آن سازمان توسط حملات سایبری دارد.
+
+<a name="footnote-2">2</a>:  زمانی از این اصطلاح استفاده می شود که فرد به تئوری های توطئه اعتقاد دارد و یا اصطلاحا اعتقاد به این دارد که رویداد فعلی نتیجه نقشه های مخفی افراد قدرتمند هستند
+
+
 
