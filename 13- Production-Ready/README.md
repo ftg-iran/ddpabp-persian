@@ -1,20 +1,16 @@
-# Production-Ready
+# آماده برای تولید
 
-In this chapter, we will discuss the following topics:
-- Picking a web stack
-- Hosting approaches
-- Deployment tools
-- Monitoring
-- Performance tips
+در این فصل به مباحث زیر می پردازیم:
+- انتخاب یک وب استک
+- رویکردهای میزبانی
+- بزارهای استقرار
+- مانیتورینگ
+- نکاتی برای کارایی
 
-So, you have developed and tested a fully functional web application in Django. Deploying
-this application can involve a diverse set of activities from choosing your hosting provider
-to performing installations. Even more challenging could be the tasks of maintaining a
-production site so it works without interruption and handling unexpected bursts in traffic.
+خوب  شما تاکنون یک برنامه وب کاملا کاربردی را در جنگو توسعه داده و آنرا مورد آزمایش قرار داده اید. استقرار این برنامه می‌تواند شامل مجموعه‌ای از فعالیت‌ها از انتخاب ارائه‌دهنده میزبانی شما تا اجرای نصب باشد. حتی چالش‌برانگیزتر می‌تواند اقدامات مربوط به حفظ یک سایت تولید شده باشد، تا بدون وقفه و مدیریت انفجارهای غیرمنتظره در ترافیک بالا کار ‌کند.
 
-The discipline of system administration is vast. Hence, this chapter will cover a lot of
-ground. However, given the limited space, we will attempt to familiarize you with the
-various aspects of building a production environment.
+قوانین مدیریت سیستم بسیار گسترده است. از این رو، این فصل زمینه های زیادی را پوشش خواهد داد. با این حال، با توجه به فضای محدود، سعی می کنیم شما را با جنبه های مختلف ساخت یک محیط تولید و پروداکشن آشنا کنیم.
+
 
 
 ### The production environment
