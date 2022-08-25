@@ -59,8 +59,7 @@
 
 در آن زمان، جنگو حدود صد هزار خط کد داشت و بازنویسی قابل توجهی از API بود. در 1 می 2006، این تغییرات، تقریباً به اندازه یک کتاب کوچک، در تنه نسخه توسعه‌دهنده جنگو ادغام شدند و با نسخه 0.95 جنگو منتشر شدند. این یک گام مهم به سوی نقطه عطف جنگو 1.0 بود.
 
-#### جنگو مدام بهتر می شود
-
+### جنگو مدام بهتر می شود
 هر ساله کنفرانس هایی به نام DjangoCons در سرتاسر جهان برای توسعه دهندگان جنگو برگزار می شود تا بتوانند با یکدیگر ملاقات کنند و با یکدیگر تعامل داشته باشند. آنها یک سنت شایان ستایش در ارائه یک سخنرانی نیمه طنز در مورد اینکه چرا جنگو بد است، دارند. این می تواند عضوی از جامعه جنگو یا شخصی باشد که روی FrameWork های وب رقیب کار می کند یا هر شخصیت برجسته ای باشد. در طول سال‌ها، شگفت‌انگیز است که چگونه توسعه‌دهندگان جنگو این انتقادات را مثبت می‌گرفتند و در نسخه‌های بعدی آن را کاهش می‌دادند.
 
 در اینجا خلاصه‌ای از پیشرفت‌های مربوط به چیزی است که زمانی در جنگو یک کاستی بود و نسخه‌ای که در آن برطرف شد:
@@ -83,7 +82,7 @@
 
 
 ![How web requests are processed in a typical Django application](./images/image.MSTBH1.png)
-*How web requests are processed in a typical Django application* 
+*نحوه پردازش درخواست های وب در یک برنامه معمولی جنگو* 
 
 نمودار قبلی سفر ساده درخواست وب از مرورگر بازدیدکننده به برنامه جنگو و بازگشت را نشان می دهد. مسیرهای شماره گذاری شده به شرح زیر است:
 
@@ -101,48 +100,24 @@ d. در صورت وجود، یک exception بر میگرداند
 
 اگرچه جزئیات خاصی حذف شده است، این نمایش باید به شما در درک معماری سطح بالای جنگو کمک کند. همچنین نقش‌هایی را که اجزای کلیدی بازی می‌کنند، مانند مدل‌ها، نماها و قالب‌ها نشان می‌دهد. بسیاری از اجزای جنگو بر اساس چندین الگوی طراحی شناخته شده هستند.
 
-### What is a pattern?
-What is common between the words **blueprint**, **scaffolding**, and **maintenance**? These
-software development terms have been borrowed from the world of building construction
-and architecture. However, one of the most influential terms comes from a treatise on
-architecture and urban planning written in 1977 by the leading Austrian architect
-Christopher Alexander and his team consisting of Murray Silverstein, Sara Ishikawa, and
-several others.
+### الگو چیست؟
+چه چیزی بین کلمات **نقشه** ، **داربست** و **نگهداری** مشترک است؟ این اصطلاحات توسعه نرم افزار از دنیای ساخت و ساز ساختمان و معماری به عاریت گرفته شده است. با این حال، یکی از تأثیرگذارترین اصطلاحات از رساله ای در معماری و شهرسازی می آید که در سال 1977 توسط معمار برجسته اتریشی کریستوفر الکساندر و تیمش متشکل از موری سیلورستاین، سارا ایشیکاوا و چندین نفر دیگر نوشته شده است.
 
-The term pattern came in vogue after their seminal work, *A Pattern Language: Towns,
-Buildings, Construction* (volume 2 in a five-book series), based on the astonishing insight that
-users know about their buildings more than any architect ever could. A pattern refers to an
-everyday problem and its proposed but time-tested solution.
-In the book, Christopher Alexander states the following:
+اصطلاح الگو پس از کار اصلی آنها، *A Pattern Language: Towns, Buildings, Construction* (جلد 2 در یک مجموعه پنج کتابی)، بر اساس بینش شگفت انگیزی که کاربران در مورد ساختمان های خود بیش از هر معمار دیگری می دانند، رایج شد. یک الگو به یک مشکل روزمره و راه حل پیشنهادی اما آزمایش شده آن اشاره دارد. کریستوفر الکساندر در این کتاب چنین می گوید:
 
 <p align="center">
-<i>"Each pattern describes a problem, which occurs over and over again in our environment,
-and then describes the core of the solution to that problem in such a way that you can use
-this solution a million times over, without ever doing it the same way twice."</i>
+    <i>"هر الگو یک مشکل را توصیف می کند که بارها و بارها در محیط ما رخ می دهد و سپس هسته راه حل آن مشکل را به گونه ای توصیف می کند که می توانید از این راه حل میلیون ها بار استفاده کنید، بدون اینکه هرگز آن را به همان روش انجام دهید. دو برابر."</i>
 </p> 
 
-For example, his *wings of light* pattern describe how people prefer buildings with more
-natural lighting and suggests arranging the building so that it is composed of wings. These
-wings should be long and narrow, never more than 25 feet wide. Next time you enjoy a
-stroll through the long well-lit corridors of an old university, be grateful to this pattern.
+برای مثال، الگوی *بال‌های نوری* او توضیح می‌دهد که چگونه مردم ساختمان‌هایی با نور طبیعی‌تر را ترجیح می‌دهند و پیشنهاد می‌کند که ساختمان را به گونه‌ای تنظیم کنید که از بال تشکیل شده باشد. این بال ها باید بلند و باریک باشند و هرگز بیش از 25 فوت عرض نداشته باشند. دفعه بعد که از قدم زدن در راهروهای طولانی یک دانشگاه قدیمی لذت بردید، از این الگو سپاسگزار باشید.
 
-Their book contained 253 such practical patterns, from the design of a room to the design of
-an entire city. Most importantly, each of these patterns gave a name to an abstract problem
-and together formed a *pattern language*.
+کتاب آنها شامل 253 الگوی عملی از این قبیل بود، از طراحی یک اتاق گرفته تا طراحی کل شهر. مهمتر از همه، هر یک از این الگوها نامی برای یک مسئله انتزاعی گذاشتند و با هم یک *زبان الگو* را تشکیل دادند.
 
-Remember when you first came across the word déjà vu? You probably thought: "*wow, I
-never knew that there was a word for that experience.*" Similarly, architects were not only able to
-identify patterns in their environment but could also, finally, name them in a way that their
-peers could understand.
+به یاد دارید که اولین بار با کلمه déjà vu برخورد کردید؟ احتمالاً فکر کرده اید: "وای، من هرگز نمی دانستم که کلمه ای برای آن تجربه وجود دارد." به طور مشابه، معماران نه تنها قادر به شناسایی الگوها در محیط خود بودند، بلکه می‌توانستند در نهایت آنها را به گونه‌ای نام‌گذاری کنند که همتایان خود بتوانند آن را درک کنند.
 
-In the world of software, the term design pattern refers to a general repeatable solution to a
-commonly occurring problem in software design. It is a formalization of best practices that
-a developer can use. Like in the world of architecture, the pattern language has proven to
-be extremely helpful to communicate a certain way of solving a design problem to other
-programmers.
+در دنیای نرم افزار، اصطلاح الگوی طراحی به یک راه حل کلی قابل تکرار برای یک مشکل رایج در طراحی نرم افزار اشاره دارد. این رسمی سازی بهترین شیوه هایی است که یک توسعه دهنده می تواند از آن استفاده کند. مانند دنیای معماری، زبان الگو ثابت کرده است که برای برقراری ارتباط روش خاصی برای حل یک مشکل طراحی با برنامه نویسان دیگر بسیار مفید است.
 
-There are several collections of design patterns, but some have been considerably more
-influential than the others.
+مجموعه های مختلفی از الگوهای طراحی وجود دارد، اما برخی از آنها به طور قابل توجهی تاثیرگذارتر از بقیه بوده اند.
 
 #### Gang of four patterns
 One of the earliest efforts to study and document design patterns was a book titled *Design
