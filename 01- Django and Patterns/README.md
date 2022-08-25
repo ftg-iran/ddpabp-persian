@@ -31,24 +31,15 @@
 
 اگر به سایر چارچوب های وب عادت داشته باشید، برخی از ویژگی های داخلی، مانند رابط مدیر، ممکن است عجیب به نظر برسد. برای درک طراحی جنگو، بیایید دریابیم که چگونه به وجود آمد.
 
-## The story of Django
-When you look at the Pyramids of Egypt, you would think that such a simple and minimal
-design must have been quite obvious. In truth, they are the products of 4,000 years of
-architectural evolution. Step Pyramids, the initial (and clunky) design, had six rectangular
-blocks of decreasing size. It took several iterations of architectural and engineering
-improvements until the modern, glazing, and long-lasting limestone structures were
-invented.
 
-Looking at Django, you might get a similar feeling — so elegantly built, it must have been
-flawlessly conceived. On the contrary, it was the result of rewrites and rapid iterations in
-one of the most high-pressure environments imaginable — a newsroom!
+## داستان جنگو
+وقتی به اهرام مصر نگاه می کنید، فکر می کنید که چنین طراحی ساده و مینیمال باید کاملاً آشکار باشد. در حقیقت، آنها محصول 4000 سال تکامل معماری هستند. اهرام پله ای، طرح اولیه (و درهم و برهم)، دارای شش بلوک مستطیل شکل در حال کاهش بود.
+چندین بار اصلاحات معماری و مهندسی طول کشید تا اینکه سازه‌های آهکی مدرن، لعاب‌دار و بادوام اختراع شدند.
 
-In the fall of 2003, two programmers, Adrian Holovaty and Simon Willison, working at the
-*Lawrence Journal-World* newspaper, were working on creating several local news websites in
-Kansas. These sites, including *LJWorld.com* , *Lawrence.com* , and *KUsports.com* , like most
-news sites were not just content-driven portals chock-full of text, photos, and videos, but
-they also constantly tried to serve the needs of the local Lawrence community with
-applications, such as a local business directory, events calendar, and classifieds.
+با نگاه کردن به جنگو، ممکن است احساس مشابهی داشته باشید - آنقدر زیبا ساخته شده است که باید بی عیب و نقص تصور شده باشد. برعکس، نتیجه بازنویسی‌ها و تکرارهای سریع در یکی از پرفشارترین محیط‌های قابل تصور بود - اتاق خبر!
+
+در پاییز 2003، دو برنامه نویس، *آدریان هولواتی* و *سایمون ویلیسون* که در روزنامه *لارنس ژورنال-ورلد* کار می کردند، مشغول ایجاد چندین وب سایت خبری محلی در کانزاس بودند. این سایت‌ها، از جمله *LJWorld.com*، *Lawrence.com*، و *KUsports.com*، مانند بسیاری از سایت‌های خبری، نه تنها درگاه‌های محتوا محور مملو از متن، عکس و ویدئو بودند، بلکه دائماً سعی می‌کردند نیازهای مردم را برآورده کنند. جامعه محلی لارنس با برنامه‌هایی مانند فهرست راهنمای کسب‌وکار محلی، تقویم رویدادها و آگهی‌ها.
+
 
 #### A framework is born
 This, of course, meant lots of work for Simon, Adrian, and later Jacob Kaplan Moss who
