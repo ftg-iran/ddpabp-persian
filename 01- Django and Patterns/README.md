@@ -41,21 +41,13 @@
 در پاییز 2003، دو برنامه نویس، *آدریان هولواتی* و *سایمون ویلیسون* که در روزنامه *لارنس ژورنال-ورلد* کار می کردند، مشغول ایجاد چندین وب سایت خبری محلی در کانزاس بودند. این سایت‌ها، از جمله *LJWorld.com*، *Lawrence.com*، و *KUsports.com*، مانند بسیاری از سایت‌های خبری، نه تنها درگاه‌های محتوا محور مملو از متن، عکس و ویدئو بودند، بلکه دائماً سعی می‌کردند نیازهای مردم را برآورده کنند. جامعه محلی لارنس با برنامه‌هایی مانند فهرست راهنمای کسب‌وکار محلی، تقویم رویدادها و آگهی‌ها.
 
 
-#### A framework is born
-This, of course, meant lots of work for Simon, Adrian, and later Jacob Kaplan Moss who
-had joined their team; with very short deadlines, sometimes with only a few hours' notice.
-Since it was the early days of web development in Python, they had to write web
-applications mostly from scratch. So, to save precious time, they gradually refactored out
-the common modules and tools into something called The *CMS.
+#### یک چارچوب متولد می شود
 
-Eventually, the content management parts were spun off into a separate project called the
-**Ellington CMS**, which went on to become a successful commercial CMS product. The rest
-of The CMS was a neat underlying framework that was general enough to be used to build
-web applications of any kind.
+البته این به معنای کار زیاد برای سایمون، آدریان و بعدها جاکوب کاپلان ماس بود که به تیم آنها پیوسته بودند. با مهلت های بسیار کوتاه، گاهی اوقات تنها با چند ساعت اطلاع رسانی. از آنجایی که اولین روزهای توسعه وب در پایتون بود، آنها مجبور بودند برنامه های وب را عمدتاً از ابتدا بنویسند. بنابراین، برای صرفه جویی در زمان گرانبها، آنها به تدریج ماژول ها و ابزارهای رایج را به چیزی به نام *CMS* تغییر دادند.
 
-By July 2005, this web development framework was released as Django (pronounced Jang-
-Oh) under an open source **Berkeley Software Distribution (BSD)** license. It was named
-after the legendary jazz guitarist Django Reinhardt. And the rest, as they say, is history.
+در نهایت، بخش‌های مدیریت محتوا به پروژه‌ای جداگانه به نام Ellington CMS تبدیل شد که به یک محصول تجاری موفق CMS تبدیل شد. بقیه CMS یک چارچوب زیربنایی منظم بود که به اندازه کافی عمومی بود که برای ساخت برنامه های کاربردی وب از هر نوع استفاده شود.
+
+تا جولای 2005، این چارچوب توسعه وب به عنوان جنگو (تلفظ Jang-Oh) تحت مجوز منبع باز توزیع نرم افزار برکلی (BSD) منتشر شد. این نام از گیتاریست افسانه ای جاز جانگو راینهارت گرفته شد. و بقیه، همانطور که می گویند، تاریخ است.
 
 #### Removing the magic
 Due to its humble origins as an internal tool, Django had a lot of Lawrence Journal-World-
