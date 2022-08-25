@@ -49,48 +49,29 @@
 
 تا جولای 2005، این چارچوب توسعه وب به عنوان جنگو (تلفظ Jang-Oh) تحت مجوز منبع باز توزیع نرم افزار برکلی (BSD) منتشر شد. این نام از گیتاریست افسانه ای جاز جانگو راینهارت گرفته شد. و بقیه، همانطور که می گویند، تاریخ است.
 
-#### Removing the magic
-Due to its humble origins as an internal tool, Django had a lot of Lawrence Journal-World-
-specific oddities. To make Django truly general purpose, an effort dubbed *Removing the
-Lawrence* had already been underway.
+#### حذف جادو
+جنگو به دلیل خاستگاه فروتنانه‌اش به عنوان یک ابزار داخلی، دارای موارد عجیب و غریب مخصوص لارنس ژورنال جهان بود. برای اینکه جنگو واقعاً هدف کلی باشد، تلاشی با عنوان حذف لارنس قبلاً در حال انجام بود.
 
-However, the most significant refactoring effort that Django developers had to undertake
-was called *Removing the Magic*. This ambitious project involved cleaning up all the warts
-Django had accumulated over the years, including a lot of magic (an informal term for
-implicit features) and replacing them with a more natural and explicit Pythonic code. For
-example, the model classes used to be imported from a magic module called
-`django.models.*` , rather than being directly imported from the `models.py` module they
-were defined in.
+با این حال، مهم ترین تلاش برای بازسازی که توسعه دهندگان جنگو باید انجام می دادند Removing the Magic نام داشت. این پروژه بلندپروازانه شامل پاکسازی تمام زگیل‌هایی بود که جنگو در طول سال‌ها جمع‌آوری کرده بود، از جمله جادوی زیادی (یک اصطلاح غیررسمی برای ویژگی‌های ضمنی) و جایگزینی آنها با کد پایتونیک طبیعی‌تر و صریح‌تر. برای مثال، کلاس‌های مدل به جای اینکه مستقیماً از ماژول `models.py` که در آن تعریف شده بودند وارد شوند، از یک ماژول جادویی به نام `django.models.*` وارد می‌شدند.
 
-At that time, Django had about a hundred thousand lines of code, and it was a significant
-rewrite of the API. On May 1, 2006, these changes, almost the size of a small book, were
-integrated into Django's development version trunk and released as Django release 0.95.
-This was a significant step toward the Django 1.0 milestone.
+در آن زمان، جنگو حدود صد هزار خط کد داشت و بازنویسی قابل توجهی از API بود. در 1 می 2006، این تغییرات، تقریباً به اندازه یک کتاب کوچک، در تنه نسخه توسعه‌دهنده جنگو ادغام شدند و با نسخه 0.95 جنگو منتشر شدند. این یک گام مهم به سوی نقطه عطف جنگو 1.0 بود.
 
-#### Django keeps getting better
-Every year, conferences called **DjangoCons** are held across the world for Django
-developers to meet and interact with each other. They have an adorable tradition of giving
-a semi-humorous keynote on why Django sucks. This could be a member of the Django
-community, or someone who works on competing web frameworks or just any notable
-personality. Over the years, it is amazing how Django developers took these
-criticisms positively and mitigated them in subsequent releases.
+#### جانگو مدام بهتر می شود
+هر ساله کنفرانس هایی به نام DjangoCons در سرتاسر جهان برای توسعه دهندگان جنگو برگزار می شود تا بتوانند با یکدیگر ملاقات کنند و با یکدیگر تعامل داشته باشند. آنها یک سنت شایان ستایش در ارائه یک سخنرانی نیمه طنز در مورد اینکه چرا جنگو بد است، دارند. این می تواند عضوی از جامعه جنگو یا شخصی باشد که روی چارچوب های وب رقیب کار می کند یا هر شخصیت برجسته ای باشد. در طول سال‌ها، شگفت‌انگیز است که چگونه توسعه‌دهندگان جنگو این انتقادات را مثبت می‌گرفتند و در نسخه‌های بعدی آن را کاهش می‌دادند.
 
-Here is a short summary of the improvements corresponding to what once used to be a
-shortcoming in Django and the release they were resolved in:
-* New form-handling library (Django 0.96)
-* Decoupling admin from models (Django 1.0)
-* Multiple database supports (Django 1.2)
-* Managing static files better (Django 1.3)
-* Better time zone support (Django 1.4)
-* Customizable user model (Django 1.5)
-* Better transaction handling (Django 1.6)
-* Built-in database migrations (Django 1.7)
-* Multiple template engines (Django 1.8)
-* Simplified URL routing syntax (Django 2.0)
+در اینجا خلاصه‌ای از پیشرفت‌های مربوط به چیزی است که زمانی در جنگو یک کاستی بود و نسخه‌ای که در آن برطرف شد:
+* کتابخانه جدید مدیریت فرم (Django 0.96)
+* جداسازی ادمین از مدل ها (Django 1.0)
+* پشتیبانی از چندین پایگاه داده (Django 1.2)
+* مدیریت بهتر فایل های استاتیک (Django 1.3)
+* پشتیبانی بهتر از منطقه زمانی (Django 1.4)
+* مدل کاربر قابل تنظیم (Django 1.5)
+* مدیریت بهتر تراکنش (جانگو 1.6)
+* انتقال پایگاه داده داخلی (جانگو 1.7)
+* موتورهای قالب چندگانه (جانگو 1.8)
+* نحو ساده شده مسیریابی URL (Django 2.0)
 
-Over time, Django has become one of most idiomatic Python codebases in the public
-domain. Django source code is also a great place to learn the architecture of a large Python
-web framework.
+با گذشت زمان، جنگو به یکی از اصطلاحی ترین پایگاه های کد پایتون در حوزه عمومی تبدیل شده است. کد منبع جنگو همچنین مکانی عالی برای یادگیری معماری یک چارچوب وب بزرگ پایتون است.
 
 ### How does Django work?
 To truly appreciate Django, you will need to peek under the hood and see the various
