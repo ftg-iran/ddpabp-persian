@@ -73,41 +73,29 @@
 
 با گذشت زمان، جنگو به یکی از اصطلاحی ترین پایگاه های کد پایتون در حوزه عمومی تبدیل شده است. کد منبع جنگو همچنین مکانی عالی برای یادگیری معماری یک چارچوب وب بزرگ پایتون است.
 
-### How does Django work?
-To truly appreciate Django, you will need to peek under the hood and see the various
-moving parts inside. This can be both enlightening and overwhelming. If you are already
-familiar with the following information, you might want to skip this section:
+### جنگو چگونه کار می کند؟
+برای درک واقعی جنگو، باید زیر کاپوت را نگاه کنید و قسمت های متحرک مختلف داخل آن را ببینید. این می تواند هم روشنگر و هم طاقت فرسا باشد. اگر قبلاً با اطلاعات زیر آشنا هستید، ممکن است بخواهید از این بخش صرفنظر کنید:
+
 
 
 ![How web requests are processed in a typical Django application](./images/image.MSTBH1.png)
 *How web requests are processed in a typical Django application* 
 
-The preceding diagram shows the simplified journey of a web request from a visitor's
-browser to your Django application and back. The numbered paths are as follows:
+نمودار قبلی سفر ساده درخواست وب از مرورگر بازدیدکننده به برنامه جنگو و بازگشت را نشان می دهد. مسیرهای شماره گذاری شده به شرح زیر است:
 
-1. The browser sends the request (essentially, a string of bytes) to your web server.
-2. Your web server (say, Nginx) hands over the request to a **Web Server Gateway
-Interface (WSGI)** server (say, uWSGI) or directly serves a file (say, a CSS file)
-from the filesystem.
-3. Unlike a web server, WSGI servers can run Python applications. The request
-populates a Python dictionary called `environ` and, optionally, passes through
-several layers of middleware, ultimately reaching your Django application.
-4.URLconf (URL configuration) module contained in the `urls.py` of your project
-selects a view to handle the request based on the requested URL. The request has
-turned into `HttpRequest` , a Python object.
-5. The selected view typically does one or more of the following things:
-a. Talks to a database via the models
-b. Renders HTML or any other formatted response using templates
-c. Returns a plain text response (not shown)
-d. Raises an exception
-6. The `HttpResponse` object gets rendered into a string, as it leaves the Django
-application.
-7. A beautifully rendered web page is seen in your user's browser.
+1. مرورگر درخواست را (در اصل یک رشته بایت) به وب سرور شما ارسال می کند.
+2. وب سرور شما (مثلاً Nginx) درخواست را به یک سرور رابط دروازه وب سرور (WSGI) (مثلا uWSGI) تحویل می دهد یا مستقیماً یک فایل (مثلاً یک فایل CSS) را از سیستم فایل ارائه می دهد.
+3. برخلاف وب سرور، سرورهای WSGI می توانند برنامه های پایتون را اجرا کنند. این درخواست یک فرهنگ لغت پایتون به نام `environ` را پر می کند و به صورت اختیاری، از چندین لایه میان افزار عبور می کند و در نهایت به برنامه جنگو شما می رسد.
+4. URLconf (پیکربندی URL) ماژول موجود در `urls.py` پروژه شما، یک نمای را برای رسیدگی به درخواست بر اساس URL درخواستی انتخاب می کند. درخواست به HttpRequest، یک شی پایتون تبدیل شده است.
+5. نمای انتخاب شده معمولاً یک یا چند مورد از کارهای زیر را انجام می دهد: 
+a. از طریق مدل ها با پایگاه داده صحبت می کند.
+b. HTML یا هر پاسخ فرمت شده دیگری را با استفاده از Template ارائه می دهد
+c. یک متن ساده را بر میگرداند ( نشان داده نمیشود)
+d. در صورت وجود، یک exception بر میگرداند
+6. شیع `HttpResponse` به متن تبدیل (Render) میشود.
+7. یک صفحه وب با رندر زیبا در مرورگر شما دیده می شود.
 
-Though certain details are omitted, this representation should help you appreciate Django's
-high-level architecture. It also shows the roles played by the key components, such as
-models, views, and templates. Many of Django's components are based on several well-
-known design patterns.
+اگرچه جزئیات خاصی حذف شده است، این نمایش باید به شما در درک معماری سطح بالای جنگو کمک کند. همچنین نقش‌هایی را که اجزای کلیدی بازی می‌کنند، مانند مدل‌ها، نماها و قالب‌ها نشان می‌دهد. بسیاری از اجزای جنگو بر اساس چندین الگوی طراحی شناخته شده هستند.
 
 ### What is a pattern?
 What is common between the words **blueprint**, **scaffolding**, and **maintenance**? These
