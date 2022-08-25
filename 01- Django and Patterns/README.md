@@ -18,50 +18,18 @@
 
 مبتدی ها اغلب مشکلات طراحی را در اواخر پروژه خود کشف می کنند. به زودی، آنها سعی می کنند همان مشکلاتی را که دیگران با آن مواجه شده اند، حل کنند. اینجاست که درک الگوها واقعاً می تواند به صرفه جویی در وقت آنها کمک کند.
 
-### Why Django?
-Every web application is different, like a piece of handcrafted furniture. You will rarely find
-a mass-produced sofa meeting all your needs perfectly. Even if you start with a basic
-requirement, such as a blog or social network, your needs will slowly grow, and you can
-easily end up with a lot of half-baked solutions duct-taped onto a once simple cookie cutter
-solution.
+### چرا جانگو؟
+هر برنامه وب متفاوت است، مانند یک تکه مبلمان دست ساز. به ندرت یک مبل تولید انبوه پیدا می کنید که تمام نیازهای شما را به خوبی برآورده کند. حتی اگر با یک نیاز اساسی مانند وبلاگ یا شبکه اجتماعی شروع کنید، نیازهای شما به آرامی افزایش می‌یابد و به راحتی می‌توانید با بسیاری از محلول‌های نیمه‌پخت که با چسب نواری روی محلول‌های کاتر کوکی‌ها چسبانده شده‌اند، خاتمه دهید.
 
-This is why web frameworks, such as Django or Rails, have become extremely popular.
-Frameworks speed up development and have all the best practices baked in. However, they
-are also flexible enough to give you access to just enough plumbing for the job. Today, web
-frameworks are ubiquitous, and most programming languages have at least one end-to-end
-framework similar to Django.
+به همین دلیل است که چارچوب های وب مانند جنگو یا ریل بسیار محبوب شده اند. چارچوب‌ها توسعه را سرعت می‌بخشند و بهترین روش‌ها را در خود دارند. با این حال، آنها همچنین به اندازه کافی انعطاف‌پذیر هستند تا به شما امکان دسترسی به لوله‌کشی کافی برای کار را بدهند. امروزه فریم ورک های وب در همه جا وجود دارند و اکثر زبان های برنامه نویسی حداقل یک فریم ورک انتها به انتها مشابه جنگو دارند.
 
-Python probably has more web frameworks than most programming languages. A quick
-look at **Python Package Index (PyPI)** brings up an amazing 13,045 packages related to web
-environments. For Django, the total is 9,091 packages. The Python wiki lists over 54 active
-web frameworks with the most popular ones being Django, Flask, Pyramid, and Zope.
-Python also has a wide diversity in frameworks. The compact bottle micro web-
-framework is just one Python file that has no dependencies and is surprisingly capable of
-creating a simple web application.
+احتمالا پایتون نسبت به بسیاری از زبان های برنامه نویسی چارچوب های وب بیشتری دارد. نگاهی گذرا به فهرست بسته پایتون (PyPI) 13045 بسته شگفت‌انگیز مربوط به محیط‌های وب را نشان می‌دهد. برای جنگو، مجموع 9091 بسته است. ویکی پایتون بیش از 54 چارچوب وب فعال را فهرست می‌کند که محبوب‌ترین آنها جنگو، فلاسک، پیرامید و زوپ است. پایتون همچنین دارای تنوع گسترده ای در فریمورک ها است. فریم ورک میکرو وب بطری فشرده تنها یک فایل پایتون است که هیچ وابستگی ندارد و به طرز شگفت انگیزی قادر به ایجاد یک برنامه وب ساده است.
 
-Despite these abundant options, Django has emerged as a big favorite by a wide margin.
-Djangosites.org lists over 5,263 sites written in Django, including famous success stories
-such as Instagram, Pinterest, and Disqus. As the official description says, Django ( https:/​ /
-djangoproject.​ com ) is a high-level Python web framework that encourages rapid
-development and clean, pragmatic design. In other words, it is a complete web framework
-with batteries included just like Python.
-The out-of-the-box admin interface, one of Django's unique features, is extremely helpful
-for early data entry and administration. Django's documentation has been praised for being
-extremely well-written for an open source project.
-Finally, Django has been battle-tested in several high traffic websites. It has an
-exceptionally sharp focus on security with protection against common attacks such as
-**Cross-site scripting (XSS), Cross-site request forgery (CSRF)** to evolving security threats
-such as weak password hashing algorithms.
+علی‌رغم این گزینه‌های فراوان، جنگو با اختلاف زیادی به عنوان یک مورد علاقه بزرگ ظاهر شده است. Djangosites.org بیش از 5263 سایت نوشته شده در جنگو را فهرست می کند، از جمله داستان های موفقیت معروفی مانند اینستاگرام، پینترست، و Disqus. همانطور که توضیحات رسمی می گوید، جنگو (https://djangoproject.com) یک چارچوب وب سطح بالا پایتون است که توسعه سریع و طراحی تمیز و عملی را تشویق می کند. به عبارت دیگر، این یک چارچوب وب کامل با باتری هایی است که دقیقاً مانند پایتون در آن گنجانده شده است. رابط مدیریت خارج از جعبه، یکی از ویژگی های منحصر به فرد جنگو، برای ورود و مدیریت اولیه داده ها بسیار مفید است. مستندات جنگو به دلیل اینکه برای یک پروژه منبع باز بسیار خوب نوشته شده است مورد تحسین قرار گرفته است. در نهایت، جنگو در چندین وب سایت پر ترافیک آزمایش شده است. تمرکز فوق‌العاده دقیقی بر امنیت با محافظت در برابر حملات رایج مانند اسکریپت‌های متقاطع (XSS)، جعل درخواست‌های متقابل سایت (CSRF) تا تهدیدات امنیتی در حال تکامل مانند الگوریتم‌های هش رمز عبور ضعیف است
 
-Although you can use Django to build any kind of web application in theory, it might not
-be the best for every use case. For example, to prototype a simple web service in an
-embedded system with tight memory constraints, you might want to use Flask, while you
-might eventually move to Django for its robustness and features. Choose the right tool for
-the job.
+اگرچه می‌توانید از جنگو برای ساخت هر نوع برنامه وب در تئوری استفاده کنید، اما ممکن است برای هر موردی بهترین نباشد. به عنوان مثال، برای نمونه سازی اولیه یک وب سرویس ساده در یک سیستم تعبیه شده با محدودیت های حافظه فشرده، ممکن است بخواهید از Flask استفاده کنید، در حالی که ممکن است در نهایت به دلیل استحکام و ویژگی های آن به جنگو بروید. ابزار مناسب برای کار را انتخاب کنید.
 
-Some of the built-in features, such as the admin interface, might sound odd if you are used
-to other web frameworks. To understand the design of Django, let's find out how it came
-into being.
+اگر به سایر چارچوب های وب عادت داشته باشید، برخی از ویژگی های داخلی، مانند رابط مدیر، ممکن است عجیب به نظر برسد. برای درک طراحی جنگو، بیایید دریابیم که چگونه به وجود آمد.
 
 ## The story of Django
 When you look at the Pyramids of Egypt, you would think that such a simple and minimal
