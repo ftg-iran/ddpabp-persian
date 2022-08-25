@@ -1,36 +1,22 @@
-# Django and Patterns
+# جنگو الگوها
 
-In this chapter, we will talk about the following topics:
-* Why Django?
-* The story of Django
-* How does Django work?
-* What is a pattern?
-* Well-known pattern collections
-* Patterns in Django
+در این فصل در مورد موضوعات زیر صحبت خواهیم کرد:
+* چرا جانگو؟
+* داستان جنگو
+* جنگو چگونه کار می کند؟
+* الگو چیست؟
+* مجموعه های الگوهای شناخته شده
+* الگوها در جنگو
 
-According to Bowei Gai's World Startup Report, there were more than 136,000 internet firms
-across the world in 2013, with more than 60,000 in America alone. Of these, 87 US
-companies are valued at more than $1 billion. Another study says that of 12,000 people
-aged between 18 years and 30 years in 27 countries, more than two-thirds see opportunities
-to become an entrepreneur.
+بر اساس گزارش جهانی استارتاپ بووی گای، در سال 2013 بیش از 136000 شرکت اینترنتی در سراسر جهان وجود داشت که بیش از 60000 شرکت فقط در آمریکا وجود داشت. از این تعداد، 87 شرکت آمریکایی بیش از یک میلیارد دلار ارزش دارند. مطالعه دیگری می گوید که از 12000 نفر بین 18 تا 30 سال در 27 کشور، بیش از دو سوم فرصت هایی را برای کارآفرین شدن می بینند.
 
-This entrepreneurial boom in digital startups is primarily due to the tools and technologies
-of startups becoming cheap and ubiquitous. Creating a full-fledged web application takes a
-lot less time and skill than it used to, thanks to powerful frameworks.
+این رونق کارآفرینی در استارت آپ های دیجیتال در درجه اول به دلیل ارزان شدن و فراگیر شدن ابزارها و فناوری های استارت آپ ها است. ایجاد یک برنامه وب کامل به لطف فریمورک های قدرتمند، زمان و مهارت بسیار کمتری نسبت به گذشته می طلبد.
 
-Physicists, educators, artists, and many others without a software engineering background
-are creating useful applications that are significantly advancing their domains. However,
-they may not be aware of the software engineering design principles needed to construct
-large and maintainable software.
+فیزیکدانان، مربیان، هنرمندان و بسیاری دیگر بدون پیشینه مهندسی نرم افزار در حال ایجاد برنامه های کاربردی مفیدی هستند که به طور قابل توجهی در حال پیشرفت حوزه خود هستند. با این حال، آنها ممکن است از اصول طراحی مهندسی نرم افزار مورد نیاز برای ساخت نرم افزار بزرگ و قابل نگهداری آگاه نباشند.
 
-A study of four different implementations of a web-based application in Norway showed
-implementations with known code smells and design anti-patterns to be directly associated
-with the difficulties in maintenance. Poorly designed software might work just as well but
-can be difficult to adapt to evolving requirements in a fast-changing world.
+مطالعه چهار پیاده‌سازی مختلف از یک برنامه کاربردی مبتنی بر وب در نروژ نشان داد که پیاده‌سازی‌هایی با بوهای کد شناخته شده و طرح‌های ضد الگو مستقیماً با مشکلات نگهداری مرتبط هستند. نرم افزاری که طراحی ضعیفی دارد ممکن است به همان اندازه کار کند، اما انطباق با الزامات در حال تحول در دنیایی که به سرعت در حال تغییر است، دشوار است.
 
-Beginners often discover design issues late in their project. Soon, they would attempt to
-solve the same problems others have faced again and again. This is where understanding
-patterns can really help save their time.
+مبتدی ها اغلب مشکلات طراحی را در اواخر پروژه خود کشف می کنند. به زودی، آنها سعی می کنند همان مشکلاتی را که دیگران با آن مواجه شده اند، حل کنند. اینجاست که درک الگوها واقعاً می تواند به صرفه جویی در وقت آنها کمک کند.
 
 ### Why Django?
 Every web application is different, like a piece of handcrafted furniture. You will rarely find
