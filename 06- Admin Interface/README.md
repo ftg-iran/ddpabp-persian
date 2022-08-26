@@ -1,362 +1,414 @@
-# **6 Admin Interface**
+<div dir='rtl'>
+<h1>فصل ۶ - رابط کاربری ادمین</h1>
+در این بخش، موضوعات زیر را بررسی خواهیم کرد:
 
-In this chapter, we will discuss the following topics:
+* شخصی سازی بخش ادمین
+* بهینه سازی مدل ها در قسمت ادمین
+* عرف و تنظیمات متداول برای ادمین
+* تغییر ویژگی ها
 
-- Customizing admin
-- Enhancing models for the admin
-- admin best practices
-- Feature flags
+ویژگی برجسته جنگو، رابط کاربری ادمین است،که برگ برنده آن در رقابت است. این بخش یک برنامه داخلی(built-in) بوده که به صورت خودکار یک رابط کاربری را برای افزودن یا ویرایش محتوای وبسایت، تولید می کند.برای خیلی از کاربران،بخش ادمین یک برنامه نجات دهنده است؛ که عملیات خسته کننده ی ساخت یک رابط کاربری برای ادمین و مدل های داخل پروژه را به دوش می کشد.
 
-Django's prominent feature is the admin interface, which makes it stand out from the competition. It is a built-in app that automatically generates a user interface to add and modify a site's content. For many, the admin is Django's killer app, automating the boring task of creating admin interfaces for the models in your project.
+بخش ادمین این امکان را برای تیم شما فراهم می کند که به صورت همزمان محتوا را افزوده و توسعه کد را ادامه دهید. زمانی که مدل های شما آماده باشند و انتقال آن ها(migrations) صورت گیرد، تنها نیاز است تا یک یا دو خط کد به برنامه افزوده شود تا مدل شما به رابط کاربری ادمین اضافه گردد. نحوه انجام این عملیات را در ادامه خواهیم دید.
 
-The admin enables your team to add content and continue development at the same time. Once your models are ready and migrations have been applied, you just need to add a line or two to create its admin interface. Let's see how.
+### استفاده از رابط کاربری ادمین
 
-**Using the admin interface**
+در یک پروژه ی جدید، رابط کاربری ادمین به صورت پیش فرض فعال شده است. پس از راه اندازی سرور توسعه برنامه، شما می توانید یک صفحه ورود به رابط ادمین را در آدرس  http://127.0.0.1:8000/admin مشاهده کنید.
 
-In a newly generated project, the admin interface is enabled by default. After starting your development server, you will be able to see a login page when you navigate to http://127.0.0.1:8000/admin/.
+اگر مشخصات ادمین سایت را(superuser) تعریف کرده باشید( یا مشخصات هر کاربر دیگر - شامل نام کاربری و رمز عبور و...)، می توانید همانطور که در تصویر دیده می شود، به رابط ادمین وارد شوید.
 
-If you have configured a superuser's credentials (or the credentials of any staff user), then you could log into the admin interface, as shown in the following screenshot:
+![رابط کاربری ادمین در جنگو برای یک پروژه جدید](https://raw.githubusercontent.com/ftg-iran/ddpabp-persian/main/06-%20Admin%20Interface/images/image-000.png "اسکرین شات از رابط کاربری ادمین در جنگو برای یک پروژه جدید")
 
-![](/06-%20Admin%20Interface/images/image-000.png)
+تصویری از رابط کاربری ادمین در جنگو برای یک پروژه جدید
 
-Screenshot of Django administration in a new project
+اگر قبلا از جنگو استفاده کرده اید،متوجه خواهید شد که ظاهر رابط ادمین بهتر از قبل شده است، بخصوص آیکن های svg در صفحه های نمایش با دی پی آی بالا (high-DPI) بهبود یافته اند.
 
-If you have used Django before, you'll notice that the appearance of the admin interface has improved, especially the SVG icons on high-DPI screens. It also uses responsive design, which works across all major mobile browsers.
+گرچه مدل های شما در حال حاضر قابل مشاهده نیست، مگر آن که مدل ها را از طریق بخش ادمین ثبت کنید. بخش ادمین در برنامه شما در فایل admin.py در دسترس است. برای مثال، در مسیر sightings/admin.py، مدلی به نام Sighting را به شکل زیر ثبت کرده ایم:
+    ‍‍
+> <p dir='ltr'>from django.contrib import admin from . import models
+> <br>
+>  admin.site.register(models.Sighting)
+> </p>
 
-However, your models will not be visible here, unless you register the model with the admin site. This is defined in your app's admin.py. For instance, in sightings/admin.py, we register the Sighting model, as follows:
+اولین آرگومان تابع register کلاس مدل را برای افزودن به بخش ادمین سایت مشخص می کند. در اینجا، آرگومان دوم تابع register؛ که مدل کلاس ادمین (ModelAdmin) بوده، حذف شده است. بنابراین رابط کاربری که به صورت پیش فرض تعریف شده است را خواهیم داشت. در ادامه خواهیم دید که چطور می توانیم مدل ادمین خود را شخصی سازی کنیم.
 
-```python
-from django.contrib import admin from . import models
+###  فانوس دریایی 
 
-admin.site.register(models.Sighting)
-```
+"داری قهوه میخوری؟" صدایی از گوشه ی ابدارخانه این را پرسید. «سو» نزدیک بود که قهوه اش را بریزد. مردی قد بلند که لباس قرمز و آبی پوشیده بود ایستاد و دست به کمر، لبخندی زد. نشانی که بر سینه او نقش بسته بود؛ به حروف بزرگ نوشته بود،کاپیتان آبویس (capitan obvious).
 
-The first argument to register specifies the model class to be added to the admin site. Here, the second argument to register, a ModelAdmin class, has been omitted, hence we will get a default admin interface for the post model. Let's see how to create and customize this ModelAdmin class.
+سو در حالی که لکه قهوه را پاک میکرد گفت "خدای من!".
 
-**The Beacon**
+کاپیتان گفت "ببخشید که ترسوندمت، چه مورد اضطراری پیش اومده؟"
 
-"Having coffee?" asked a voice from the corner of the pantry. Sue almost spilled her coffee. A tall man wearing a tight red and blue colored costume stood to smile with hands on his hips. The logo emblazoned on his chest said, in large type, Captain Obvious.
+زنی آرام از بالا گفت: "نمیبینی که دختره توی باغ نیست؟"
 
-"Oh, my God," said Sue as she wiped at the coffee stain with a napkin.
+سو؛ سایه ای که به آرامی از سالن رو باز به پایین می آمد را دنبال می کرد. بخشی از صورت زن به وسیله موهای مشکی اش پوشیده شده بود.
 
-"Sorry, I think I scared you," said Captain Obvious "What is the emergency?"
+کاپیتان گفت:"سلام هکسا" سپس ادامه داد،"آخرش پیام سایت SuperBook چی بود؟"
 
-"Isn't it obvious that she doesn't know?" said a calm female voice from above. Sue looked up to find a shadowy figure slowly descend from the open hall. Her face was partially obscured by her dark matted hair, which had a few grey streaks.
+اندکی بعد، همه آن ها در دفتر کار «استیو»، در حالی که به مانیتور او نگاه میکردند؛ جمع شدند.
+«ایوان» گفت: "میبینی! گفته بودم که هیچ فانوسی در صفحه ی اصلی سایت نیست. ما هنوز داریم روی این ویژگی کار می کنیم."
 
-"Hi Hexa!" said the Captain "But then, what was the message on SuperBook about?"
+استیو گفت: "صبر کن، بذار با یک اکانت غیرپرسنلی وارد بشم".
 
-Soon, they were all at Steve's office staring at his screen.
+طی چند ثانیه، صفحه سایت تازه سازی شد و فانوس قرمز به طور برجسته ای در بالای صفحه سایت قرار گرفته بود.
+کاپیتان فریاد زد:"خودشه! همون فانوسی که بهت گفته بودم".
 
-"See, I told you there is no beacon on the front page," said Evan. "We are still developing that feature."
+استیو گفت:"یک لحظه صبر کن!". او سورس فایلی که برای ویژگی های جدید سایت ثبت شده بود را بررسی کرد. با یک نگاه به ویژگی های فانوس متوجه شد که چه چیزی اشتباه شده است.
 
-"Wait," said Steve. "Let me log in through a nonstaff account."
+> <p dir='ltr'>
+>  if switch_is_active(request, 'beacon') and not request.user.is_staff():
+>  <br>
+>  beacon.activate()
+> </p>
 
-In a few seconds, the page refreshed and an animated red beacon appeared at the top, prominently positioned.
+استیو گفت:"ببخشید، یه خطای منطقی اتفاق افتاده.بجای اینکه این ویژگی را فقط برای پرسنل فعال کنم، ناخواسته آن را برای کسانی که جز پرسنل نبودند فعال کردم.حالا درست شد. بابت این اشفتگی عذر میخوام".
 
-"That's the beacon I was talking about!" exclaimed Captain Obvious.
+کاپیتان با یک نگاه تاسف بار پرسید:"پس هیچ مورد اضطراری وجود نداشت؟". هکسا با آرنج به بازوی او زد و گفت:"فکر نکنم کاپیتان!"
+سپس صدای مهیبی آمد. همه به سمت راهرو دویدند. ظاهرا مردی اشتباها از طریق یکی از دیوارهای شیشه ای، وارد اتاق شده بود. در حالی که تکه های شکسته شیشه را در دستش تکان میداد؛ ایستاد و گفت: "ببخشید،با نهایت سرعت خودم رو رسوندم،دیر رسیدم؟".
+هکسا خندید و گفت: "نه «بیلتز» منتظرت بودیم که برسی".
 
-"Hang on a minute," said Steve. He pulled up the source files for the new features deployed earlier that day. A glance at the beacon feature branch code made it clear what went wrong:
+بهینه سازی مدل ها برای بخش ادمین:
 
-```python
-if switch_is_active(request, 'beacon') and not request.user.is_staff():
-    beacon.activate()
-```
+در اینجا مثالی موجود است که مدل ادمین را برای کارایی و جلوه ای بهتر، بهینه سازی کرده است. می توانید به تفاوت های میان دو اسکرین شات زیر نگاهی بیاندازید تا ببینید که چطور چند خط کد، می تواند انقدر تفاوت ایجاد کند.
 
-"Sorry everyone," said Steve. "There has been a logic error. Instead of turning this feature on only for staff, we inadvertently turned it on for everyone but staff. It is turned off now. Apologies for any confusion."
+![حالت پیش فرض نمایش لیستی در بخش ادمین](https://raw.githubusercontent.com/ftg-iran/ddpabp-persian/main/06-%20Admin%20Interface/images/image-001.png)
 
-"So, there was no emergency?" asked Captain with a disappointed look. Hexa put an arm on his shoulder and said "I am afraid not, Captain." Suddenly, there was a loud crash, and everyone ran to the hallway. A man had apparently landed in the office through one of the floor-to- ceiling glass walls. Shaking off shards of broken glass, he stood up. "Sorry, I came as fast as I could," he said. "Am I late to the party?"
+حالت پیش فرض نمایش لیستی بخش ادمین، برای مدل sightings
 
-Hexa laughed. "No, Blitz. Been waiting for you to join," she said.
+پس از پیاده سازی روش مذکور برای شخصی سازی بخش ادمین، همان اطلاعات مشابه با دسترسی آسان تر و بهتری به شکل زیر نمایش داده می شوند:
 
-**Enhancing models for the admin**
+![نمایش لیستی بهینه شده در بخش ادمین](https://raw.githubusercontent.com/ftg-iran/ddpabp-persian/main/06-%20Admin%20Interface/images/image-002.png)
 
-Here is an example that enhances the model's admin for better presentation and functionality. You can look at the difference between the two following screenshots to see how a few lines of code can make a lot of difference:
+نمایش لیستی بهینه شده بخش ادمین برای مدل sightings
 
-![](/06-%20Admin%20Interface/images/image-001.png)
+برنامه ادمین به اندازه کافی هوشمند است که موارد زیادی را از مدل شما به صورت خودکار درک و دریافت کند. اگرچه گاهی اطلاعات اشاره شده قابل بهبود است. این عمل معمولا به صورت اضافه کردن یک ویژگی یا یک متد به مدل خودتان(بجای مدل ادمین) انجام می شود.
 
-The default admin list view for the sightings model
+در اینجا کد مربوط به مدل بهینه شده ی sightings را داریم:
 
-After the admin customizations explained in this section are made, the same information will be presented in a much more accessible manner, as shown in the following screenshot:
+<pre dir='ltr' style='background-color:#D3D3D3'>\# <span class="pl-s1">models</span>.<span class="pl-s1">py</span>
+<span class="pl-k">class</span> <span class="pl-v">Sighting</span>(<span class="pl-s1">models</span>.<span class="pl-v">Model</span>):
+    <span class="pl-s1">superhero</span> <span class="pl-c1">=</span> <span class="pl-s1">models</span>.<span class="pl-v">ForeignKey</span>(
+        <span class="pl-s1">settings</span>.<span class="pl-v">AUTH_USER_MODEL</span>, <span class="pl-s1">on_delete</span><span class="pl-c1">=</span><span class="pl-s1">models</span>.<span class="pl-v">CASCADE</span>)
+    <span class="pl-s1">power</span> <span class="pl-c1">=</span> <span class="pl-s1">models</span>.<span class="pl-v">CharField</span>(<span class="pl-s1">max_length</span><span class="pl-c1">=</span><span class="pl-c1">100</span>)
+    <span class="pl-s1">location</span> <span class="pl-c1">=</span> <span class="pl-s1">models</span>.<span class="pl-v">ForeignKey</span>(<span class="pl-v">Location</span>, <span class="pl-s1">on_delete</span><span class="pl-c1">=</span><span class="pl-s1">models</span>.<span class="pl-v">CASCADE</span>)
+    <span class="pl-s1">sighted_on</span> <span class="pl-c1">=</span> <span class="pl-s1">models</span>.<span class="pl-v">DateTimeField</span>()
 
-![](/06-%20Admin%20Interface/images/image-002.png)
+    <span class="pl-k">def</span> <span class="pl-en">__str__</span>(<span class="pl-s1">self</span>):
+        <span class="pl-k">return</span> <span class="pl-s">"{}'s power {} sighted at: {} on {}"</span>.<span class="pl-en">format</span>(
+            <span class="pl-s1">self</span>.<span class="pl-s1">superhero</span>,
+            <span class="pl-s1">self</span>.<span class="pl-s1">power</span>,
+            <span class="pl-s1">self</span>.<span class="pl-s1">location</span>.<span class="pl-s1">country</span>,
+            <span class="pl-s1">self</span>.<span class="pl-s1">sighted_on</span>)
 
-The improved admin list view for the sightings model
+    <span class="pl-k">def</span> <span class="pl-en">get_absolute_url</span>(<span class="pl-s1">self</span>):
+        <span class="pl-k">from</span> <span class="pl-s1">django</span>.<span class="pl-s1">urls</span> <span class="pl-k">import</span> <span class="pl-s1">reverse</span>
+        <span class="pl-k">return</span> <span class="pl-en">reverse</span>(<span class="pl-s">'sighting_details'</span>, <span class="pl-s1">kwargs</span><span class="pl-c1">=</span>{<span class="pl-s">'pk'</span>: <span class="pl-s1">self</span>.<span class="pl-s1">id</span>})
 
-The admin app is smart enough to figure out a lot of things from your model automatically. However, sometimes the inferred information can be improved. This usually involves adding an attribute or a method to the model itself (rather than to the ModelAdmin class).
+    <span class="pl-k">class</span> <span class="pl-v">Meta</span>:
+      <span class="pl-s1">unique_together</span> <span class="pl-c1">=</span> (<span class="pl-s">"superhero"</span>, <span class="pl-s">"power"</span>)
+      <span class="pl-s1">ordering</span> <span class="pl-c1">=</span> [<span class="pl-s">"-sighted_on"</span>]
+      <span class="pl-s1">verbose_name</span> <span class="pl-c1">=</span> <span class="pl-s">"Sighting &amp; Encounter"</span>
+      <span class="pl-s1">verbose_name_plural</span> <span class="pl-c1">=</span> <span class="pl-s">"Sightings &amp; Encounters"</span>
+</pre>
 
-Here is the enhanced Sightings model:
+حال نحوه استفاده ادمین از این ویژگی ها را بررسی می کنیم:
 
-```python
-\# models.py
-class Sighting(models.Model):
-    superhero = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    power = models.CharField(max_length=100)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
-    sighted_on = models.DateTimeField()
+<h4>__str__():</h4>
+بدون این متد، عناوین فلیدهای مدل شما به صورتی کسالت بار و ناخوانا نمایش داده می شوند. تمام فیلدها با فرمتی به شکل
 
-    def __str__(self):
-        return "{}'s power {} sighted at: {} on {}".format(
-            self.superhero,
-            self.power,
-            self.location.country,
-            self.sighted_on)
+Sighting:Sighting object
 
-    def get_absolute_url(self):
-        from django.urls import reverse
-        return reverse('sighting_details', kwargs={'pk': self.id})
+نمایش داده می شوند. سعی کنید که تمام ویژگی های منحصر به فرد آبجکت را در نمایش str(یا در نمایش Unicode برای پایتون ورژن ۲)، همچون نام آبجکت و ورژن آن؛ نمایش دهید. هر آنچه که به نمایش بدون ابهام آبجکت در ادمین کمک کند، کاربردی است.
 
-    class Meta:
-      unique_together = ("superhero", "power")
-      ordering = ["-sighted_on"]
-      verbose_name = "Sighting & Encounter"
-      verbose_name_plural = "Sightings & Encounters"
-```
+#### get_absolute_url():
+این متد برای جابجا شدن بین صفحه سایت ادمین و نمایش جزئیات آبجکت متناظر روی سایت شما(صفحه اصلی) کارآمد است.اگر این متد تعریف شده باشد، یک دکمه با عنوان "نمایش بر روی سایت" در کنج بالا و دست راست صفحه ی ویرایش آبجکت در داخل ادمین؛ نشان داده می شود
 
-Let's take a look at how admin uses all these nonfield attributes:
+- ordering:
 
-**_\_\_str\_\_()_**: Without this, the list of superhero entries would look extremely boring. All entries would be shown alike, with the format of < Sighting:
-Sighting object>. Try to display the object's unique information in its str representation (or Unicode representation, in the case of Python 2.x code), such as its name or version. Anything that helps the admin to recognize the object unambiguously would help.
+ بدون این گزینه ی متا،ورودی های شما با ترتیبی که از دیتابیس دریافت شده اند،نمایش داده می شوند. همانطور که تصور می کنید، اگر تعداد زیادی آبجکت داشته باشید؛ این شیوه مرتب کردن برای ادمین سایت جالب نخواهد بود. به طور معمول، ادمین ها ترجیح می دهند که ورودی های جدیدتر را در ابتدا مشاهده کنند؛ بنابراین مرتب سازی با ترتیب زمانی معکوس(با نشان منفی) رایج است.
 
-**_get_absolute_url()_**: This method is handy if you like to switch between the
 
-admin site and the object's corresponding detail view on your (nonadmin) website. If this method is defined, then a button labeled **View on site** will appear in the top right-hand corner of the object's **Edit** page within the admin.
+-   verbose_name:
 
-- **_ordering_**: Without this Meta option, your entries can appear in any order as returned from the database. As you can imagine, this is no fun for the admins if you have a large number of objects. The admins usually prefer to see fresh entries first, so sorting by date in the reverse chronological order (hence the minus sign) is common.
-- **_verbose_name_**: If you omit this attribute, your model's name would be converted from CamelCase into camel case. In this case, it used frivolously to change "Sighting" to "Sighting & Encounter". But sometimes, the automatically generated verbose_name looks awkward, and you can specify how you would like the user-readable name to appear in the admin interface here.
-- **_verbose_name_plural_**: Again, omitting this option can leave you with funny results. Since Django simply prepends an _s_ to the word, the generated plural would be shown as "Sighting & Encounters" (on the admin front page, no less), so it is better to define it correctly here.
+اگر این ویژگی را حذف کنید، نام مدل شما از حالت کمل کیس با حروف اول بزرگ، به حالت ساده تبدیل می شود.در این مثال، از این ویژگی به صورت بیهوده و برای تبدیل Sighting به Sighting & Encounter استفاده شده است.
+اما بعضی مواقع اسمی که به صورت خودکار برای مدل ساخته می شود، گیج کننده است؛ پس شما می توانید نامی که برای کاربر خوانا باشد را برای نمایش در بخش ادمین تعیین کنید.
 
-It is recommended that you define the previous Meta attributes and methods not just for the admin interface, but for better representation in the shell, log files, and so on. However, you can use many more features of the admin by creating a custom ModelAdmin class. In this case, we customize it as follows:
+ 
+- verbose_name_plural
 
-class. In this case, we customize it as follows:
-\# admin.py
+مجددا، حذف این ویژگی نتایج جالبی خواهد داشت. از آنجا که جنگو برای اسامی مدل ها حرف جمع s را در انتها می آورد، لغت جمع به صورت"Sighting & Encounters"(در صفحه ادمین و نه جای دیگر)نمایش داده می شود. پس بهتر است با استفاده از این ویژگی، شکل صحیح آن را تعریف کنیم.
 
-```python
-class SightingAdmin(admin.ModelAdmin):
-    list_display = ('superhero', 'power', 'location', 'sighted_on')
-    date_hierarchy = 'sighted_on'
-    search_fields = ['superhero']
-    ordering = ['superhero']
-admin.site.register(models.Sighting, SightingAdmin)
-```
+پیشنهاد می شود که تگ متا مذکور را نه تنها برای رابط ادمین، بلکه برای نمایش بهتر در قسمت های شل و فایل های لاگ نیز، تعریف کنید.اگرچه، شما می توانید از ویژگی های بسیار بیشتر ادمین برای شخصی سازی کلاس مدل ادمین بهره ببرید. در این مثال، شخصی سازی را به صورت زیر انجام می دهیم:
 
-Let's take a look at these options more closely:
-list_display: This option shows the model instances
+`# admin.py`
 
-Let's take a look at these options more closely:
+<pre dir='ltr' style='background-color:#D3D3D3'><span class="pl-k">class</span> <span class="pl-v">SightingAdmin</span>(<span class="pl-s1">admin</span>.<span class="pl-v">ModelAdmin</span>):
+    <span class="pl-s1">list_display</span> <span class="pl-c1">=</span> (<span class="pl-s">'superhero'</span>, <span class="pl-s">'power'</span>, <span class="pl-s">'location'</span>, <span class="pl-s">'sighted_on'</span>)
+    <span class="pl-s1">date_hierarchy</span> <span class="pl-c1">=</span> <span class="pl-s">'sighted_on'</span>
+    <span class="pl-s1">search_fields</span> <span class="pl-c1">=</span> [<span class="pl-s">'superhero'</span>]
+    <span class="pl-s1">ordering</span> <span class="pl-c1">=</span> [<span class="pl-s">'superhero'</span>]
+<span class="pl-s1">admin</span>.<span class="pl-s1">site</span>.<span class="pl-en">register</span>(<span class="pl-s1">models</span>.<span class="pl-v">Sighting</span>, <span class="pl-v">SightingAdmin</span>)</pre>
 
-- **_list_display_**: This option shows the model instances in a tabular form. Instead of using the model's \_\_str\_\_ representation, it shows each field mentioned as a separate sortable column. This is ideal if you like to sort by more than one attribute of your model.
-- **_date_hierarchy_**: Specifying any date-time field of the model as a date hierarchy will present a date drill down (note the clickable years below the **Search** box).
-- **_search_fields_**: This option shows a **Search** box above the list. Any search term entered would be searched against the mentioned fields. Hence, only text fields such as CharField or TextField can be mentioned here.
-- **_ordering_**: This option takes precedence over your model's default ordering. It is useful if you prefer a different ordering in your admin screen, which is the preference we have adopted here.
+بگذارید تا به این ویژگی ها نگاهی دقیق تر داشته باشیم.
 
-We have only mentioned a subset of the most commonly used admin options. Certain kinds of sites use the admin interface heavily. In such cases, it is highly recommended that you go through and understand the admin part of the Django documentation.
 
-**Not everyone should be an admin**
+- list_display:
 
-Since admin interfaces are so easy to create, people tend to misuse them. Some give users administration access indiscriminately by merely turning on their staff flag. Soon, users begin making feature requests, mistaking the admin interface for the actual application interface.
+این گزینه نمونه های ساخته شده ازمدل را به صورت جدولی نشان می دهد. بجای استفاده از \__str__ این گزینه تمام فیلدهای ذکر شده را به صورت ستونی قابل مرتب سازی نشان می دهد. این قابلیت برای مرتب سازی مدل با بیش از یک ویژگی ، ایده آل است.
 
-Unfortunately, this is not what the admin interface is for. As the word staff suggests, it is an internal tool for the staff to enter content. It is production-ready, but not really intended for the end users of your website.
 
-It is best to use admin for simple data entry. For example, in a school-wide intranet project I once reviewed, every teacher was made an admin for a Django application. This was a poor decision since the admin interface confused the teachers.
+- date_hierarchy:
 
-The workflow for scheduling a class involves checking the schedules of other teachers and students. Using the admin interface gives them a direct view of the database. There is very little control over how the data gets modified by the administrator.
+تعیین هر فیلد تاریخ-زمان با این ویژگی، یک توضیح دقیق تر برای هر تاریخ ارائه خواهد داد.( به سال های قابل کلیک در زیر کادر جستجو توجه کنید)
 
-So, keep the set of people with admin access as small as possible. Make changes via admin sparingly, unless it is simple data entry, such as adding an article's content.
+- search_fields:
 
-**Best Practice**
+این گزینه یک کادر جستجو بالای لیست ایجاد می کند. هر عبارتی که جستجو شود در فیلدهای مشخص شده جستجو خواهد شد. بنابراین فقط فیلدهای کاراکتری و فیلدهای متنی می توانند در اینجا استفاده شوند.
 
-Don't give admin access to end users.
+- ordering:
 
-Ensure that all your admins understand the data inconsistencies that can arise from making changes through the admin. If possible, record manually, or use apps, such as [django-](http://django-auditlog.readthedocs.io/en/latest/)
+این گزینه به ترتیب پیش فرض مدل شما تقدم می یابد. این مورد زمانی کاربردی است که شما نیاز به ترتیب نمایش متفاوتی در صفحه ادمین دارید؛ که در اینجا ترجیحا اعمال شده است.
 
-[audit-log, that](http://django-auditlog.readthedocs.io/en/latest/) can keep a log of admin changes made for future reference.
+ما فقط زیرمجموعه ای از پر استفاده ترین ویژگی های ادمین را ذکر کردیم. نوع خاصی از وبسایت ها، استفاده زیادی از رابط ادمین دارند؛در این موارد، شدیدا توصیه می شود که به مستندات جنگو مراجعه و بخش مربوط به ادمین را مطالعه کنید.
 
-In the case of the university example, we created a separate interface for teachers, such as a course scheduler. These tools contain application code that can be used for purposes that are far beyond admin's data entry functionality, such as the detection of date conflicts.
+#### هر کسی نباید ادمین باشه
 
-Essentially, rectifying most misuses of the admin interface involve creating more powerful tools for certain sets of users. However, don't take the easy (and wrong) path of granting them admin access.
+از آنجا که ساخت رابط ادمین بسیار آسان است، ممکن است که افراد به غلط از آن استفاده کنند. برخی با فعال کردن تیک staff(کارکنان) برای کاربران، به صورت بی رویه به آن ها دسترسی برای مدیریت این بخش می دهند.
 
-**Admin interface customizations**
 
-The out-of-the-box admin interface is quite useful when getting started. Unfortunately, most people assume that it is quite hard to change the Django admin and leave it as it is. In fact, the admin is extremely customizable, and its appearance can be drastically changed with minimal effort.
+متاسفانه، این چیزی نیست که رابط ادمین برای آن ساخته شده. همانطور که از معنی لغت staff پیدا است، ابزاری داخلی است برای کارکنان تا محتوا را وارد کنند. این یک ابزار فعال در محیط تولید است(زمانی که سایت بر روی سرور اپلود شده)، اما برای کاربران نهایی وبسایت شما در نظر گرفته نشده است.
 
-**Changing the heading**
 
-Many users of the admin interface might be stumped by the heading—Django administration. It might be more helpful to change this to something customized, such as _MySite Admin_, or something cool, such as _SuperBook Secret Area_.
+بهتر است از رابط ادمین برای وارد کردن دیتا های ساده استفاده شود. برای مثال،در یک پروژه ی اینترانت در سطح یک مدرسه مشاهده کردم، هر یک از معلم ها به عنوان یک ادمین برای اپ جنگو در نظر گرفته شده بود. این تصمیم اشتباهی بود چرا که محیط کاربری ادمین، معلمان را گیج می کرد.
 
-It is quite easy to make this change. Simply add the following line to your site's urls.py:
 
-```python
+گردش کار برای برنامه ریزی کلاس ، شامل بررسی برنامه های معلمان و دانش آموزان دیگر است. استفاده از رابط ادمین به آن ها نمای واضحی از پایگاه داده می دهد. در این حالت ، مدیر کنترل کمی بر روند اعمال تغییرات بر داده ها دارد.
 
-admin.site.site_header = "SuperBook Secret Area"
 
-```
+بنابراین، تعداد افرادی که به رابط ادمین دسترسی دارند را در حداقل ممکن نگه دارید. در اعمال تغییرات از طریق رابط ادمین زیاده روی نکنید، مگر اینکه وارد کردن یک داده ساده، مثل اضافه کردن محتوای یک مقاله؛ باشد.
 
-**Changing the base and stylesheets**
 
-Almost every admin page is extended from a common base template
+#### الگوهای سرآمد: 
 
-named admin/base_site.html. This means that with a little knowledge of HTML and CSS, you can make all sorts of customizations to change the look and feel of the admin interface.
+`به کاربران نهایی دسترسی به رابط ادمین ندهید.
+`
 
-Create a directory called admin in any templates directory. Then, copy the
+مطمئن شوید که تمام مدیران سایت شما از تناقض هایی که ممکن است در داده ها از طریق رابط ادمین ایجاد شود، آگاه هستند.اگر ممکن است به صورت دستی تغییرات را ذخیره کنید؛یا از برنامه هایی مثل django-audit-log، که می تواند گزارش تغییرات اعمال شده در قسمت ادمین را برای ارجاع در آینده ذخیره کند، استفاده کنید.
 
-base_site.html file from the Django source directory and alter it according to your
+در یک نمونه مثال از یک دانشگاه، ما یک رابط کاربری مجزا،همانند یک رابط برنامه ریزی دوره ها؛ برای اساتید ساختیم. چنین ابزاری حاوی برنامه ای است که می تواند برای مقاصدی بسیار فراتر از عملکرد فیلد های داده ی رابط ادمین،مثل شناسایی تناقض بین تاریخ دوره ها؛ مورد استفاده باشد باشد .
 
-needs. If you don't know where the templates are located, just run the following commands within the Django shell:
 
-**>>> from os.path import join**
 
-**>>> from django.contrib import admin**
+اساسا، اصلاح اشکالات رابط ادمین مستلزم ایجاد ابزار های توانمندتری برای یک مجموعه مشخص از کاربران است. با این حال، مسیر آسان(و اشتباه) اعطای دسترسی مدیریت به آنها را انتخاب نکنید.
 
-**>>> print(join(admin.\_\_path\_\_[0], "templates", "admin")) /home/arun/env/sbenv/lib/python3.6/site- packages/django/contrib/admin/templates/admin**
 
-The last line is the location of all your admin templates. You can override or extend any of these templates.
+#### سفارشی سازی رابط مدیریت
 
-For an example of overriding the admin base template, you can change the font of the entire admin interface to _Special Elite_ from Google Fonts, which is great for giving a mock-serious look.
+پنل ادمین آماده جنگو برای شروع کار بسیار مناسب است. متاسفانه، اکثریت افراد تصور می کنند که تغییر دادن رابط مدیریت جنگو بسیار مشکل است و آن را به همان شکلی که هست رها می کنند. در واقع رابط مدیریت جنگو قابلیت شخصی سازی فوق العاده ای دارد و ظاهر آن را می توان با حداقل تلاش، شدیدا تغییر داد.
 
-You will need to copy base_site.html from the admin templates to admin/base_site.html in one of your template's directories. Then, add the following lines to the end:
 
-```html
-{% block extrastyle %}
+#### تغییر عنوان
 
-<link
-  href="http://fonts.googleapis.com/css?family=Special+Elite"
-  rel="stylesheet"
-  type="text/css"
-/>
 
-<style type="text/css">
-  body,
-  td,
-  th,
-  input {
-    font-family: "Special Elite", cursive;
+بسیاری از کاربران رابط مدیریت ممکن است با عنوان مدیریت جنگو (django administration) دچار مشکل شوند. احتمالا بهتر باشد که این مورد را به عبارتی اختصاصی مثل، "مدیر سایت من"، یا عبارت جالب توجهی چون "محیط مهرمانه superbook"  تغییر دهید.
+
+ایجاد این تغییرات بسیار راحت است، فقط لازم است تا خط کد زیر را به صفحه urls.py سایت خود اضافه کنید.
+
+<pre dir='ltr' style='background-color:#D3D3D3'><span class="pl-s1">admin</span>.<span class="pl-s1">site</span>.<span class="pl-s1">site_header</span> <span class="pl-c1">=</span> <span class="pl-s">"SuperBook Secret Area"</span></pre>
+
+#### تغییر پایه و شیوه نامه
+
+تقریبا هر صفحه مدیریتی، از یک الگوی پایه مشترک توسعه یافته است که به آن admin/base_site.html می گویند.
+
+این بدان معنی است که شما با یک دانش حداقلی از html و css، می توانید به دلخواه ظاهر و حالت رابط کاربری ادمین را تغییر دهید.
+
+یک فایل با نام ادمین در مسیری که الگوهایتان قرار دارد بسازید. سپس محتوای فایل base_site.html را از سورس کد جنگو کپی کرده و در فایل جدید، به دلخواه آن را ویرایش کنید. اگر نمی دانید که الگوها(templates) کجا قرار گرفته اند،کافی است که کد زیر را در شل (shell) جنگو اجرا نمایید.
+
+<p dir='ltr' style='background-color:#ADD8E6'>
+from os.path import join
+<br>
+from django.contrib import admin
+<br>
+print(join(admin.\__path__[0], "templates", "admin")) /home/arun/env/sbenv/lib/python3.6/site- packages/django/contrib/admin/templates/admin
+</p>
+
+اخرین خط، محل قرارگیری تمام فایل های الگوی ادمین شما است.شما می توانید هر کدام از این فایل ها را تغییر و یا تعمیم دهید.
+
+برای مثال در تغییر پایه الگوی ادمین، شما می توانیدفونت تمام قسمت ادمین را به فونت Special Elite تغییر دهید.
+
+برای این کار لازم است که محتویات فایل  base_site.html را از مسیر الگوهای ادمین به مسیر admin/base_site.html؛ در یک پوشه از الگوهای خودتان، کپی کنید. سپس کد زیر را به انتهای آن اضافه کنید.
+
+<pre dir='ltr' style='background-color:#D3D3D3'>{% block extrastyle %}
+
+<span class="pl-kos">&lt;</span><span class="pl-ent">link</span>
+  <span class="pl-c1">href</span>="<span class="pl-s">http://fonts.googleapis.com/css?family=Special+Elite</span>"
+  <span class="pl-c1">rel</span>="<span class="pl-s">stylesheet</span>"
+  <span class="pl-c1">type</span>="<span class="pl-s">text/css</span>"
+/&gt;
+
+<span class="pl-kos">&lt;</span><span class="pl-ent">style</span> <span class="pl-c1">type</span>="<span class="pl-s">text/css</span>"<span class="pl-kos">&gt;</span>
+  <span class="pl-ent">body</span><span class="pl-kos">,</span>
+  <span class="pl-ent">td</span><span class="pl-kos">,</span>
+  <span class="pl-ent">th</span><span class="pl-kos">,</span>
+  <span class="pl-ent">input</span> {
+    <span class="pl-c1">font-family</span><span class="pl-kos">:</span> <span class="pl-s">"Special Elite"</span><span class="pl-kos">,</span> cursive;
   }
-</style>
-{% endblock %}
-```
+<span class="pl-kos">&lt;/</span><span class="pl-ent">style</span><span class="pl-kos">&gt;</span>
+{% endblock %}</pre>
 
-This adds an extra stylesheet for overriding the font-related styles and will be applied to every admin page.
 
-**Adding a rich-text editor for WYSIWYG editing**
+این کد، شیوه نامه جدیدی برای تغییر فونت مربوطه می افزاید که به تمام صفحات ادمین اعمال می شود.
 
-Sometimes, you will need to include JavaScript code in the admin interface. A common requirement is to use an HTML editor, such as CKEditor, for your TextField.
 
-There are several ways to implement this in Django, for example, using a Media inner class on your ModelAdmin class. However, I find extending the admin change_form template to be the most convenient approach.
+#### اضافه کردن یک ویرایشگر متن غنی(rich-text) برای ویرایش WYSIWYG 
 
-For example, if you have an app called posts, then you will need to create a file called change_form.html within the templates/admin/posts/ directory. If you need to show CKEditor (it could be any JavaScript editor, but this one is the one I prefer) for the message field of a model in this app, then the contents of the file can be as follows:
 
-```html
-{% extends "admin/change\_form.html" %} {% block footer %} {{ block.super }}
+گاهی اوقات نیاز دارید که کد جاوااسکریپتی در بخش ادمین داشته باشید. یک نیاز مشترک، استفاده از یک ویرایشگر HTML ؛ مثل CKEditor، برای فیلدهای متنی است.
 
-<script src="//cdn.ckeditor.com/4.4.4/standard/ckeditor.js"></script>
-<script>
-  CKEDITOR.replace("**id_message**", {
-    toolbar: [["Bold", "Italic", "-", "NumberedList", "BulletedList"]],
-    width: 600,
-  });
-</script>
-<style type="text/css">
-  .cke {
-    clear: both;
+راه های متعددی برای پیاده سازی این موضوع در جنگو ، همانند استفاده از کلاس داخلی Media در کلاس مدل ادمین(ModelAdmin)؛ وجود دارد.با این حال، من تعمیم الگوی change_form در ادمین را مناسب ترین روش تشخیص دادم.
+
+برای مثال، اگر شما یک برنامه به اسم پست ها دارید، لازم است که فایلی با نام change_form.html در مسیر templates/admin/posts/ بسازید. اگر نیاز دارید که ویرایشگر CKEditor ( یا هر ویرایشگر جاوااسکریپت، اما این ویرایشگر مورد ترجیح من است)برای فیلد پیام یک مدل از این برنامه نمایش داده شود، محتوای فایل مربوطه می تواند به صورت زیر باشد:
+
+<pre dir='ltr' style='background-color:#D3D3D3'>{% extends "admin/change\_form.html" %} {% block footer %} {{ block.super }}
+
+<span class="pl-kos">&lt;</span><span class="pl-ent">script</span> <span class="pl-c1">src</span>="<span class="pl-s">//cdn.ckeditor.com/4.4.4/standard/ckeditor.js</span>"<span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">script</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;</span><span class="pl-ent">script</span><span class="pl-kos">&gt;</span>
+  <span class="pl-c1">CKEDITOR</span><span class="pl-kos">.</span><span class="pl-en">replace</span><span class="pl-kos">(</span><span class="pl-s">"**id_message**"</span><span class="pl-kos">,</span> <span class="pl-kos">{</span>
+    <span class="pl-c1">toolbar</span>: <span class="pl-kos">[</span><span class="pl-kos">[</span><span class="pl-s">"Bold"</span><span class="pl-kos">,</span> <span class="pl-s">"Italic"</span><span class="pl-kos">,</span> <span class="pl-s">"-"</span><span class="pl-kos">,</span> <span class="pl-s">"NumberedList"</span><span class="pl-kos">,</span> <span class="pl-s">"BulletedList"</span><span class="pl-kos">]</span><span class="pl-kos">]</span><span class="pl-kos">,</span>
+    <span class="pl-c1">width</span>: <span class="pl-c1">600</span><span class="pl-kos">,</span>
+  <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">script</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;</span><span class="pl-ent">style</span> <span class="pl-c1">type</span>="<span class="pl-s">text/css</span>"<span class="pl-kos">&gt;</span>
+  .<span class="pl-c1">cke</span> {
+    <span class="pl-c1">clear</span><span class="pl-kos">:</span> both;
   }
-</style>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">style</span><span class="pl-kos">&gt;</span>
 
-{% endblock %}
-```
+{% endblock %}</pre>
 
-The part in bold is the automatically created ID for the form element we wish to enhance from a normal textbox to a rich-text editor. This change will not affect other textboxes or form fields in the admin site. These scripts and styles have been added to the footer block so that the form elements are created in the DOM before they are changed.
+قسمتی که بولد شده، شناسه ساخته شده به صورت خودکار برای المان فرمی است که می خواهیم از یک کادر متنی ساده به یک ویرایشگر متن غنی تبدیل کنیم. این تغییر سایر کادرهای متنی فیلدهای سایت ادمین را تحت تاثیر قرار نمی دهد. این اسکریپت ها به بلوک انتهایی (footer) افزوده شده، پس المان های فرم در DOM قبل از آن که تغییر کنند،ساخته شده اند.
 
-Other approaches for achieving this might require the installation of apps and other configuration changes. For changing just one admin site field, this might be overkill. The approach here also gives you the flexibility to pick and choose the JavaScript editor of your choice.
+شیوه های دیگر دستیابی به این موضوع ممکن است نیازمند نصب برنامه ها و تنظیمات دیگری باشد. برای تغییر فقط یک صفحه از سایت ادمین، این زیاده روی است. شیوه قبلی به شما این انعطاف پذیری را می دهد که بین ویرایشگر جاوااسکریپت یا موارد دلخواه خودتان، انتخاب کنید.
 
-**Bootstrap-themed admin**
 
-Unsurprisingly, a common request for admin customization is whether it can be integrated with Bootstrap. There are several packages that can do this, such as Django-admin- bootstrapped or Django suit.
+#### ادمین با تم بوت استرپ
 
-Rather than overriding all the admin templates yourself, these packages provide ready-to- use Bootstrap-themed templates. They are easy to install and deploy. Being based on Bootstrap, they are responsive and come with a variety of widgets and components.
+جای تعجب نیست که یک درخواست برای سفارشی سازی بخش ادمین این است که آیا می توان بوت استرپ را با آن ادغام کرد یا خیر. بسته های(pacakges) زیادی؛ همانند Django-admin-bootstrapped  و یا Django suit هستند؛ که می توانند این کار را انجام دهند.
 
-**Complete overhauls**
+بجای این که تمام الگوهای ادمین را خودتان تغییر دهید، این بسته ها تم های آماده به مصرفی را فراهم کرده اند.نصب و بارگذاری این تم ها آسان است. از آنجا که بر اساس بوت استرپ هستند، واکنشگرا(responsive) بوده و با مولفه ها و ویجت های متنوعی همراه هستند.
 
-Attempts have been made to completely reimagine the admin interface. [Grappelli is a ](https://django-grappelli.readthedocs.io/)very popular skin that extends the Django admin with new features, such as autocomplete lookups and collapsible inlines. With [django-admin-tools, you ](https://django-admin-tools.readthedocs.io/)get a customizable dashboard and menu bar.
 
-Attempts have also been made to completely rewrite the admin, such as django-admin2 and nexus, which did not achieve any significant adoption. There is even an official proposal called AdminNext to revamp the entire admin app. Considering the size, complexity, and popularity of the existing admin, any such effort is expected to take a significant amount of time.
 
-**Protecting the admin**
+#### بازسازی کامل 
 
-The admin interface of your site provides access to almost every piece of data stored, so don't leave the metaphorical gate lightly guarded. In fact, one of the only telltale signs that someone is running Django is that when you navigate to [http://example.com/admin/, you](http://example.com/admin/)
+تلاش های زیادی برای دوباره به تصویر کشیدن بخش ادمین انجام شده است.  Grappelli یک پوسته محبوب است که رابط ادمین جنگو را با با ویژگی های جدیدی تعمیم می دهد؛  جستجوهای پیشنهاد دهنده(autocomplete lookups) و خطوط تاشو(collapsible inlines) نمونه هایی از این ویژگی ها هستند. با استفاده از ابزار  django-admin-tools شما یک داشبورد و نوار منو با قابلیت سفارشی سازی خواهید داشت.
 
-will be greeted by the blue login screen.
 
-In production, it is recommended that you change this location to something less obvious. It is as simple as changing the following line in your root urls.py:
 
-```python
-path('secretarea/', admin.site.urls),
-```
+تلاش هایی برای بازنویسی مجدد رابط ادمین صورت گرفته، نظیر django-admin2  و nexus؛ که پیشرفت قابل توجهی نداشتند. همچنین یک ابزار رسمی به نام AdminNext برای اصلاح کامل رابط ادمین ساخته شد.
+با در نظر گرفتن حجم، پیچیدگی و محبوبیت رابط ادمین موجود؛ هر تلاشی از این قبیل زمان بسیار زیادی خواهد برد.
 
-A slightly more sophisticated approach is to use a dummy admin site at the default location or a honeypot (see the [django-admin-honeypot package).](http://django-admin-honeypot.readthedocs.io/) However, the best option is to use HTTPS for your admin area (and everywhere else) since normal HTTP will send all the data in plain-text over the network.
+#### حفاظت از ادمین
 
-Check your web server documentation on how to set up HTTPS for admin requests (or, even better, if your entire site can be on HTTPS). On Nginx, it is quite easy to set this up. This involves specifying the SSL certificate locations. Finally, redirect all HTTP requests for admin pages to HTTPS, and you can sleep more peacefully.
+رابط ادمین سایت شما تقریبا به هر داده ای که در سایت ذخیره شده است دسترسی دارد،بنابراین دروازه این مخزن اطلاعات را بدون محافظ رها نکنید.در واقع یک نشانه که گویای این است که شخص از جنگو استفاده می کند،این است که وقتی به صفحه http://example.com/admin/ می روید، یک صفحه آبی برای ورود به بخش می بینید.
 
-The following pattern is not strictly limited to the admin interface but it is nonetheless included in this chapter, as it is often controlled in the admin.
+زمانی که سایت را بر روی سرور بالا می آورید، بهتر است که مسیر ادمین را به مسیری که کمتر مشخص باشد تغییر دهید. انجام این کار با سادگی با کد زیر در فایل urls.py انجام می شود.
 
-**Pattern – feature flags**
+<pre dir='ltr' style='background-color:#D3D3D3'><span class="pl-en">path</span>(<span class="pl-s">'secretarea/'</span>, <span class="pl-s1">admin</span>.<span class="pl-s1">site</span>.<span class="pl-s1">urls</span>),</pre>
 
-**Problem:** The publishing of new features to users should be independent of the deployment of the corresponding code in production.
+راهکاری که مقداری پیچیده تر است آن است که یک صفحه ادمین فیک (رد گم کن!) در مسیر پیش فرض داشته باشید.(بسته ی django-admin-honeypot package را جستجو کنید).
+با این حال بهترین راه حل استفاده از HTTPS در محیط ادمین(و هر جای دیگر از وبسایت) است.چرا که استفاده از HTTP ساده، موجب ارسال تمام داده ها به صورت یک متن ساده در شبکه می شود.
 
-**Solution:** Use feature flags to selectively enable or disable features after deployment.
 
-**Problem details**
+مستندات سرور وبسایت خود را در رابطه با نحوه ی تنظیم HTTPS برای درخواست های ادمین (یا اگر ممکن است، تمام وبسایتتان) بررسی کنید. بر روی Nginx، انجام این کار ساده است؛ که شامل تعیین محل گواهی SSL می شود. در نهایت،تمامی درخواست های HTTP دریافت شده برای ادمین را به صفحات HTTPS بازنشانی کنید، تا خیال راحت تری داشته باشید!
 
-Rolling out frequent bug fixes and new features to production is common today. Many of these changes are unnoticed by users. However, new features that have a significant impact in terms of usability or performance ought to be rolled out in a phased manner. In other words, deployment should be decoupled from a release.
+الگوی زیر تنها محدود به بخش رابط ادمین نیست، اما با این وجود در این فصل گنجانده شده؛ زیرا اغلب در این بخش کنترل می شود.
 
-Simplistic release processes activate new features as soon as they are deployed. This can potentially have catastrophic results, ranging from user issues (swamping your support resources) to performance issues (causing downtime).
+#### پرچم های(flags) الگو - ویژگی
 
-Hence, in large sites, it is important to decouple deployment of new features in production and their activation. Even if they are activated, they are sometimes only seen by a select group of users. This select group can be staff or a limited set of customers who get an early preview.
+مشکل: انتشار ویژگی های جدید برای کاربران باید مستقل از بارگذاری کد متناظر در تولید باشد.
 
-**Solution details**
+راه حل: استفاده از پرچم های ویژگی برای فعال یا غیر فعال کردن ویژگی ها پس از بارگذاری به صورت انتخابی.
 
-Many sites control the activation of new features using feature flags. Typically, this is a switch controlled in each environment. A feature flipper is a switch in your code that determines whether a feature should be made available to certain customers. But we shall use the general term feature flags here.
+##### شرح مشکل
 
-Several Django packages provide feature flags, such as [gargoyle and](http://gargoyle.readthedocs.io/) [django-waffle. These ](https://waffle.readthedocs.io/)packages store feature flags of a site in the database. They can be activated or deactivated through the admin interface or through management commands. Hence, every environment (production, testing, development, and so on) can have its own set of activated features.
+امروزه رفع مشکلات مکرر و مدیریت ویژگی های جدید در حین فعال بودن سایت بر روی سرور، مسئله ای رایج است.بسیاری از این تغییرات توسط کاربران مورد توجه قرار نمی گیرد. اگرچه ویژگی های جدیدی که تاثیر قابل توجی از نظر عملکرد و قابلیت های سایت دارند، باید به صورت مرحله ای عرضه شوند. به عبارت دیگر، بارگذاری باید از مرحله انتشار و فعال سازی جدا شود.
 
-Feature flags were originally documented in Flickr (see [http://code.flickr.net/2009/12/02/flipping-out/). They managed a ](http://code.flickr.net/2009/12/02/flipping-out/)code repository without any branches—that is, everything was checked into the mainline. They also deployed this code into production several times a day. If they found out that a new feature broke anything in production or increased load on the database, then they simply disabled it by turning that feature flag off.
+یک فرآیند ساده انتشار نسخه جدید، ویژگی های تازه را به محض بارگذاری شدن آن ها بر روی سایت، فعال می کند. این امر به طور بالقوه می تواند نتایج فاجعه باری داشته باشد؛ از مشکلات کابران ( پر شدن منابع پشتیبانی و نرم افزاری شما) گرفته، تا مشکلات عملکردی(خرابی و غیرفعال شدن سایت) را منجر می شود.
 
-Feature flags can be used for various other situations (the following examples use Django Waffle):
 
-**Trials**: A feature flag can also be conditionally active for certain users. These can be your own staff or certain early adopters that you may be targeting, as follows:
+از این رو در سایت های بزرگ، جداسازی فرآیند بارگذاری بروزرسانی جدید در زمان تولید و فعال سازی آن ها؛ اهمیت زیادی دارد. حتی گاهی پس از فعال سازی ممکن است فقط برای عده خاصی از کاربران آن را قابل مشاهده کنیم. این گروه منتخب می توانند کارکنان یا مجموعه محدودی از مشتریان باشند که پیش نمایش اولیه را دریافت می کنند.
 
-```python
-def my_view(request):
-    if flag_is_active(request, 'flag_name'):
-    \#Behavior if flag is active.
-```
+##### شرح راه حل:
 
-Sites can run several such trials in parallel, so different sets of users might actually have different user experiences. Metrics and feedback are collected from these controlled tests before wider deployment.
+بسیاری از سایت ها فعال سازی ویژگی های جدید را با استفاده از پرچم های ویژگی کنترل می کنند.به طور معمول این یک سوئیچ است که در هر مرحله کنترل می شود."فلیپر" سوئیچی در کد شما است که تعیین می کند آیا یک ویژگی باید در دسترس مشتریان خاص قرار گیرد یا خیر. اما ما در اینجا عبارت عام پرچم ویژگی(feature flag) را به کار می بریم.
 
-**A/B testing**: This is quite similar to trials, except that users are selected randomly within a controlled experiment. This method is quite common in web design and is used to identify which changes can increase the conversion rates. The following is how such a view can be written:
+پکیج های جنگو دارای پرچم های ویژگی مانند gargoyle و django-waffle هستند. این پکیج ها پرچم های سایت را در پایگاه داده ذخیره می کنند.آنها را می توان از طریق رابط ادمین یا از طریق دستورات مدیریت فعال یا غیرفعال کرد. از این رو هر محیطی(تولید،آزمایش،توسعه و ...) می تواند مجموعه ای از ویژگی های فعال شده خود را داشته باشد.
 
-```python
-def my_view(request):
-    if sample_is_active(request, 'new_design'):
-    \#Behavior for test sample.
-```
+پرچم های ویژگی در اصل در سایت فلیکر ثبت شده بودند.(ادرس http://code.flickr.net/2009/12/02/flipping-out را بررسی کنید). آنها یک منبع کد را بدون هیچ شاخه ای مدیریت کردند- یعنی همه چیز در شاخه اصلی بررسی شد. آنها همچنین این کد را چندین بار در روز وارد محیط تولید کردند. اگر آنها متوجه می شدند که یک ویژگی جدید باعث خرابی چیزی در محیط تولید شده است یا بارگذاری روی پایگاه داده را افزایش داده است؛ به سادگی آن را با استفاده از پرچم ویژگی، غیر فعال می کردند.
 
-- **Performance testing**: Sometimes, it is hard to measure the impact of a feature on server performance. In such cases, it is best to activate the flag only for a small percentage of users first. The percentage of activation can be gradually increased if the performance is within the expected limits.
-- **Limit externalities**: We can also use feature flags as a site-wide feature switch that reflects the availability of its services. For example, downtime in external services such as Amazon S3 can result in users facing error messages while they perform actions such as uploading photos. When the external service is down for extended periods, a feature flag can be deactivated and would disable the **Upload** button and/or show a more helpful message about the downtime. This simple feature saves the user's time and provides a better user experience:
+پرچم های ویژگی می توانند برای موقعیت های دیگری نیز استفاده شوند(مثال زیر از Django Waffle استفاده می کند):
 
-```python
-def my_view(request):
-    if switch_is_active('s3_down'):
-    \#Disable uploads and show it is downtime
+##### آزمایش:
+یک پرچم ویژگی می تواند برای کاربران خاصی فعال باشد. این کاربران می توانند کارکنان شما و یا برخی پذیرندگان اولیه باشند که مورد هدف شما هستند؛ که به  صورت زیر مشاهده می کنید:
 
-```
+<pre dir='ltr' style='background-color:#D3D3D3'><span class="pl-k">def</span> <span class="pl-s1">my_view</span>(<span class="pl-s1">request</span>):
+    <span class="pl-k">if</span> <span class="pl-en">flag_is_active</span>(<span class="pl-s1">request</span>, <span class="pl-s">'flag_name'</span>):
+    \#<span class="pl-v">Behavior</span> <span class="pl-k">if</span> <span class="pl-s1">flag</span> <span class="pl-c1">is</span> <span class="pl-s1">active</span>.</pre>
 
-The main disadvantage of this approach is that the code gets littered with conditional checks. However, this can be controlled by periodic code cleanups that remove checks for fully accepted features and prune out permanently deactivated features.
+سایت ها می توانند چندین آزمایش از این دست را به صورت همزمان و موازی اجرا کنند، بنابراین مجموعه های مختلف کاربران ممکن است تجربیات متفاوتی داشته باشند. کمیت ها و بازخوردهای این آزمایش های کنترل شده،قبل از انتشار در سطح وسیع تر؛ جمع آوری و بررسی می شوند.
 
-The activation of flags can be controlled from the admin site using the built-in user authentication and permissions systems. You can also control the sample percentage from the admin interface.
 
-**Summary**
+##### آزمایش A/B:
 
-In this chapter, we explored Django's built-in admin app. We found that it is not only quite useful out of the box, but that various customizations can also be made to improve its appearance and functionality.
+این آزمایش نیز مشابه با مورد پیشین است، با این تفاوت که کاربران به صورت تصادفی در یک ازمایش کنترل شده انتخاب می شوند. این روش در طراحی وبسایت بسیار مرسوم است و با این هدف تعیین آن که کدام تغییرات موجب افزایش نرخ تبدیل می شود، انجام می شوند. در ادامه مثالی از آن را میبینیم:
 
-In the next chapter, we will take a look at how to use forms more effectively in Django by considering various patterns and common use cases.
+<pre dir='ltr' style='background-color:#D3D3D3'><span class="pl-k">def</span> <span class="pl-s1">my_view</span>(<span class="pl-s1">request</span>):
+    <span class="pl-k">if</span> <span class="pl-en">sample_is_active</span>(<span class="pl-s1">request</span>, <span class="pl-s">'new_design'</span>):
+    \#<span class="pl-v">Behavior</span> <span class="pl-s1">for</span> <span class="pl-s1">test</span> <span class="pl-s1">sample</span>.</pre>
+
+##### تست عملکرد:
+گاهی اوقات اندازه گیری تاثیر یک ویژگی بر عملکرد سرور دشوار است. در چنین شرایطی بهتر است از ابتدا پرچم را فقط برای درصد کمی از کابران فعال کنید. اگر عملکرد آن مورد رضایت بود، درصد فعال سازی را می توان به تدریج افزایش داد.
+
+##### محدودیت های خارجی:
+همچنین می توانیم از پرچم های ویژگی به عنوان سوئیچ ویژگی در سراسر سایت استفاده کنیم که در دسترس بودن آن خدمات را منعکس می کند. به عنوان مثال، از کار افتادن سرویس های خارجی مانند Amazon S3 می تواند باعث شود که کابران در حین انجام اقداماتی مانند آپلود تصویر، با پیام های خطا مواجه شوند. هنگامی که سرویس خارجی برای مدت طولانی خاموش است، یک پرچم ویژگی را می توان فعال مرد و دکمه آپلود را غیر فعال کرد و یا پیامی قابل فهم در خصوص زمان خرابی سرویس نشان داد. این ویژگی ساده در وقت کاربر صرفه جویی کرده و تجربه کاربری بهتری را ارائه می دهد:
+
+<pre dir='ltr' style='background-color:#D3D3D3'><span class="pl-k">def</span> <span class="pl-en">my_view</span>(<span class="pl-s1">request</span>):
+    <span class="pl-k">if</span> <span class="pl-en">switch_is_active</span>(<span class="pl-s">'s3_down'</span>):
+    \#<span class="pl-v">Disable</span> <span class="pl-s1">uploads</span> <span class="pl-c1">and</span> <span class="pl-s1">show</span> <span class="pl-s1">it</span> <span class="pl-c1">is</span> <span class="pl-s1">downtime</span></pre>
+
+عیب اصلی این روش آن است که کد با عبارت های شرطی شلوغ می شود. با این حال، این مسئله را می توان با پاکسازی و تصحیح دوره ای کدها و حذف شروط برای ویژگی هایی که کاملا تایید شده اند ، یا حذف ویژگی هایی که به طور دائمی غیرفعال شده؛ تا حدی برطرف کنید.
+
+فعال سازی پرچم ها را می توان از سایت مدیریت با ساتفاده از سیستم های احراز هویت و مجوزهای کاربر داخلی کنترل کرد. همچنین می توانید درصد کاربران نمونه برای ازمایش را از رابط مدیریت کنترل کنید.
+
+
+### خلاصه
+
+در این فصل، برنامه مدیریت داخلی جنگو(ادمین) را بررسی کردیم. نه تنها این بخش به عنوان یک ابزار کمکی بسیار مفید است، بلکه می توان برای بهبود ظاهر و کارایی، آن را سفارشی سازی کرد.
+
+در فصل بعدی با در نظر گرفتن الگوهای مختلف و موارد استفاده شده متداول، نگاهی به نحوه استفاده موثرتر از فرم ها در جنگو خواهیم داشت.
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
