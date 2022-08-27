@@ -212,14 +212,14 @@
 |           ۱ شهریور         |  Alireza Khorami       |03- Models                          |
 |         اتمام          |  Hamed Daneshvar       |04- Views and URLs                  |
 |            اتمام       |  Rahimz        |05- Templates                       |
-|             ۱ شهریور      |  sajjad ebrahimi moghaddam        |06- Admin Interface                 |
+|            اتمام     |  sajjad ebrahimi moghaddam        |06- Admin Interface                 |
 |             اتمام      |  amirajoodani        |07- Forms                           |
 |            اتمام        |  Khalil Farashiani       |08- Working Asynchronously          |
 |          اتمام         |  Hamed Daneshvar       |09- Creating APIs                   |
-|              ۱ شهریور     |  Fereydoon jafari babookani       |10- Dealing with Legacy Code        |
+|              اتمام     |  Fereydoon jafari babookani       |10- Dealing with Legacy Code        |
 |            اتمام       |  Rahimz       |11- Testing and Debugging           |
 |            ۱ شهریور       |  Mohammad Amin Orojloo       |12- Security                        |
-|           ۱ شهریور        |  mokarramis        |13- Production-Ready                |
+|         اتمام       |  mokarramis        |13- Production-Ready                |
 |              اتمام     |  Hamed Alizade       |Appendix A: Python 2 Versus Python 3|
 
 </div>

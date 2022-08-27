@@ -1,578 +1,326 @@
-# Production-Ready
+# آماده برای تولید
 
-In this chapter, we will discuss the following topics:
-- Picking a web stack
-- Hosting approaches
-- Deployment tools
-- Monitoring
-- Performance tips
+در این فصل به مباحث زیر می پردازیم:
+- انتخاب یک وب استک
+- رویکردهای میزبانی
+- بزارهای استقرار
+- مانیتورینگ
+- نکاتی برای کارایی
 
-So, you have developed and tested a fully functional web application in Django. Deploying
-this application can involve a diverse set of activities from choosing your hosting provider
-to performing installations. Even more challenging could be the tasks of maintaining a
-production site so it works without interruption and handling unexpected bursts in traffic.
+خوب  شما تاکنون یک برنامه وب کاملا کاربردی را در جنگو توسعه داده و آنرا مورد آزمایش قرار داده اید. استقرار این برنامه می‌تواند شامل مجموعه‌ای از فعالیت‌ها از انتخاب ارائه‌دهنده میزبانی شما تا اجرای نصب باشد. حتی چالش‌برانگیزتر می‌تواند اقدامات مربوط به حفظ یک سایت تولید شده باشد، تا بدون وقفه و مدیریت انفجارهای غیرمنتظره در ترافیک بالا کار ‌کند.
 
-The discipline of system administration is vast. Hence, this chapter will cover a lot of
-ground. However, given the limited space, we will attempt to familiarize you with the
-various aspects of building a production environment.
-
-
-### The production environment
-
-Although most of us intuitively understand what a production environment is, it is
-worthwhile clarifying what it really means. A production environment is simply one where
-end users use your application. It should be available, resilient, secure, responsive, and
-must have abundant capacity for current (and future) needs.
-
-Unlike a development environment, the chance of real business damage due to any issues
-in a production environment is high. Hence, before moving to production, the code is
-moved to various testing and acceptance environments in order to get rid of as many bugs
-as possible. For easy traceability, every change made to the production environment must
-be tracked, documented, and made accessible to everyone in the team.
-
-As an upshot, there must be no development performed directly on the production
-environment. In fact, there is no need to install development tools, such as a compiler or
-debugger, in production. The presence of any unneeded software increases the attack
-surface of your site and could pose a security risk.
-
-Most web applications are deployed on sites with extremely low downtime, for example,
-large data centers are at five nines, that is, 99.999 percent, uptime. By designing for failure,
-even if an internal component fails, there is enough redundancy to prevent the entire
-system crashing. This concept of avoiding a **single point of failure (SPOF)** can be applied
-at every level, hardware or software.
-
-Hence, it is a crucial collection of software you choose to run in your production
-environment.
-
-
-### Choosing a web stack
-
-So far, we have not discussed the stack on which your application will be running. Even
-though we are talking about it at the very end of this book, it is best not to postpone such
-decisions to the later stages of the application lifecycle. Ideally, your development
-environment must be as close as possible to the production environment to avoid the but it
-works on my machine situation.
-
-By a web stack, we refer to the set of technologies that are used to build a web application.
-It is usually depicted as a series of components, such as OS, database, and web server, all
-piled on top of one another. Hence, it is referred to as a stack.
-
-We will mainly focus on open source solutions here because they are widely used.
-However, various commercial applications can also be used if they are more suited to your
-needs.
+قوانین مدیریت سیستم بسیار گسترده است. از این رو، این فصل زمینه های زیادی را پوشش خواهد داد. با این حال، با توجه به فضای محدود، سعی می کنیم شما را با جنبه های مختلف ساخت یک محیط تولید و پروداکشن آشنا کنیم.
 
 
 
-### Components of a stack
+### محیط تولید و پروداکشن
 
-A production Django web stack is built using several kinds of application (or layers,
-depending on your terminology). While constructing your web stack, some of the choices
-you might need to make are as follows:
-- Which OS and distribution? For example, Debian, Red Hat, or OpenBSD
-- Which WSGI server? For example, Gunicorn or uWSGI.
-- Which web server? For example, Apache or Nginx.
-- Which database? For example, PostgreSQL, MySQL, or Redis.
-- Which caching system? For example, Memcached or Redis.
-- Which process control and monitoring system? For example, Upstart, Systemd, or Supervisord.
-- How to store static media? For example, Amazon S3 or CloudFront
+اگرچه بسیاری از ما به طور شهودی درک می کنیم که یک محیط تولید چیست، مشخص نمودن معنای واقعی آن حائز اهمیت است. محیط تولید به سادگی محیطی است که کاربران نهایی از برنامه شما استفاده می کنند. باید در دسترس، انعطاف پذیر، ایمن، پاسخگو باشد و باید ظرفیت فراوانی برای نیازهای فعلی (و آینده) داشته باشد.
 
+بر خلاف یک محیط توسعه، احتمال آسیب واقعی کسب و کار به دلیل هر گونه مسائل در یک محیط تولید بالا است. از این رو، قبل از حرکت به سمت تولید، کد به محیط‌های مختلف آزمایش و پذیرش منتقل می‌شود تا تا حد امکان از شر اشکالات خلاص شود. برای ردیابی آسان، هر تغییری که در محیط تولید ایجاد می‌شود باید ردیابی، مستند شده و برای همه اعضای تیم قابل دسترسی باشد.
 
-There could be several more, and these choices are not mutually exclusive either. Some use
-several of these applications in tandem. For example, username availability might be
-looked up on Redis, while the primary database might be PostgreSQL.
+در نتیجه، هیچ توسعه ای نباید به طور مستقیم در محیط تولید انجام شود. در واقع نیازی به نصب ابزارهای توسعه مانند کامپایلر یا دیباگر در محیط تولید نیست. وجود هر نرم افزار غیر ضروری سطح حمله سایت شما را افزایش می دهد و می تواند خطر امنیتی ایجاد کند.
 
-There is no one size fits all answer when it comes to selecting your stack. Different
-components have different strengths and weaknesses. Choose them only after careful
-consideration and testing. For instance, you might have heard that Nginx is a popular
-choice for a web server, but you might actually need Apache's rich ecosystem of modules or
-options.
+اکثر برنامه‌های کاربردی وب در سایت‌هایی با خرابی بسیار کم مستقر می‌شوند، به عنوان مثال، مراکز داده بزرگ در پنج 9، یعنی 99.999 درصد، آپتایم هستند. با طراحی برای خرابی، حتی اگر یک جزء داخلی خراب شود، افزونگی کافی برای جلوگیری از خرابی کل سیستم وجود دارد. مفهوم اجتناب از یک نقطه شکست (SPOF) را می توان در هر سطح، سخت افزار یا نرم افزار اعمال کرد.
 
-Sometimes, the selection of the stack is based on various non-technical reasons. Your
-organization might have standardized on a particular operating system, say, Debian for all
-its servers, or your cloud hosting provider might support only a limited set of stacks.
-
-Hence, how you choose to host your Django application is one of the key factors in
-determining your production setup.
+این امر درواقع مجموعه ای مهم از نرم افزارهایی است که شما انتخاب می کنید تا در محیط تولید خود اجرا شوند.
 
 
-### Virtual machines or Docker
 
-Most of us are familiar with using virtual machines either in development or in production.
-They isolate your application (guest machine) from the underlying infrastructure (host
-machine). Container technologies such as Docker are increasingly being used for cloud
-deployments, either complementing, or replacing virtual machines.
+### انتخاب یک پشته وب(استک)
 
-Containers are a means to create multiple user-space instances over the same kernel. Unlike
-virtual machines, containers avoid the need to start, and run separate guest operating
-systems. Typically, each container packages an application and its dependencies in a userspace instance separate from other containers. 
-Unlike virtual machines, they do not have a separate instance of the operating system, making them lighter, and faster to start or stop.
+تا کنون، ما در مورد استک یا پشته ای که برنامه شما روی آن اجرا می شود صحبت نکرده ایم. حتی اگر در انتهای این کتاب در مورد آن صحبت می کنیم، بهتر است چنین تصمیماتی را به مراحل بعدی چرخه حیات برنامه موکول نکنید. در حالت ایده‌آل، محیط توسعه شما باید تا حد امکان به محیط تولید نزدیک باشد تا از این جمله که می گوید اما در ماشین من کار می‌کند، جلوگیری شود.
 
-Docker has become the containerization technology of choice with a large ecosystem and
-wide support among cloud vendors. Docker images are created from a binary image called
-base image or automatically built from a script called a Dockerfile. This helps you recreate
-the same environment in production for development or testing purposes, thus ending the
-infamous excuse but it worked in my machine.
+با یک پشته وب، به مجموعه فناوری هایی اشاره می کنیم که برای ساخت یک برنامه وب استفاده می شوند. معمولاً به صورت مجموعه‌ای از مؤلفه‌ها، مانند سیستم عامل، پایگاه داده و وب سرور، که همگی روی یکدیگر جمع شده‌اند، نشان داده می‌شود. از این رو، از آن به عنوان پشته یاد می شود.
+
+ما در اینجا عمدتاً روی راه حل های منبع باز تمرکز خواهیم کرد زیرا آنها به طور گسترده استفاده می شوند. با این حال، برنامه های تجاری مختلف نیز در صورتی که بیشتر با نیازهای شما مطابقت داشته باشند، می توانند مورد استفاده قرار گیرند. 
 
 
-### Microservices
 
-The most common design pattern using Docker is breaking down applications and services
-into microservices. The advantage is that individual microservices can be developed and
-deployed independently while being more elastic and resilient in demanding situations.
-Hence, containerization technologies such as Docker is a natural fit due to its minimal
-overhead and application-level isolation.
 
-The following is a simplistic example of a Django web application implemented as
-microservice using containers:
+### کامپوننت های یک پشته
+
+یک پشته وب جنگو با استفاده از چندین نوع برنامه (یا لایه ها، بسته به اصطلاح شما) ساخته می شود. هنگام ساخت پشته وب خود، برخی از انتخاب هایی که ممکن است لازم باشد به شرح زیر است:
+- کدام سیستم عامل و توزیع؟ به عنوان مثال، دبیان، رد هت یا OpenBSD
+- کدام سرور WSGI؟ به عنوان مثال، Gunicorn یا uWSGI.
+- کدام وب سرور؟ به عنوان مثال، Apache یا Nginx.
+- کدام دیتابیس؟ به عنوان مثال، PostgreSQL، MySQL یا Redis
+- کدام سیستم کش؟ مثلا Memcached یا Redis.
+- کدام سیستم کنترل فرآیند و مانیتورینگ؟ به عنوان مثال، Upstart، Systemd، یا Supervisord.
+- چگونه رسانه های استاتیک را ذخیره کنیم؟ به عنوان مثال، Amazon S3 یا CloudFront
+
+
+ممکن است چندین مورد دیگر وجود داشته باشد، و این انتخاب ها نیز متقابلاً منحصر به فرد نیستند. برخی از چندین مورد از این برنامه ها به صورت پشت سر هم استفاده می شوند. به عنوان مثال، در دسترس بودن نام کاربری ممکن است در Redis جستجو شود، در حالی که پایگاه داده اولیه ممکن است PostgreSQL باشد.
+
+وقتی نوبت به انتخاب پشته شما می رسد، هیچ پاسخی برای همه وجود ندارد. اجزای مختلف نقاط قوت و ضعف متفاوتی دارند. آنها را تنها پس از بررسی دقیق و آزمایش انتخاب کنید. به عنوان مثال، ممکن است شنیده باشید که Nginx یک انتخاب محبوب برای وب سرور است، اما ممکن است در واقع به اکوسیستم غنی ماژول ها یا گزینه های آپاچی نیاز داشته باشید.
+
+گاهی اوقات، انتخاب پشته بر اساس دلایل مختلف غیر فنی است. سازمان شما ممکن است روی یک سیستم عامل خاص مانند دبیان برای همه سرورهایش استاندارد شده باشد، یا ارائه دهنده هاست ابری شما ممکن است تنها مجموعه محدودی از پشته ها را پشتیبانی کند.
+
+از این رو، نحوه انتخاب میزبانی برنامه جنگو یکی از عوامل کلیدی در تعیین تنظیمات تولید شما است.
+
+
+### ماشینهای مجازی یا داکر
+
+بسیاری از ما به استفاده از ماشین های مجازی چه در توسعه و چه در تولید آشنا هستیم. این ابزارها برنامه شما (ماشین مهمان) را از زیرساخت اصلی (ماشین میزبان) جدا می کنند. فناوری‌های کانتینری مانند Docker به طور فزاینده‌ای برای استقرار ابری، یا مکمل یا جایگزین ماشین‌های مجازی استفاده می‌شوند.
+
+کانتینرها ابزاری برای ایجاد چندین نمونه فضای کاربر بر روی یک هسته هستند. برخلاف ماشین‌های مجازی، کانتینرها از نیاز به راه‌اندازی اجتناب می‌کنند و سیستم‌عامل‌های مهمان مجزا را اجرا می‌کنند. به طور معمول، هر کانتینر یک برنامه کاربردی و وابستگی های آن را در یک نمونه فضای کاربری جدا از سایر کانتینرها بسته بندی می کند. برخلاف ماشین‌های مجازی، داکر نمونه جداگانه‌ای از سیستم عامل ندارد، که باعث می‌شود سبک‌تر و سریع‌تر شروع یا متوقف شود.
+
+داکر با اکوسیستم بزرگ و پشتیبانی گسترده در میان فروشندگان ابری، به فناوری انتخابی کانتینری تبدیل شده است. داکر ایمیج ها از یک ایمیج باینری به نام ایمیج پایه ایجاد می شوند یا به طور خودکار از یک اسکریپت به نام Dockerfile ساخته می شوند. این به شما کمک می کند تا همان محیط را در تولید برای اهداف توسعه یا آزمایش دوباره ایجاد کنید، بنابراین بهانه اما در دستگاه من کار کرد را پایان دهید.
+
+
+
+### میکروسرویس ها
+
+رایج ترین الگوی طراحی با استفاده از Docker، تجزیه برنامه ها و سرویس ها به میکروسرویس ها است. مزیت این است که میکروسرویس‌های فردی می‌توانند به طور مستقل توسعه یافته و به کار گرفته شوند، در حالی که در موقعیت‌های سخت انعطاف‌پذیرتر هستند. از این رو، فن‌آوری‌های کانتینری‌سازی مانند Docker به دلیل حداقل سطح سربار و ایزوله در سطح کاربرد، یک تناسب طبیعی است.
+
+مثال زیر یک مثال ساده از یک برنامه وب جنگو است که به عنوان میکروسرویس با استفاده از کانتینرها اجرا شده است:
 
 
 ![Django application flow when deployed as distinct containers](1.jpg)
 
-This single microservice is composed of three containers with separate logical components:
-**Nginx container** (web server), **Gunicorn/Django container** (web application), and
-**PostgreSQL container** (database). Each container is instantiated from a Docker image,
-which may be built using a Dockerfile.
+این میکروسرویس واحد از سه کانتینر با اجزای منطقی مجزا تشکیل شده است: ظرف Nginx (وب سرور)، کانتینر Gunicorn/Django (برنامه وب) و کانتینر PostgreSQL (پایگاه داده). هر ظرف از یک داکر ایمیج که ممکن است با استفاده از یک Dockerfile ساخته شود، نمونه سازی شده است.
 
-Docker containers have an ephemeral file system, so persistent data is managed by
-explicitly creating a volume. Volumes can be used to share data between containers. In this
-case, the static files of the Django project can be shared to the Nginx container to serve them
-directly.
+کانتینرهای Docker یک سیستم فایل زودگذر دارند، بنابراین داده‌های پایدار با ایجاد صریح یک حجم مدیریت می‌شوند. از ولوم ها می توان برای اشتراک گذاری داده ها بین کانتینرها استفاده کرد. در این حالت، فایل‌های استاتیک پروژه جنگو را می‌توان در کانتینر Nginx به اشتراک گذاشت تا مستقیماً به آن‌ها سرویس داده شود.
 
-As you can imagine, most real-world applications will be composed of multiple
-Microservices and each of them would require multiple containers. If you run them on
-multiple servers, how would you deploy these containers across them? How can you scale
-individual microservices up or down? Kubernetes is the most widely recommended
-solution for managing such container clusters.
+همانطور که می توانید تصور کنید، اکثر برنامه های کاربردی دنیای واقعی از چندین Microservice تشکیل شده اند و هر یک از آنها به چندین کانتینر نیاز دارند. اگر آنها را روی چندین سرور اجرا کنید، چگونه این کانتینرها را در آنها مستقر خواهید کرد؟ چگونه می‌توانید میکروسرویس‌های فردی را به سمت بالا یا پایین مقیاس کنید؟ Kubernetes گسترده ترین راه حل توصیه شده برای مدیریت چنین خوشه های کانتینری است.
 
-Although we have covered containers in this section at a very high level, there are many
-implementation details, such as deployment patterns, which could not be covered here, as
-they can be a book by itself. Containers and orchestration tools have become an important
-part of modern web application development by making radically easier-to-manage
-application environments.
+اگرچه ما در این بخش کانتینرها را در سطح بسیار بالایی پوشش داده‌ایم، اما جزئیات پیاده‌سازی زیادی مانند الگوهای استقرار وجود دارد که در اینجا نمی‌توان به آنها پرداخت، زیرا می‌توانند به تنهایی یک کتاب باشند. کانتینرها و ابزارهای ارکستراسیون با ایجاد آسان‌تر مدیریت محیط‌های برنامه به بخش مهمی از توسعه برنامه‌های کاربردی وب مدرن تبدیل شده‌اند.
 
 
-### Hosting
 
-When it comes to hosting, you will need to be sure whether to go for a hosting platform
-such as Heroku or not. If you do not know much about managing a server or do not have
-anyone with that knowledge in your team, then a hosting platform is a convenient option.
+### میزبانی و هاستینگ
 
-
-### Platform as a service
-
-A **Platform as a Service (PaaS)** is defined as a cloud service where the solution stack is
-already provided and managed for you. Popular platforms for Django hosting include
-Heroku, PythonAnywhere, and Google App Engine.
-
-In most cases, deploying a Django application should be as simple as selecting the services
-or components of your stack and pushing out your source code. You do not have to
-perform any system administration or setup yourself. The platform is entirely managed.
-
-Like most cloud services, the infrastructure can also scale on demand. If you need an
-additional database server or more RAM on a server, it can be easily provisioned from a
-web interface or the command line. The pricing is primarily based on your usage.
-
-The bottom line with such hosting platforms is that they are very easy to set up and ideal
-for smaller projects. They tend to be more expensive as your user base grows.
-
-Another downside is that your application might get tied to a platform or become difficult
-to port. For instance, Google App Engine is used to support only a non-relational database,
-which means you need to use **django-nonrel**, a fork of Django. This limitation is now
-somewhat mitigated with Google Cloud SQL.
+وقتی نوبت به هاستینگ می رسد، باید مطمئن شوید که آیا به دنبال بستر(پلتفرم) میزبانی مانند Heroku هستید یا خیر. اگر اطلاعات زیادی در مورد مدیریت سرور ندارید یا کسی با آن دانش در تیم خود ندارید، پلتفرم میزبانی گزینه مناسبی است.
 
 
-### Virtual private servers
+### پلتفرم به عنوان سرویس
 
-A **virtual private server (VPS)** is a virtual machine hosted in a shared environment. From
-the developer's perspective, it would seem like a dedicated machine (hence, the word
-private) preloaded with an operating system. You will need to install and set up the entire
-stack yourself, though many VPS providers such as WebFaction and DigitalOcean offer
-easier Django setups.
+**پلتفرم به عنوان سرویس** (PaaS)  یک سرویس ابری است که در آن راه حل از قبل برای شما ارائه و مدیریت شده است. پلتفرم های محبوب برای میزبانی جنگو عبارتند از Heroku، PythonAnywhere و Google App Engine.
 
-If you are a beginner and can spare some time, I highly recommend this approach. You will
-be given root access, and you can build the entire stack yourself. You will not only
-understand how various pieces of the stack come together but also have full control in finetuning each individual component.
+در بیشتر موارد، استقرار یک برنامه جنگو باید به سادگی انتخاب سرویس‌ها یا اجزای پشته و خارج کردن کد منبع شما باشد. نیازی نیست خودتان هیچ گونه مدیریت یا راه اندازی سیستمی انجام دهید. پلتفرم به طور کامل مدیریت می شود.
 
-Compared to a PaaS, a VPS might work out to be more value for money, especially for
-high-traffic sites. You might be able to run several sites from the same server as well.
+مانند بسیاری از سرویس های ابری، زیرساخت ها نیز می توانند بر اساس تقاضا مقیاس شوند. اگر به پایگاه داده یا رم بیشتر روی یک سرور نیاز دارید، می توان آن را به راحتی از یک رابط وب یا خط فرمان تهیه کنید. قیمت گذاری در درجه اول بر اساس استفاده شما است.
+نکته اصلی در مورد چنین پلتفرم های میزبانی این است که راه اندازی آنها بسیار آسان است و برای پروژه های کوچکتر ایده آل هستند. با افزایش تعداد کاربران، گران تر می شوند.
+
+نکته منفی دیگر این است که برنامه شما ممکن است به یک پلتفرم گره بخورد یا پورت کردن آن دشوار شود. به عنوان مثال، Google App Engine فقط برای پشتیبانی از یک پایگاه داده غیررابطه ای استفاده می شود، به این معنی که شما باید از django-nonrel، یک فورکی(کپی) از جنگو، استفاده کنید. این محدودیت اکنون با Google Cloud SQL تا حدودی کاهش یافته است.
 
 
-### Serverless
 
-Imagine that you need to host an infrequently used service, but paying for a dedicated
-server that is always up and running is proving to be costly or inefficient to maintain.
-Serverless architectures might be what you are looking for. The name serverless is a
-misnomer since all client requests are indeed handled by servers, which are dynamically
-provisioned for the lifetime of the request.
+### سرورهای مجازی اختصاصی
 
-A more appropriate term would be **Function as a Service (FaaS)**, as these platforms
-support execution of an application logic like a small Python function but does not store
-any state. Building an application composed of such functions would be quite similar to the
-microservices architecture discussed earlier.
+سرور خصوصی مجازی (VPS) یک ماشین مجازی است که در یک محیط مشترک میزبانی می شود. از دیدگاه توسعه‌دهنده، به نظر می‌رسد یک ماشین اختصاصی (از این رو، کلمه خصوصی) با یک سیستم عامل از قبل بارگذاری شده است. شما باید خودتان کل پشته را نصب و راه اندازی کنید، اگرچه بسیاری از ارائه دهندگان VPS مانند WebFaction و DigitalOcean تنظیمات جنگو را آسان تر ارائه می دهند.
 
-Typically, you only pay for the milliseconds of server time that a serverless application
-uses, which makes it much cheaper than dedicated servers. Scaling is automatically
-handled, so there is no additional effort needed to handle massive spikes in traffic. Last but
-not the least, there is no headache of having to set up and maintain server infrastructure.
+اگر مبتدی هستید و می توانید کمی وقت بگذارید، این روش را به شدت توصیه می کنم. به شما دسترسی ریشه (روت) داده می شود و می توانید کل پشته را خودتان بسازید. شما نه تنها متوجه خواهید شد که چگونه قطعات مختلف پشته به هم می رسند، بلکه کنترل کاملی در تنظیم دقیق هر جزء خواهید داشت.
 
-Django might not sound like it would work in such an environment, but **Zappa** makes it
-easy to deploy Django applications (in fact, any WSGI compatible application) on a
-serverless platform such as AWS Lambda with minimal changes. This opens up the
-possibility of enjoying all the advantages of serverless while using Django.
+در مقایسه با PaaS، VPS ممکن است ارزش بیشتری دربرابر پول پرداختی داشته باشد، به خصوص برای سایت های پربازدید. ممکن است بتوانید چندین سایت از یک سرور را نیز اجرا کنید.
 
 
-### Other hosting approaches
+### سرورلس
 
-Even though hosting on a platform or VPS are by far the two most popular hosting options,
-there are plenty of other options. If you are interested in maximizing performance, you can
-opt for a bare metal server with collocation from providers, such as **Rackspace**.
+تصور کنید که نیاز به میزبانی سرویسی دارید که به ندرت استفاده می شود، اما پرداخت هزینه برای یک سرور اختصاصی که همیشه در حال اجرا است، هزینه بر یا ناکارآمد از نظر نگهداری است. به نظر میرسد در این حالت معماری های بدون سرور همان چیزی باشد که شما به دنبال آن هستید. نام بدون سرور یک نام اشتباه است زیرا تمام درخواست‌های مشتری در واقع توسط سرورهایی انجام می‌شوند که به صورت پویا برای طول عمر درخواست ارائه می‌شوند.
 
-On the lighter end of the hosting spectrum, you can save the cost by hosting multiple
-applications within Docker containers. Docker is a tool to package your application and
-dependencies in a virtual container. Compared to traditional virtual machines, a Docker
-container starts up faster and has minimal overheads (since there is no bundled operating
-system or hypervisor).
+اصطلاح مناسب‌تر Function as a Service (FaaS) است، زیرا این پلتفرم‌ها از اجرای یک منطق برنامه مانند یک تابع کوچک پایتون پشتیبانی می‌کنند اما هیچ حالتی را ذخیره نمی‌کنند. ساخت یک برنامه کاربردی متشکل از چنین توابعی کاملاً شبیه به معماری میکروسرویس است که قبلاً مورد بحث قرار گرفت.
 
-Docker is ideal for hosting micro services-based applications. It is becoming as ubiquitous
-as virtualization with almost every PaaS and VPS provider supporting them.
+به طور معمول، شما فقط برای میلی ثانیه زمان سروری که یک برنامه بدون سرور استفاده می کند، پرداخت می کنید، که آن را بسیار ارزان تر از سرورهای اختصاصی می کند. مقیاس‌بندی به‌طور خودکار انجام می‌شود، بنابراین هیچ تلاش اضافی برای رسیدگی به جهش‌های عظیم در ترافیک لازم نیست. نکته مهم دیگر اینکه هیچ دردسر راه اندازی و نگهداری زیرساخت سرور هم وجود ندارد.
 
-It is also a great development platform since Docker containers encapsulate the entire
-application state and can be directly deployed to production.
+جنگو ممکن است به نظر در چنین محیطی کار نکند، اما Zappa استقرار برنامه های جنگو (در واقع، هر برنامه سازگار با WSGI) را بر روی یک پلتفرم بدون سرور مانند AWS Lambda با حداقل تغییرات آسان می کند. این امکان لذت بردن از تمام مزایای بدون سرور را در هنگام استفاده از جنگو باز می کند.
 
 
-### Deployment tools
 
-Once you have zeroed in on your hosting solution, there could be several steps in your
-deployment process, from running regression tests to spawning background services.
+### رویکردهای دیگر برای هاستینگ
 
-The key to a successful deployment process is automation. Since deploying applications
-involves a series of well-defined steps, it can be rightly approached as a programming
-problem. Once you have an automated deployment in place, you do not have to worry
-about deployments for fear of missing a step.
+اگرچه میزبانی بر روی یک پلتفرم یا VPS دو گزینه محبوب میزبانی هستند، گزینه های زیاد دیگری نیز وجود دارد. اگر به افزایش کارایی علاقه دارید، می توانید یک سرور فیزیکی (bare metal) با هماهنگی از ارائه دهندگان، مانند Rackspace انتخاب کنید.
 
-In fact, deployments should be painless and as frequent as required. For example, the
-Facebook team can release code to production several times in a day. Considering
-Facebook's enormous user base and code base, this is an impressive feat, yet, it becomes
-necessary as emergency bug fixes and patches need to be deployed as soon as possible.
+در انتهای سبک‌تر طیف میزبانی، می‌توانید با میزبانی چندین برنامه در کانتینرهای Docker در هزینه صرفه‌جویی کنید. داکر ابزاری برای بسته بندی برنامه ها و وابستگی های شما در یک کانتینر مجازی است. در مقایسه با ماشین‌های مجازی سنتی، کانتینر Docker سریع‌تر راه‌اندازی می‌شود و دارای کمترین میزان هزینه‌های سربار است (زیرا سیستم عامل یا هایپروایزر همراهی وجود ندارد).
 
-A good deployment process is also idempotent. In other words, even if you accidentally
-run the deployment tool twice, the actions should not be executed twice (or rather it should
-leave it in the same state).
+داکر برای میزبانی برنامه های برپایه میکروسرویس ایده آل است. تقریباً هر ارائه دهنده PaaS و VPS از آنها پشتیبانی می کند و در همه جا در حال فراگیر شدن است.
 
-Let's take a look at some of the popular tools for deploying Django applications.
+همچنین یک پلتفرم توسعه عالی است زیرا کانتینرهای داکر کل حالت برنامه را در خود محصور می کنند و می توانند مستقیماً در تولید دیپلوی و مستقر شوند.
+
+
+
+### ابزارهای استقرار سازی و دیپلوی
+
+هنگامی که راه حل میزبانی خود را به صفر رساندید، ممکن است چندین مرحله در فرآیند استقرار شما وجود داشته باشد، از اجرای تست های رگرسیون گرفته تا ایجاد خدمات پس زمینه.
+
+کلید یک فرآیند استقرار موفق، اتوماسیون است. از آنجایی که استقرار برنامه ها شامل یک سری مراحل کاملاً تعریف شده است، می توان به درستی به عنوان یک مشکل برنامه نویسی به آن نگاه کرد. هنگامی که یک استقرار اتوماسیون شده دارید، از ترس از دست دادن یک مرحله، لازم نیست نگران استقرار باشید.
+
+در واقع، استقرار باید بدون درد و به همان اندازه که لازم است انجام شود. به عنوان مثال، تیم فیس بوک می تواند چندین بار در روز کد را برای تولید منتشر کند. با در نظر گرفتن پایگاه عظیم کاربر و پایگاه کد فیس بوک، این یک شاهکار چشمگیر است، با این حال، ضروری است زیرا رفع اشکالات و وصله های اضطراری باید در اسرع وقت اجرا شوند.
+
+یک فرآیند استقرار خوب نیز ناتوان است. به عبارت دیگر، حتی اگر به طور تصادفی ابزار استقرار را دو بار اجرا کنید، اقدامات نباید دو بار اجرا شوند (یا بهتر است بگوییم باید آن را در همان حالت رها کنید).
+
+بیایید نگاهی به برخی از ابزارهای محبوب برای استقرار برنامه های جنگو بیندازیم.
+
 
 
 ### Fabric
 
-Fabric is favored among Python web developers for its simplicity and ease of use. It expects
-a file named `fabfile.py` that defines all the actions (for deployment or otherwise) in your
-project. Each of these actions can be a local or remote shell command. The remote host is
-connected via SSH.
+این مورد به دلیل سادگی و سهولت استفاده در بین توسعه دهندگان وب پایتون مورد علاقه است. فایلی به نام fabfile.py را در نظر دارد که تمام اقدامات (برای استقرار یا غیره) در پروژه شما را تعریف میکند. هر یک از این اقدامات می تواند یک shell command محلی یا راه دور باشد. میزبان راه دور از طریق SSH متصل می شود.
 
-The key strength of Fabric is its ability to run commands on a set of remote hosts. For
-instance, you can define a **web** group that contains the hostnames of all web servers in
-production.
+نقطه قوت اصلی Fabric توانایی آن در اجرای دستورات روی مجموعه ای از میزبان های راه دور است. به عنوان مثال، می توانید یک گروه **وب**را تعریف کنید که شامل نام میزبان همه وب سرورهای در حال تولید است.
 
-**TIP:** You can run a Fabric action only against these web servers by specifying
-the web group name on the command line.
-
-To illustrate the tasks involved in deploying a site using Fabric, let's take a look at a typical
-deployment scenario.
+**نکته:** با تعیین نام گروه وب در خط فرمان، می‌توانید یک اکشن Fabric را فقط در برابر این سرورهای وب اجرا کنید.
+برای نشان دادن وظایف مربوط به استقرار یک سایت با استفاده از Fabric، اجازه دهید نگاهی به یک سناریوی استقرار معمولی بیندازیم.
 
 
-### Typical deployment steps
+### گام های ساده برای استقرار
 
-Imagine that you have a medium-sized web application deployed on a single web server.
-Git has been chosen as the version control and collaboration tool. A central repository that
-is shared with all users has been created in the form of a bare Git tree.
+تصور کنید که یک برنامه وب با اندازه متوسط دارید که بر روی یک وب سرور واحد مستقر شده است. Git به عنوان ابزار کنترل نسخه و همکاری انتخاب شده است. یک مخزن مرکزی که با همه کاربران به اشتراک گذاشته شده است به شکل درخت Git برهنه ایجاد شده است.
 
-Let's assume that your production server has been fully set up. When you run your Fabric
-deployment command, say, **fab deploy**, the following scripted sequence of actions take
-place:
-1. Runs all tests locally
-2. Commits all local changes to Git
-3. Pushes to a remote central Git repository
-4. Resolves merge conflicts, if any
-5. Collects the static files (CSS, images)
-6. Copies the static files to the static file server
-7. At the remote host, pulls changes from a central Git repository
-8. At the remote host, runs (database) migrations
-9. At the remote host, touches `app.wsgi` to restart WSGI server
+فرض کنید سرور تولید شما به طور کامل راه اندازی شده است. هنگامی که فرمان استقرار Fabric خود را اجرا می کنید، مثلاً fab deploy، دنباله اسکریپت زیر از اقدامات انجام می شود:
+1. تمام تست ها را به صورت محلی اجرا می کند
+2. تمام تغییرات محلی Git را انجام می دهد
+3. به یک مخزن مرکزی راه دور Git فشار می آورد
+4. در صورت وجود، تضادهای ادغام را حل می کند
+5. فایل های ثابت (CSS، تصاویر) را جمع آوری می کند.
+6. فایل های استاتیک را در سرور فایل استاتیک کپی می کند
+7. در میزبان راه دور، تغییرات را از یک مخزن مرکزی Git می کشد
+8. در میزبان راه دور، مهاجرت (پایگاه داده) را اجرا می کند
+9. در میزبان راه دور، app.wsgi را برای راه اندازی مجدد سرور WSGI لمس کنید
 
-The entire process is automatic and should be completed in a few seconds. By default, if
-any step fails, then the deployment gets aborted. Though not explicitly mentioned, there
-would be checks to ensure that the process is idempotent.
-
-Fabric is not yet compatible with Python 3, though the developers are in
-the process of porting it. In the meantime, you can run Fabric in a Python
-2.x virtual environment or check out similar tools, such as PyInvoke.
+کل فرآیند به صورت خودکار است و باید در چند ثانیه تکمیل شود. به طور پیش فرض، اگر هر مرحله ای با شکست مواجه شود، استقرار متوقف می شود. اگرچه به صراحت ذکر نشده است، اما بررسی هایی برای اطمینان از عدم توانمندی فرآیند وجود دارد.
+Fabric هنوز با پایتون 3 سازگار نیست، اگرچه توسعه دهندگان در حال انتقال آن هستند. در عین حال، می‌توانید Fabric را در محیط مجازی Python 2.x اجرا کنید یا ابزارهای مشابهی مانند PyInvoke را بررسی کنید.
 
 
-### Configuration management
 
-Managing multiple servers in different states can be hard with Fabric. Configuration
-management tools such as Chef, Puppet, or Ansible try to bring a server to a certain desired
-state.
+### مدیریت پیکره بندی ها
 
-Unlike Fabric, which requires the deployment process to be specified in an imperative
-manner, these configuration-management tools are declarative. You just need to define the
-final state you want the server to be in, and it will figure out how to get there.
+مدیریت چندین سرور در حالت های مختلف می تواند با Fabric سخت باشد. ابزارهای مدیریت پیکربندی مانند Chef، Puppet یا Ansible سعی می کنند یک سرور را به وضعیت مطلوبی برسانند.
 
-For example, if you want to ensure that the Nginx service is running at startup on all your
-web servers, then you will need to define a server state having the Nginx service both
-running and starting on boot. On the other hand, with Fabric, you will need to specify the
-exact steps to install and configure Nginx to reach such a state.
+بر خلاف Fabric، که نیاز به تعیین فرآیند استقرار به شیوه ای ضروری دارد، این ابزارهای مدیریت پیکربندی بیانی هستند. شما فقط باید وضعیت نهایی را که می خواهید سرور در آن قرار داشته باشد، مشخص کنید و نحوه رسیدن به آنجا را مشخص می کند.
 
-One of the most important advantages of configuration-management tools is that they are
-idempotent by default. Your servers can go from an unknown state to a known state,
-resulting in an easier server configuration management and reliable deployment.
+برای مثال، اگر می‌خواهید مطمئن شوید که سرویس Nginx در هنگام راه‌اندازی در تمام سرورهای وب شما اجرا می‌شود، باید وضعیت سروری را تعریف کنید که سرویس Nginx هم در حال اجرا و هم در هنگام راه‌اندازی است. از طرف دیگر، با Fabric، باید مراحل دقیق نصب و پیکربندی Nginx را برای رسیدن به چنین حالتی مشخص کنید.
 
-Among configuration-management tools, Chef, and Puppet enjoy wide popularity since
-they were one of the earliest tools in this category. However, their roots in Ruby can make
-them look a bit unfamiliar to the Python programmer. For such folks, we have Salt and
-Ansible as excellent alternatives.
+یکی از مهمترین مزایای ابزارهای مدیریت پیکربندی این است که به طور پیش فرض فاقد قدرت هستند. سرورهای شما می توانند از یک حالت ناشناخته به یک وضعیت شناخته شده بروند و در نتیجه مدیریت پیکربندی سرور آسان تر و استقرار قابل اعتماد را به همراه داشته باشند.
 
-Configuration-management tools have a considerable learning curve compared to simpler
-tools, such as Fabric. However, they are essential tools for creating reliable production
-environments and are certainly worth learning.
+در میان ابزارهای مدیریت پیکربندی، Chef و Puppet از محبوبیت زیادی برخوردار هستند زیرا یکی از اولین ابزارها در این دسته بودند. با این حال، ریشه آنها در Ruby می تواند آنها را برای برنامه نویس پایتون کمی ناآشنا نشان دهد. برای چنین افرادی، ما Salt و Ansible را به عنوان جایگزین های عالی داریم.
+
+ابزارهای مدیریت پیکربندی در مقایسه با ابزارهای ساده تر، مانند Fabric، منحنی یادگیری قابل توجهی دارند. با این حال، آنها ابزار ضروری برای ایجاد محیط های تولید قابل اعتماد هستند و مطمئنا ارزش یادگیری را دارند.
 
 
-### Monitoring
+### مانیتورینگ
 
-Even a medium-sized website can be extremely complex. Django might be one of the
-hundreds of applications and services running and interacting with each other. In the same
-way that the heartbeat and other vital signs can be constantly monitored to assess the
-health of the human body, so are various metrics collected, analyzed, and presented in
-most production systems.
+حتی یک وب سایت با اندازه متوسط می تواند بسیار پیچیده باشد. جنگو ممکن است یکی از صدها برنامه و سرویسی باشد که در حال اجرا و تعامل با یکدیگر هستند. همانطور که ضربان قلب و سایر علائم حیاتی را می توان به طور مداوم برای ارزیابی سلامت بدن انسان کنترل کرد، معیارهای مختلفی نیز در اکثر سیستم های تولیدی جمع آوری، تجزیه و تحلیل و ارائه می شوند.
 
-While logging keeps track of various events, such as the arrival of a web request or an
-exception, monitoring usually refers to collecting key information periodically, such as
-memory utilization, or network latency. However, differences get blurred at the application
-level, for example, while monitoring database query performance, which might very well
-be collected from logs.
+در حالی که ثبت رویدادهای مختلف مانند ورود یک درخواست وب یا یک استثنا را پیگیری می کند، نظارت معمولاً به جمع آوری اطلاعات کلیدی به صورت دوره ای مانند استفاده از حافظه یا تأخیر شبکه اشاره دارد. با این حال، تفاوت ها در سطح برنامه محو می شوند، به عنوان مثال، هنگام نظارت بر عملکرد پرس و جو پایگاه داده، که ممکن است به خوبی از گزارش ها جمع آوری شود.
 
-Monitoring also helps with the early detection of problems. Unusual patterns, such as
-spikes or a gradually increasing load, can be signs of bigger underlying problems, such as
-memory leak. A good monitoring system can alert site owners of problems before they
-happen.
+نظارت همچنین به تشخیص زودهنگام مشکلات کمک می کند. الگوهای غیرمعمول، مانند سنبله ها یا افزایش تدریجی بار، می تواند نشانه ای از مشکلات اساسی بزرگتر مانند نشت حافظه باشد. یک سیستم مانیتورینگ خوب می تواند صاحبان سایت را از مشکلات قبل از وقوع آنها آگاه کند.
 
-Monitoring tools usually need a backend service (sometimes called agents) to collect the
-statistics and frontend service to display dashboards or generate reports. Popular data
-collection backends include StatsD and Monit. This data can be passed to frontend tools,
-such as **Graphite**.
+ابزارهای مانیتورینگ معمولاً به یک سرویس پشتیبان (گاهی اوقات به نام عوامل) برای جمع آوری آمار و سرویس ظاهری برای نمایش داشبوردها یا تولید گزارش نیاز دارند. پشتیبان های محبوب جمع آوری داده ها عبارتند از StatsD و Monit. این داده ها را می توان به ابزارهای frontend مانند Graphite منتقل کرد.
 
-There are several hosted monitoring tools, such as New Relic and Status.io, which are easier
-to set up and use.
+چندین ابزار مانیتورینگ میزبان مانند New Relic و Status.io وجود دارد که راه‌اندازی و استفاده از آنها آسان‌تر است.
 
-Measuring performance is another important role of monitoring. As we will soon see in a
-later section, any proposed optimization must be carefully measured and monitored before
-getting implemented.
+اندازه گیری عملکرد یکی دیگر از نقش های مهم نظارت است. همانطور که به زودی در بخش بعدی خواهیم دید، هر بهینه سازی پیشنهادی باید قبل از اجرا به دقت اندازه گیری و نظارت شود.
 
 
-### Improving Performance
 
-Performance is a feature. Studies show how slow sites have an adverse effect on users, and
-therefore revenue. For instance, tests at Amazon in 2007 revealed that for every 100 ms
-increase in load time of [amazon.com](https://www.amazon.com/), the sales decreased by 1 percent.
+### بهبود کارایی
 
-Reassuringly, several high-performance web applications such as Disqus and Instagram
-have been built on Django. At Disqus, in 2013, they could handle 1.5 million concurrently
-connected users, 45,000 new connections per second, 165,000 messages per second, with
-less than 0.2 seconds latency end-to-end.
+عملکرد یک ویژگی است. مطالعات نشان می‌دهد که سایت‌های کند چگونه تأثیر نامطلوبی بر کاربران و در نتیجه درآمد دارند. به عنوان مثال آزمایش هایی در آمازون در سال 2007 نشان داد که به ازای هر 100 میلی ثانیه افزایش زمان بارگذاری [amazon.com](https://www.amazon.com/) فروش 1 درصد کاهش می یابد.
 
-The key to improving performance is finding where the bottlenecks are. Rather than relying
-on guesswork, it is always recommended that you measure and profile your application to
-identify these performance bottlenecks. As Lord Kelvin would say:
-- "If you can't measure it, you can't improve it."
+با اطمینان، چندین برنامه وب با کارایی بالا مانند Disqus و Instagram بر روی جنگو ساخته شده اند. در Disqus، در سال 2013، آنها می‌توانستند 1.5 میلیون کاربر متصل همزمان، 45000 اتصال جدید در ثانیه، 165000 پیام در ثانیه را با تأخیر سرتاسر کمتر از 0.2 ثانیه مدیریت کنند.
+
+کلید بهبود عملکرد، یافتن تنگناهاست. به جای تکیه بر حدس و گمان، همیشه توصیه می شود که برنامه خود را اندازه گیری و نمایه کنید تا این گلوگاه های عملکرد را شناسایی کنید. همانطور که لرد کلوین می گوید:
+- "اگر نتوانید آن را اندازه گیری کنید، نمی توانید آن را بهبود ببخشید"
 
 
-In most web applications, the bottlenecks are likely to be at the browser or the database end
-rather than within Django. However, to the user, the entire application needs to be
-responsive.
+در بیشتر برنامه‌های کاربردی وب، گلوگاه‌ها احتمالاً در انتهای مرورگر یا پایگاه داده به جای جنگو هستند. با این حال، برای کاربر، کل برنامه باید پاسخگو باشد.
 
-Let's take a look at some of the ways to improve the performance of a Django application.
-Due to widely differing techniques, the tips are split into two parts: frontend and backend.
+بیایید به برخی از راه های بهبود عملکرد یک برنامه جنگو نگاهی بیندازیم. به دلیل تکنیک‌های بسیار متفاوت، نکات به دو بخش تقسیم می‌شوند: قسمت جلویی و پشتیبان.
 
 
-### Frontend performance
+### کارایی سمت فرانت
 
-Django programmers might quickly overlook frontend performance because it deals with
-understanding how the client side, usually a browser, works. However, let's quote Steve
-Souders' study of Alexa-ranked top 10 websites:
-- "80-90% of the end-user response time is spent on the frontend. Start there."
+برنامه نویسان جنگو ممکن است عملکرد frontend را نادیده بگیرند زیرا با درک نحوه عملکرد سمت کلاینت، معمولاً یک مرورگر، سروکار دارد. با این حال، بیایید از مطالعه استیو سادرز در مورد 10 وب سایت برتر رتبه بندی الکسا نقل قول کنیم:
+- "80 تا 90 درصد از زمان پاسخ‌دهی کاربر نهایی در قسمت فرانت صرف می‌شود. از آنجا شروع کنید."
 
-A good starting point for frontend optimization would be to check your site with Google
-page speed or Yahoo! YSlow (commonly used as browser plugins). These tools will rate
-your site and recommend various best practices, such as minimizing the number of HTTP
-requests or gzipping the content.
+یک نقطه شروع خوب برای بهینه سازی frontend این است که سایت خود را با سرعت صفحه گوگل یا یاهو بررسی کنید! YSlow (معمولاً به عنوان پلاگین مرورگر استفاده می شود). این ابزارها سایت شما را رتبه بندی می کنند و بهترین روش ها را توصیه می کنند، مانند به حداقل رساندن تعداد درخواست های HTTP یا gzip نمودن محتوا.
 
-As a best practice, your static assets, such as images, stylesheets, and JavaScript files, must
-not be served through Django. Rather a static file server, cloud storages such as Amazon S3,
-or a **content delivery network (CDN)** should serve them for better performance.
+به عنوان بهترین روش، دارایی های استاتیک شما، مانند تصاویر، شیوه نامه ها و فایل های جاوا اسکریپت، نباید از طریق جنگو ارائه شوند. به جای یک فایل سرور استاتیک و ثابت، فضای ذخیره سازی ابری مانند آمازون S3 یا یک شبکه **تحویل محتوا** (CDN) باید برای عملکرد بهتر مورد استفاده قرار گیرد.
 
 
-Even then, Django can help you improve frontend performance in a number of ways:
-- **Cache infinitely with** `CachedStaticFilesStorage`: The fastest way to load static assets is to leverage the browser cache. By setting a long caching time, you
-can avoid re-downloading the same asset again and again. However, the challenge is to know when not to use the cache when the content changes. 
-    - `CachedStaticFilesStorage` class solves this elegantly by appending the asset's MD5 hash to its filename. This way, you can
-      extend the TTL of the cache for these files infinitely.
-    - To use this, set the `CACHES` setting named `staticfiles` to `CachedStaticFilesStorage`
-      or, if you have a custom storage, inherit from `CachedFilesMixin`.
-      Also, it is best to configure your caches to use the local memory
-      cache backend to perform the static filename to its hashed name
-      lookup.
-- **Use a static asset manager**: An asset manager can pre-process your static assets
-  to minify, compress, or concatenate them, thereby reducing their size and
-  minimizing requests. It can also preprocess them, enabling you to write them in
-  other languages, such as CoffeeScript and **Syntactically awesome stylesheets
-  (Sass)**. There are several Django packages that offer static asset management
-  such as `django-pipeline` or `webassets`.
+حتی در این صورت، جنگو می‌تواند به چندین روش به شما در بهبود عملکرد frontend کمک کند:
+- کش بی نهایت با CachedStaticFilesStorage: سریع ترین راه برای بارگیری assets ایستا، استفاده از حافظه پنهان مرورگر است. با تنظیم زمان کش طولانی، می توانید از بارگیری مجدد همان دارایی دوباره و دوباره خودداری کنید. با این حال، چالش این است که بدانیم چه زمانی از حافظه پنهان هنگام تغییر محتوا استفاده نکنیم. 
+    - کلاس CachedStaticFilesStorage این مشکل را با افزودن هش MD5 asset به نام فایل حل می کند. به این ترتیب می توانید TTL کش را برای این فایل ها بی نهایت افزایش دهید.
+    - برای استفاده از این، تنظیم CACHES با نام staticfiles را روی CachedStaticFilesStorage تنظیم کنید یا اگر فضای ذخیره سازی سفارشی دارید، از CachedFilesMixin ارث بری نمایید. همچنین، بهتر است کش های خود را به گونه ای پیکربندی کنید که از پشتیبان کش حافظه محلی برای انجام نام فایل استاتیک در جستجوی نام هش شده آن استفاده کند.
+- از یک asset manager ایستا استفاده کنید: یک asset manager می تواند دارایی های استاتیک شما را از قبل پردازش کند تا آنها را کوچک کند، فشرده یا به هم متصل کند، در نتیجه اندازه آنها را کاهش داده و درخواست ها را به حداقل برساند. همچنین می‌تواند آنها را از قبل پردازش کند و به شما امکان می‌دهد آن‌ها را به زبان‌های دیگر بنویسید، مانند CoffeeScript و stylesheets از لحاظ نحوی عالی (Sass). چندین بسته جنگو وجود دارد که asset manager ثابت مانند django-pipeline یا websets را ارائه می دهد.
 
 
-### Backend performance
-The scope of backend performance improvements covers your entire server-side web stack,
-including database queries, template rendering, caching, and background jobs. You will
-want to extract the highest performance from them since it is entirely within your control.
 
-For quick and easy profiling needs, `django-debug-toolbar` is quite handy. We can also
-use Python profiling tools, such as the `hotshot` module for detailed analysis. In Django,
-you can use one of the several profiling middleware snippets to display the output of
-hotshot in the browser.
+### کارایی سمت بک اند
+دامنه کارایی سمت Backend تمامی وب استک سمت سرور شما را شامل می شود، از جمله پرس و جوهای پایگاه داده، رندر قالب، ذخیره سازی و کارهایی که در پس زمینه انجام می شوند. ممکن است بالاترین عملکرد را از آنها استخراج کنید زیرا کاملاً در کنترل شما است.
 
-A recent live-profiling solution is `django-silk`. It stores all the requests and responses in
-the configured database, allowing aggregated analysis over an entire user session, say, to
-find the worst-performing views. It can also profile any piece of Python code by adding a
-decorator.
+برای نیازهای پروفایل سریع و آسان، django-debug-toolbar بسیار مفید است. همچنین می‌توانیم از ابزارهای پروفایل پایتون مانند ماژول hotshot برای تجزیه و تحلیل دقیق استفاده کنیم. در جنگو، می توانید از یکی از چندین قطعه میان افزار پروفایل برای نمایش خروجی هات شات در مرورگر استفاده کنید. 
 
-As before, we will take a look at some of the ways to improve backend performance.
-However, considering that they are vast topics in themselves, they have been grouped into
-sections. Many of these have already been covered in the previous chapters but have been
-summarized here for easy reference.
+راه‌حلی که اخیراً برای ایجاد نمایه زنده وجود دارد، django-silk است. تمام درخواست‌ها و پاسخ‌ها را در پایگاه داده پیکربندی شده ذخیره می‌کند و اجازه تجزیه و تحلیل انبوه در یک سشن کاربر را میدهد، که بدترین عملکردها را پیدا کند. همچنین می‌تواند با افزودن یک دکوراتور، هر قطعه کد پایتون را نمایه کند.
+
+مانند قبل، نگاهی به برخی از راه‌های بهبود عملکرد Backend خواهیم انداخت. با این حال، با توجه به اینکه آنها به خودی خود موضوعات گسترده ای هستند، در بخش هایی دسته بندی شده اند. بسیاری از این موارد قبلاً در فصل‌های قبلی پوشش داده شده‌اند، اما برای ارجاع آسان در اینجا خلاصه شده‌اند.
 
 
-### Templates
 
-As the documentation suggests, you should enable the cached template loader in
-production. This avoids the overhead of reparsing and recompiling the templates each time
-it needs to be rendered. The cached template is compiled the first time it is needed and then
-stored in memory. Subsequent requests for the same template are served from memory.
+### تمپلیت ها
 
-If you find that another templating language such as Jinja2 renders your page significantly
-faster, then it is quite easy to replace the built-in Django template language.
+همانطور که مستندات نشان می دهد، شما باید تمپلیت لودر ذخیره شده را در مرحله تولید فعال کنید. این کار باعث می‌شود که هر بار که قالب‌ها نیاز به رندر شدن داشته باشند، از کامپایل مجدد آن جلوگیری می‌شود. قالب ذخیره شده در حافظه پنهان اولین باری که نیاز است کامپایل می شود و سپس در حافظه ذخیره می شود. درخواست های بعدی برای همان الگو از حافظه ارائه می شود.
+
+اگر متوجه شدید که زبان قالب دیگری مانند Jinja2 صفحه شما را به طور قابل توجهی سریعتر ارائه می کند، جایگزین کردن زبان قالب داخلی جنگو بسیار آسان است.
 
 
-### Database 
+### دیتابیس
 
-Sometimes, the Django ORM can generate inefficient SQL code. There are several
-optimization patterns to improve this, as follows:
-- **Reduce database hits with** `select_related`: If you are using a
-  `OneToOneField` or a Foreign key relationship, in forwarding direction, for a
-  large number of objects, then `select_related()` can perform a SQL join and
-  reduce the number of database hits.
-- **Reduce database hits with** `prefetch_related`: For accessing a
-  `ManyToManyField` method or, a Foreign key relation, in reverse direction, or a
-  Foreign key relation in a large number of objects, consider
-  using `prefetch_related` to reduce the number of database hits.
-- **Fetch only needed fields with values or** `values_list`: You can save time and
-  memory usage by limiting queries to return only the needed fields and skipping
-  model instantiation using `values()` or `values_list()`.  
-- **Denormalize models**: Selective denormalization improves performance by
-  reducing joins at the cost of data consistency. It can also be used for
-  precomputing values, such as the sum of fields or the active status report into an
-  extra column. Compared to using annotated values in queries, denormalized
-  fields are often simpler and faster.
-- **Add an index**: If a non-primary key gets searched a lot in your queries, consider
-  setting that field's `db_index` to `True` in your model definition.
-- **Create, update, and delete multiple rows at once**: Multiple objects can be
-  operated upon in a single database query with the `bulk_create()`, `update()`,
-  and `delete()` methods. However, they come with several important caveats
-  such as skipping the `save()` method on that model. So, read the documentation
-  carefully before using them.
+گاهی اوقات، Django ORM می تواند کد SQL ناکارآمد تولید کند. چندین الگوی بهینه سازی برای بهبود این امر وجود دارد که به شرح زیر است:
+- کاهش بازدیدهای پایگاه داده با select_related: اگر از یک رابطه یک به یک یا یک کلید خارجی، در جهت فوروارد، برای تعداد زیادی از اشیاء استفاده می کنید، select_related() می تواند یک جوین را انجام دهد و تعداد بازدیدهای پایگاه داده را کاهش دهد.
+- کاهش بازدید پایگاه داده با prefetch_related: برای دسترسی به متد ManyToManyField یا یک رابطه کلید خارجی در جهت معکوس، یا یک رابطه کلید خارجی در تعداد زیادی از اشیاء، استفاده از prefetch_related را برای کاهش تعداد بازدیدهای پایگاه داده در نظر بگیرید.
+- واکشی فیلدهای مورد نیاز با ولیوها یا values_list: می‌توانید با محدود کردن کوئری‌ها برای بازگشت فیلدهای مورد نیاز و چشم پوشی کردن از نمونه‌سازی مدل با استفاده از values() یا values_list در زمان و استفاده از حافظه صرفه‌جویی کنید.  
+- مدل‌های دینرمال شده: denormalization انتخابی، کارایی را از طریق کاهش جوین ها برای افزایش سازگاری داده‌ها بهبود می‌بخشد. همچنین می توان از آن برای پیش محاسبه مقادیر، مانند مجموع فیلدها یا گزارش وضعیت فعال در یک ستون اضافی استفاده کرد. در مقایسه با استفاده از مقادیر مشروح در پرس و جوها، فیلدهای غیرعادی شده اغلب ساده تر و سریعتر هستند.
+- یک شاخص اضافه کنید: اگر یک کلید غیر اصلی در جستارهای شما زیاد جستجو می شود، db_index آن فیلد را در تعریف مدل خود روی True قرار دهید.
+- ایجاد، به روز رسانی و حذف چندین ردیف به طور همزمان: چندین شی را می توان در یک کوئری پایگاه داده واحد با متدهای bulk_create()، update() و delete() اجرا کرد. با این حال، آنها با چندین اخطار مهم مانند چشم پوشی از متد save() در آن مدل همراه هستند. بنابراین، قبل از استفاده از آنها، اسناد را به دقت بخوانید.
 
-As a last resort, you can always fine-tune the raw SQL statements using proven database
-performance expertise. However, maintaining the SQL code can be painful over time.
+به‌عنوان آخرین راه‌حل، همیشه می‌توانید عبارات SQL خام را با استفاده از تخصص کارایی پایگاه داده تنظیم کنید. با این حال، حفظ کد SQL می تواند در طول زمان دردناک باشد.
 
 
-### Caching
 
-Any computation that takes the time can take advantage of caching and return
-precomputed results faster. However, the problem is stale data or, often, quoted as one of
-the hardest things in computer science, cache invalidation. This is commonly spotted when,
-despite refreshing the page, a YouTube video's view count doesn't change.
+### ذخیره سازی
 
-Django has a flexible cache system that allows you to cache anything from a template
-fragment to an entire site. It allows a variety of pluggable backends such as file-based or
-data-based backed storage.
+هر محاسباتی که زمان می برد می تواند از مزیت ذخیره سازی استفاده کند و نتایج از پیش محاسبه شده را سریعتر بازگرداند. با این حال، مشکل داده‌های قدیمی است یا اغلب به عنوان یکی از سخت‌ترین چیزها در علوم کامپیوتر، عدم اعتبار کش ذکر می‌شود. این معمولاً زمانی دیده می‌شود که، با وجود به‌روزرسانی صفحه، تعداد بازدیدهای ویدیوی YouTube تغییر نمی‌کند.
 
-Most production systems use a memory-based caching system, such as Redis or
-Memcached. This is purely because volatile memory is many orders of magnitude faster
-than disk-based storage.
+جنگو دارای یک سیستم کش انعطاف پذیر است که به شما امکان می دهد هر چیزی از یک قطعه قالب گرفته تا کل سایت را در حافظه پنهان ذخیره کنید. این انواع پشتیبان های قابل اتصال مانند ذخیره سازی مبتنی بر فایل یا مبتنی بر داده را شامل میشود.
 
-Such cache stores are ideal for storing frequently used but ephemeral data, such as user
-sessions.
+اکثر سیستم های تولیدی از یک سیستم کش مبتنی بر حافظه مانند Redis یا Memcached استفاده می کنند. این صرفاً به این دلیل است که حافظه فرار بسیار سریعتر از ذخیره سازی مبتنی بر دیسک است.
+
+چنین حافظه های کش برای ذخیره سازی داده های پرکاربرد اما زودگذر، مانند جلسات کاربر، ایده آل هستند..
 
 
-### Cached session backend
+### بکند سشن ذخیره شده
 
-By default, Django stores its user session in the database. This usually gets retrieved for
-every request. To improve performance, the session data can be stored in memory by
-changing the `SESSION_ENGINE` setting. For instance, add the following in `settings.py` to
-store the session data in your cache:
+به طور پیش فرض، جنگو یوزر سشن خود را در پایگاه داده ذخیره می کند. این معمولاً برای هر درخواست بازیابی می شود. برای بهبود عملکرد، داده های سشن را می توان با تغییر تنظیمات SESSION_ENGINE در حافظه ذخیره کرد. به عنوان مثال، موارد زیر را در settings.py اضافه کنید تا داده‌های جلسه را در حافظه پنهان خود ذخیره کنید:
 - SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
-Since some cache storage can evict stale data leading to the loss of session data, it is
-preferable to use Redis or Memcached as the session store, with memory limits high
-enough to support the maximum number of active user sessions.
+از آنجایی که برخی از حافظه پنهان می‌توانند داده‌های قدیمی را که منجر به از دست رفتن داده‌های جلسه می‌شود، از بین ببرد، ترجیح داده می‌شود از Redis یا Memcached به عنوان ذخیره‌گاه سشن با محدودیت‌های حافظه کافی برای پشتیبانی از حداکثر تعداد یوزر سشن های فعال استفاده شود.
 
 
-### Caching frameworks
+### فریم ورک های ذخیره سازی
 
-For basic caching strategies, it might be easier to use a caching framework. Among the
-popular ones are `django-cache-machine` and `django-cachalot`. They can handle
-common scenarios, such as automatically caching results of queries to avoid database hits
-every time you perform a read.
-
-The simplest of these is Django-cachalot, a successor of Johnny Cache. It requires very little
-configuration. It is ideal for sites that have multiple reads and infrequent writes (that is, the
-vast majority of applications), it caches all Django ORM-read queries in a consistent
-manner.
+برای استراتژی های ذخیره سازی اولیه، ممکن است استفاده از فریم ورک ذخیره سازی آسان تر باشد. از جمله محبوب ترین ها می توان به django-cache-machine و django-cachalot اشاره کرد. آنها می توانند سناریوهای رایج را مدیریت کنند، مانند ذخیره خودکار نتایج جستجوها برای جلوگیری از بازدید از پایگاه داده هر بار که خواندن انجام می دهید.
+ساده ترین آنها جنگو-کاچالوت، جانشین Johnny Cache است. به پیکربندی بسیار کمی نیاز دارد. این برای سایت‌هایی که دارای چندین خواندن و نوشتن نادر هستند (یعنی اکثریت قریب به اتفاق برنامه‌ها) ایده‌آل است، تمام پرس‌و‌جوهای خوانده‌شده جنگو ORM را به شیوه‌ای ثابت ذخیره می‌کند.
 
 
-### Caching patterns
+### الگوهای ذخیره سازی
 
-Once your site starts getting heavy traffic, you will need to start exploring several caching
-strategies throughout your stack. Using Varnish, a caching server that sits between your
-users and Django, many of your requests might not even hit the Django server.
+هنگامی که سایت شما شروع به دریافت ترافیک سنگین نمود، باید شروع به کاوش چندین استراتژی ذخیره سازی در سراسر پشته خود کنید. با استفاده از Varnish، یک سرور کش که بین کاربران شما و جنگو قرار می گیرد، بسیاری از درخواست های شما ممکن است حتی به سرور جنگو هم نرسند.
 
-Varnish can make pages load extremely fast (sometimes, hundreds of times faster than
-normal). However, if used improperly, it might serve static pages to your users. Varnish
-can be easily configured to recognize dynamic pages or dynamic parts of a page such as a
-shopping cart.
+وارنیش می تواند باعث شود صفحات بسیار سریع بارگذاری شوند (گاهی اوقات صدها برابر سریعتر از حالت عادی). با این حال، در صورت استفاده نادرست، ممکن است صفحات ایستا را به کاربران شما ارائه دهد. Varnish را می توان به راحتی برای تشخیص صفحات پویا یا بخش های پویا از یک صفحه مانند سبد خرید پیکربندی کرد.
 
-**Russian doll caching**, popular in the rails community, is an interesting template cacheinvalidation pattern. 
-Imagine a user's timeline page with a series of posts, each containing a
-nested list of comments. In fact, the entire page can be considered as several nested lists of
-content. At each level, the rendered template fragment gets cached.
+ذخیره سازی عروسک روسی (Russian doll caching) که در جامعه ریل محبوب است، یک الگوی جالب برای تمپلیت الگوی caching validation است. صفحه تایم لاین یک کاربر را با مجموعه‌ای از پست‌ها تصور کنید که هر کدام شامل فهرست تودرتویی از نظرات است. در واقع، کل صفحه را می توان به عنوان چندین لیست تو در تو از محتوا در نظر گرفت. در هر سطح، قطعه قالب رندر شده کش می شود.
+بنابراین، اگر یک نظر جدید به یک پست اضافه شود، تنها پست مرتبط و کش های جدول زمانی باطل می شوند.
 
-So, if a new comment gets added to a post, only the associated post and timeline caches get
-invalidated.
+ابتدا محتوای کش را مستقیماً خارج از محتوای تغییر یافته باطل می کنیم و به تدریج حرکت می کنیم تا زمانی که به بیرونی ترین محتوا برسیم. وابستگی های بین مدل ها باید دنبال شود تا این الگو کار کند.
 
-We first invalidate the cache content directly outside the changed content
-and move progressively until we reach the outermost content. The
-dependencies between models need to be tracked for this pattern to work.
+یکی دیگر از الگوهای رایج حافظه پنهان، کش کردن برای همیشه است. حتی پس از تغییر محتوا، کاربر ممکن است داده های قدیمی را از حافظه پنهان دریافت کند. با این حال، یک کار ناهمزمان، مانند کار Celery، نیز برای به‌روزرسانی حافظه پنهان فعال می‌شود. همچنین می توانید به طور دوره ای کش را در یک بازه زمانی مشخص گرم کنید تا محتوا را تازه کنید.
 
-Another common caching pattern is to cache forever. Even after the content changes, the
-user might get served stale data from the cache. However, an asynchronous job, such as a
-Celery job, also gets triggered to update the cache. You can also periodically warm the
-cache at a certain interval to refresh the content.
+اساساً، یک استراتژی ذخیره سازی موفق، بخش های استاتیک و پویا یک سایت را شناسایی می کند. برای بسیاری از سایت‌ها، بخش‌های پویا، داده‌های خاص کاربر هستند زمانی که وارد سیستم میشوید.
 
-Essentially, a successful caching strategy identifies the static and dynamic parts of a site.
-For many sites, the dynamic parts are the user-specific data when you are logged in. If this
-is separated from the generally available public content, then implementing caching
-becomes easier.
+ذخیره سازی نهان را به عنوان بخش جدایی ناپذیر عملکرد سایت خود تلقی نکنید. حتی اگر سیستم کش خراب شود، سایت باید به حالت کندتر اما کارآمد برگردد.
 
-Don't treat caching as integral to the working of your site. The site must fall back to a
-slower but working state even if the caching system breaks down.
 
 **Cranos**:
 <pre>
@@ -721,21 +469,12 @@ slower but working state even if the caching system breaks down.
 </pre>
 
 
-### Summary
+### خلاصه
 
-In this final chapter, we looked at various approaches to make your Django application
-stable, reliable, and fast. In other words, to make it production-ready. Although system
-administration might be an entire discipline in itself, a fair knowledge of the web stack is
-essential. We explored several hosting options, including PaaS, VPS, and Serverless.
+در این فصل آخر، ما به رویکردهای مختلف برای پایدار، قابل اعتماد و سریع کردن برنامه جنگو شما نگاه کردیم. به عبارت دیگر، آن را آماده تولید کنیم. اگرچه مدیریت سیستم ممکن است به خودی خود یک رشته کامل باشد، دانش منصفانه از وب استک ضروری است. چندین گزینه میزبانی از جمله PaaS، VPS و Serverless را بررسی کردیم.
 
-We also looked at several automated deployment tools and a typical deployment scenario.
-Finally, we covered several techniques to improve frontend and backend performance.
+همچنین چندین ابزار استقرار خودکار و یک سناریوی استقرار معمولی را بررسی کردیم. در نهایت، چندین تکنیک را برای بهبود عملکرد frontend و backend پوشش دادیم.
 
-The most important milestone of a website is finishing and taking it to production.
-However, it is by no means the end of your development journey. There will be new
-features, alterations, and rewrites.
-
-Every time you revisit the code, use the opportunity to take a step back and find a cleaner
-design, identify a hidden pattern, or think of a better implementation. Other developers,
-and perhaps your future self, will thank you for it.
+مهمترین نقطه عطف یک وب سایت تکمیل و رساندن آن به مرحله تولید است. با این حال، این به هیچ وجه پایان سفر توسعه شما نیست. ویژگی‌ها، تغییرات و بازنویسی‌های جدیدی وجود خواهد داشت.
+هر بار که کد را دوباره مرور می‌کنید، از این فرصت استفاده کنید تا یک قدم به عقب برگردید و طرحی تمیزتر پیدا کنید، یک الگوی پنهان را شناسایی کنید یا به پیاده‌سازی بهتری فکر کنید. توسعه دهندگان دیگر، و شاید خود آینده شما، از شما برای آن تشکر خواهند کرد.
 
