@@ -202,19 +202,15 @@ MVC در مورد کاری که مدل ها، نماها و کنترلرها ا�
 * جزئیات مشکل: این موضوع زمینه مشکل را توضیح می دهد و احتمالاً مثالی را ارائه می دهد
 * جزئیات راه حل: این راه حل (ها) را به طور کلی توضیح می دهد و نمونه ای از اجرای جنگو را ارائه می دهد
 
-####Criticism of patterns
-Despite their near universal usage, patterns have their share of criticism too. The most
-common arguments against them are as follows:
+#### نقد الگوها
+علیرغم کاربرد تقریباً جهانی آنها، الگوها نیز سهم خود را از انتقاد دارند. رایج ترین استدلال ها علیه آنها به شرح زیر است:
 
-* **Patterns compensate for the missing language features:** Peter Norvig found that
-16 of the 23 patterns in design patterns were invisible or simpler in dynamic
-languages such as Lisp or Python. For instance, as functions are already objects in
-Python, it would be unnecessary to create separate classes to implement strategy
-patterns.
-* **Patterns repeat best practices:** Many patterns are essentially formalizations of
-best practices, such as separation of concerns, and could seem redundant.
-* **Patterns can lead to over-engineering:** Implementing the pattern might be less
-efficient and excessive compared to a simpler solution.
+* **الگوها ویژگی‌های زبان از دست رفته را جبران می‌کنند:** پیتر نورویگ دریافت که 16 الگو از 23 الگو در الگوهای طراحی در زبان‌های پویا مانند Lisp یا Python نامرئی یا ساده‌تر هستند. برای مثال، از آنجایی که توابع قبلاً در پایتون اشیاء هستند، ایجاد کلاس‌های جداگانه برای پیاده‌سازی الگوهای استراتژی غیرضروری است.
+
+* **الگوها بهترین شیوه‌ها را تکرار می‌کنند:** بسیاری از الگوها اساساً رسمی‌سازی بهترین شیوه‌ها، مانند تفکیک نگرانی‌ها هستند، و ممکن است زائد به نظر برسند.
+الگوها می توانند منجر به مهندسی بیش از حد شوند: پیاده سازی الگو ممکن است در مقایسه با راه حل ساده تر کارآمدتر و بیش از حد باشد.
+
+* **الگوها می توانند منجر به مهندسی بیش از حد شوند:** پیاده سازی الگو ممکن است در مقایسه با راه حل ساده تر کارآمدتر و بیش از حد باشد.
 
 ####How to use patterns
 Although some of the previous criticisms are quite valid, they are based on how patterns
