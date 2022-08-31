@@ -140,36 +140,20 @@ Patterns: Elements of Reusable Object-Oriented Software) * توسط *اریش گ
 
 در حالی که این الگوها بیشتر مورد توجه کسانی است که درونیات جنگو را مطالعه می کنند، رایج ترین سؤالی که پرسیده می شود این است که خود جنگو تحت کدام الگو طبقه بندی می شود؟
 
-#### Is Django MVC?
-**Model-View-Controller (MVC)** is an architectural pattern invented by Xerox PARC in the
-70s. Being the framework used to build user interfaces in Smalltalk, it gets an early mention
-in the GoF book.
+#### آیا جنگو MVC است؟
+**مدل-ویو-کنترلر (MVC)** یک الگوی معماری است که توسط Xerox PARC در دهه 70 اختراع شد. به عنوان چارچوبی که برای ساخت رابط های کاربری در Smalltalk استفاده می شود، در کتاب GoF در ابتدا به آن اشاره شد.
 
-Today, MVC is a very popular pattern in web application frameworks. A variant of the
-common question is whether Django is an MVC framework.
+امروزه MVC یک الگوی بسیار محبوب در فریمورک های برنامه های وب است. یک نوع سوال رایج این است که آیا جنگو یک چارچوب MVC است یا خیر
 
-The answer is both yes and no. The MVC pattern advocates the decoupling of the
-presentation layer from the application logic. For instance, while designing an online game
-website API, you might present a game's high scores table as an HTML, XML, or **comma-
-separated values (CSV)** file. However, its underlying model class would be designed
-independently of how the data would be finally presented.
+پاسخ هم بله و نه است. الگوی MVC از جداسازی لایه ارائه از منطق برنامه حمایت می کند. به عنوان مثال، هنگام طراحی یک API وب سایت بازی آنلاین، ممکن است جدول امتیازات بالای یک بازی را به عنوان یک فایل HTML، XML یا **مقادیر جدا شده با کاما (CSV)** ارائه دهید. با این حال، کلاس مدل زیربنایی آن مستقل از نحوه ارائه نهایی داده ها طراحی می شود.
 
-MVC is very rigid about what models, views, and controllers do. However, Django takes a
-much more practical view to web applications. Due to the nature of the HTTP protocol,
-each request for a web page is independent of any other request. Django's framework is
-designed like a pipeline to process each request and prepare a response.
+MVC در مورد کاری که مدل ها، نماها و کنترلرها انجام می دهند بسیار سخت است. با این حال، جنگو نگاه بسیار کاربردی تری به برنامه های کاربردی وب دارد. با توجه به ماهیت پروتکل HTTP، هر درخواست برای یک صفحه وب مستقل از هر درخواست دیگری است. چارچوب جنگو مانند یک خط لوله برای پردازش هر درخواست و آماده سازی پاسخ طراحی شده است.
 
-Django calls this the **Model-Template-View (MTV)** architecture. There is a separation of
-concerns between the database interfacing classes (model), request-processing classes
-(view), and a templating language for the final presentation (template).
+جنگو این را معماری **مدل-تمپلیت-ویو (MTV)** می نامد. نگرانی‌ها بین کلاس‌های واسط پایگاه داده (مدل)، کلاس‌های پردازش درخواست (نما) و زبان قالب برای ارائه نهایی (الگو) جدایی وجود دارد.
 
-If you compare this with the classic MVC — a model is comparable to Django's Models; a
-view is usually Django's Templates, and the controller is the framework itself that processes
-an incoming HTTP request and routes it to the correct view function.
+اگر این را با MVC کلاسیک مقایسه کنید، یک مدل با مدل های جنگو قابل مقایسه است. یک view معمولاً Templates جنگو است و کنترلر خود چارچوبی است که یک درخواست HTTP ورودی را پردازش می کند و آن را به تابع view صحیح هدایت می کند.
 
-If this has not confused you enough, Django prefers to name the callback function to handle
-each URL a view function. This is, unfortunately, not related to the MVC pattern's idea of a
-view.
+اگر این به اندازه کافی شما را گیج نکرده است، جنگو ترجیح می‌دهد که تابع callback را برای مدیریت هر URL یک تابع view نامگذاری کند. این، متأسفانه، به ایده الگوی MVC از دیدگاه مربوط نمی شود.
 
 #### Fowler's patterns
 In 2002, Martin Fowler wrote *Patterns of Enterprise Application Architecture*, which described
