@@ -185,35 +185,22 @@ MVC در مورد کاری که مدل ها، نماها و کنترلرها ا�
 |Template view                | قالب های جنگو          |‌ رندر خروجی HTML بوسلیه تبدیل علامت ها و حروف                     |
 
 
-####Are there more patterns?
-Yes, of course. Patterns are discovered all the time. Like living beings, some mutate and
-form new patterns, for instance, MVC variants such as **Model-view-presenter (MVP)**,
-**Hierarchical model-view-controller (HMVC)**, or **Model View ViewModel (MVVM)**.
+#### آیا الگوهای بیشتری وجود دارد؟
+بله حتما. الگوها همیشه کشف می شوند. مانند موجودات زنده، برخی جهش می یابند و الگوهای جدیدی را تشکیل می دهند، به عنوان مثال، انواع MVC مانند Model-view-presenter (MVP)، **Hierarchical model-view-controller (HMVC)** ، یا **Model View ViewModel (MVVM)**.
 
-Patterns also evolve with time, as better solutions to known problems are identified. For
-example, Singleton pattern was once considered to be a design pattern but now is
-considered to be an **anti-pattern** due to the shared state it introduces, similar to using
-global variables. An anti-pattern can be defined as a commonly reinvented but a bad
-solution to a problem. Some of the other well-known books that catalog patterns are
-**Pattern-oriented software architecture (POSA)** by Buschmann, Meunier, Rohnert,
-Sommerlad, and Sta; *Enterprise Integration Patterns by Hohpe* and Woolf; and *The Design of
-Sites: Patterns, Principles, and Processes for Crafting a Customer-Centered Web Experience by
-Duyne, Landay, and Hong*.
+الگوها نیز با گذشت زمان تکامل می یابند، زیرا راه حل های بهتری برای مشکلات شناخته شده شناسایی می شود. به عنوان مثال، الگوی Singleton زمانی به عنوان یک الگوی طراحی در نظر گرفته می شد، اما اکنون به دلیل حالت مشترکی که معرفی می کند، مشابه با استفاده از متغیرهای سراسری، به عنوان یک ضد الگو در نظر گرفته می شود. یک ضد الگو را می توان به عنوان راه حلی که معمولاً دوباره اختراع می شود، اما راه حلی بد برای یک مشکل تعریف کرد. برخی از کتاب‌های معروف دیگر که الگوهای فهرست‌نویسی دارند، معماری نرم‌افزار الگو محور (POSA) توسط Buschmann، Meunier، Rohnert، Sommerlad و Sta هستند. الگوهای ادغام سازمانی توسط هوپ و وولف. و طراحی سایت ها: الگوها، اصول و فرآیندها برای ایجاد یک تجربه وب مشتری محور توسط Duyne، Landay و Hong.
 
-###Patterns in this book
-This book will cover Django-specific design and architecture patterns, which would be
-useful to a Django developer. This is how each pattern will be presented:
+### الگوها در این کتاب
+این کتاب الگوهای طراحی و معماری خاص جنگو را پوشش می‌دهد که برای توسعه‌دهنده جنگو مفید است. هر الگو به این صورت ارائه خواهد شد:
 
-**Pattern name
+**نام الگو
 
-The heading is the pattern name. If it is a well-known pattern, the commonly used name is
-used; otherwise, a terse, self-descriptive name has been chosen. Names are important, as
-they help in building the pattern vocabulary. All patterns will have the following parts:
+عنوان نام الگو است. اگر یک الگوی شناخته شده باشد، از نام رایج استفاده می شود. در غیر این صورت، نام مختصر و خود توصیفی انتخاب شده است. نام ها مهم هستند، زیرا به ساخت واژگان الگو کمک می کنند. تمام الگوها دارای قسمت های زیر خواهند بود:
 
-* Problem: This briefly mentions the problem
-* Solution: This summarizes the proposed solution(s)
-* Problem Details: This elaborates the context of the problem and possibly gives an example
-* Solution Details: This explains the solution(s) in general terms and provides a sample Django implementation
+* مشکل: در اینجا به طور خلاصه به مشکل اشاره می شود
+* راه حل: این راه حل(های) پیشنهادی را خلاصه می کند
+* جزئیات مشکل: این موضوع زمینه مشکل را توضیح می دهد و احتمالاً مثالی را ارائه می دهد
+* جزئیات راه حل: این راه حل (ها) را به طور کلی توضیح می دهد و نمونه ای از اجرای جنگو را ارائه می دهد
 
 ####Criticism of patterns
 Despite their near universal usage, patterns have their share of criticism too. The most
