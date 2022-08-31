@@ -176,13 +176,14 @@ MVC در مورد کاری که مدل ها، نماها و کنترلرها ا�
 
 جنگو تعدادی از این الگوها را نیز پیاده سازی می کند. جدول زیر تعدادی از آنها را فهرست می کنددانستن تقریباً همه این الگوها هنگام طراحی یک برنامه جنگو مفید است. در واقع، وب‌سایت فاولر به آدرس `http://martinfowler.com/eaaCatalog`  یک کاتالوگ عالی از این الگوها به صورت آنلاین دارد. من به شدت توصیه می کنم آنها را بررسی کنید.
 جنگو تعدادی از این الگوها را نیز پیاده سازی می کند. جدول زیر تعدادی از آنها را فهرست می کند:
-
+<span dir="rtl" style="direction:rtl;">
 | **الگوهای فاولر**          | **کامپوننت های جنگو**      | **توضیح**    
 |:---------------------------:|:-------------------------:|:-----------------------------------------------------------------:|
 | Active record               | Django models             | Encapsulate the database access and add domain logic on that data |
 | Class table inheritance     | Model inheritance         | Each entity in the hierarchy is mapped to a separate table        |
 | Identity field              | ID field                  | Saves a database ID field in an object to maintain identity       |
 |Template view                | Django templates          |‌ Render into HTML by embedding markers in HTML                     |
+</span>
 
 ####Are there more patterns?
 Yes, of course. Patterns are discovered all the time. Like living beings, some mutate and
