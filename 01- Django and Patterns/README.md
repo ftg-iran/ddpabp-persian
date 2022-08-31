@@ -236,13 +236,10 @@ MVC در مورد کاری که مدل ها، نماها و کنترلرها ا�
 
 ** نکته: از `BASE_DIR` در `settings.py` استفاده کنید و از کدگذاری نام دایرکتوری ها خودداری کنید.
 
-###Summary
-In this chapter, we looked at why people choose Django over other web frameworks, its
-interesting history, and how it works. We also examined design patterns, popular pattern
-collections, and best practices.
+### خلاصه
+در این فصل، ما به این موضوع پرداختیم که چرا مردم جنگو را نسبت به سایر چارچوب های وب، تاریخچه جالب آن و نحوه کارکرد آن انتخاب می کنند. ما همچنین الگوهای طراحی، مجموعه های الگوهای محبوب و بهترین شیوه ها را بررسی کردیم.
 
-In the next chapter, we will take a look at the first few steps in the beginning of a Django
-project, such as gathering requirements, creating mockups, and setting up the project.
+در فصل بعد، نگاهی به چند مرحله اولیه در آغاز پروژه جنگو خواهیم داشت، مانند جمع آوری نیازمندی ها، ساخت ماکت ها و راه اندازی پروژه.
 
 
 
