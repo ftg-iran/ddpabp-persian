@@ -220,25 +220,21 @@ MVC در مورد کاری که مدل ها، نماها و کنترلرها ا�
 * از یک الگو فقط در صورتی استفاده کنید که ظریف ترین راه حل در زمینه شما باشد
 * از ایجاد الگوهای جدید نترسید
 
-#### Python Zen and Django's design philosophy
-Generally, the Python community uses the term *Pythonic* to describe a piece of idiomatic
-code. It typically refers to the principles laid out in *The Zen of Python*. Written like a poem, it
-is extremely useful to describe such a vague concept.
+#### فلسفه طراحی پایتون ذن و جنگو
+به طور کلی، جامعه پایتون از اصطلاح *پایتونیک* برای توصیف یک کد اصطلاحی استفاده می کند. معمولاً به اصولی اشاره دارد که در *The Zen of Python* بیان شده است. که مانند یک شعر نوشته شده است، توصیف چنین مفهوم مبهمی بسیار مفید است.
 
-**Tip: Try entering `import this` in a Python prompt to view *The Zen of Python*. 
+** نکته:   برای مشاهده *Zen of Python* سعی کنید این را در یک اعلان پایتون `وارد کنید`.
 
-Furthermore, Django developers have crisply documented their design philosophies while
-designing the framework at `https:/​/docs.​djangoproject.​com/en/​dev/​misc/​design-philosophies/​`.
+علاوه بر این، توسعه‌دهندگان جنگو فلسفه‌های طراحی خود را در حین طراحی چارچوب در `https:/​/docs.​djangoproject.​com/en/​dev/​misc/​design-philosophies/​` به طور واضح مستند کرده‌اند.
 
-While the document describes the thought process behind how Django was designed, it is
-also useful for developers using Django to build applications. Certain principles such as
-**Don't Repeat Yourself (DRY)**, **loose coupling**, and **tight cohesion** can help you write more
-maintainable and idiomatic Django applications.
+در حالی که این سند فرآیند فکری پشت چگونگی طراحی جنگو را توضیح می‌دهد، اما برای توسعه‌دهندگانی که از جنگو برای ساخت برنامه‌ها استفاده می‌کنند نیز مفید است.
+ برخی از اصول مانند:
+**Don't Repeat Yourself (DRY)**, **loose coupling**, and **tight cohesion** می توانند به شما کمک کنند تا برنامه های جنگو قابل نگهداری و اصطلاحی بیشتری بنویسید.
 
-Django or Python best practices suggested by this book would be formatted in the
-following manner:
 
-**Tip: Use `BASE_DIR` in `settings.py` and avoid hardcoding directory names.
+بهترین شیوه های جنگو یا پایتون پیشنهاد شده توسط این کتاب به روش زیر قالب بندی می شوند:
+
+** نکته: از `BASE_DIR` در `settings.py` استفاده کنید و از کدگذاری نام دایرکتوری ها خودداری کنید.
 
 ###Summary
 In this chapter, we looked at why people choose Django over other web frameworks, its
