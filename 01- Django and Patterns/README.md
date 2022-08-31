@@ -155,44 +155,27 @@ MVC در مورد کاری که مدل ها، نماها و کنترلرها ا�
 
 اگر این به اندازه کافی شما را گیج نکرده است، جنگو ترجیح می‌دهد که تابع callback را برای مدیریت هر URL یک تابع view نامگذاری کند. این، متأسفانه، به ایده الگوی MVC از دیدگاه مربوط نمی شود.
 
-#### Fowler's patterns
-In 2002, Martin Fowler wrote *Patterns of Enterprise Application Architecture*, which described
-40 or so patterns he often encountered while building enterprise applications.
+#### الگوهای فاولر (Fowler's)
+در سال 2002، مارتین فاولر **الگوهای معماری برنامه های سازمانی** را نوشت که حدود 40 الگوی را توصیف کرد که او اغلب در هنگام ساخت برنامه های سازمانی با آنها مواجه می شد.
 
-Unlike the GoF book, which described design patterns, Fowler's book was about
-architectural patterns. Hence, they describe patterns at a much higher level of abstraction
-and are largely programming language agnostic.
+برخلاف کتاب GoF که الگوهای طراحی را توصیف می کرد، کتاب فاولر در مورد الگوهای معماری بود. از این رو، آنها الگوها را در سطح بسیار بالاتری از انتزاع توصیف می کنند و تا حد زیادی زبان برنامه نویسی آگنوستیک هستند.
 
-Fowler's patterns are organized as follows:
-* **Domain logic patterns:** These include domain model, transaction script, service
-layer, and table module
-* **Data source architectural patterns:** These include row data gateway, table data
-gateway, data mapper, and active record
-* **Object-relational behavioral patterns:** These include Identity Map, Unit of
-Work, and Lazy Load
-* **Object-relational structural patterns:** These include Foreign Key Mapping,
-Mapping, Dependent Mapping, Association Table Mapping, Identity Field,
-Serialized LOB, Embedded Value, Inheritance Mappers, Single Table Inheritance,
-Concrete Table Inheritance, and Class Table Inheritance
-* **Object-relational metadata mapping patterns:** These include Query Object,
-Metadata Mapping, and repository
-* **Web presentation patterns:** These include Page Controller, Front Controller,
-Model View Controller, Transform View, Template View, Application
-Controller, and Two-Step View
-* **Distribution patterns:** These include Data Transfer Object and Remote Facade
-* **Offline concurrency patterns:** These include Coarse-Grained Lock, Implicit
-Lock, Optimistic Offline Lock, and Pessimistic Offline Lock
-* **Session state patterns:** These include Database Session State, Client Session State,
-and Server Session State
-* **Base patterns:** These include Mapper, Gateway, Layer Supertype, Registry,
-Value Object, Separated Interface, Money, Plugin, Special Case, Service Stub, and
-Record Set
+الگوهای فاولر به صورت زیر سازماندهی می شوند:
+* **الگوهای منطقی دامنه:**  این الگوها شامل مدل دامنه، اسکریپت تراکنش، لایه سرویس و ماژول جدول است
+* **الگوهای معماری منبع داده:** اینها شامل دروازه داده ردیف، دروازه داده جدول، نگاشت داده و رکورد فعال است.
+* **الگوهای رفتاری شی-رابطه ای:** این الگوها شامل نقشه هویت، واحد کار و بار تنبل است.
+* **الگوهای ساختاری شی-رابطه ای:** این الگوها عبارتند از نگاشت کلید خارجی، نگاشت، نگاشت وابسته، نگاشت جدول انجمن، فیلد هویت، LOB سریال، ارزش جاسازی شده، نگاشتهای ارثی، ارث بری جدول تک، ارث بری جدول بتن، و ارث بری جدول کلاس.
+* **الگوهای نگاشت ابرداده شی رابطه ای:** این الگوها عبارتند از Query Object، Metadata Mapping و Repository.
+* **الگوهای ارائه وب:** اینها عبارتند از کنترل کننده صفحه، کنترلر جلو، کنترلر نمای مدل، نمای تبدیل، نمای الگو، کنترل کننده برنامه، و نمای دو مرحله ای
+* **الگوهای توزیع:** اینها شامل شی انتقال داده و نما از راه دور است
+* **الگوهای همزمانی آفلاین:** این الگوهای شامل قفل درشت دانه، قفل ضمنی، قفل آفلاین خوش بینانه و قفل آفلاین بدبینانه است.
+* **الگوهای وضعیت جلسه:** اینها شامل وضعیت جلسه پایگاه داده، وضعیت جلسه مشتری و وضعیت جلسه سرور است.
+* **الگوهای پایه:** این الگوها عبارتند از Mapper، Gateway، Layer Supertype، Registry، Value Object، Separated Interface، Money، Plugin، Case Special، Service Stub و Record Set.
 
-Almost all of these patterns would be useful to know while architecting a Django
-application. In fact, Fowler's website at `http:/​/martinfowler.​com/​eaaCatalog/`​ has an
-excellent catalog of these patterns online. I highly recommend that you check them out.
+دانستن تقریباً همه این الگوها هنگام طراحی یک برنامه جنگو مفید است. در واقع، وب‌سایت فاولر به آدرس `http://martinfowler.com/eaaCatalog`  یک کاتالوگ عالی از این الگوها به صورت آنلاین دارد. من به شدت توصیه می کنم آنها را بررسی کنید.
 
-Django also implements a number of these patterns. The following table lists a few of them:
+جنگو تعدادی از این الگوها را نیز پیاده سازی می کند. جدول زیر تعدادی از آنها را فهرست می کنددانستن تقریباً همه این الگوها هنگام طراحی یک برنامه جنگو مفید است. در واقع، وب‌سایت فاولر به آدرس `http://martinfowler.com/eaaCatalog`  یک کاتالوگ عالی از این الگوها به صورت آنلاین دارد. من به شدت توصیه می کنم آنها را بررسی کنید.
+جنگو تعدادی از این الگوها را نیز پیاده سازی می کند. جدول زیر تعدادی از آنها را فهرست می کند:
 
 | **Fowler pattern**          | **Django component**      | **Explanation**    
 |:---------------------------:|:-------------------------:|:-----------------------------------------------------------------:|
