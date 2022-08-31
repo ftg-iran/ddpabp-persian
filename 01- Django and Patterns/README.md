@@ -212,16 +212,13 @@ MVC در مورد کاری که مدل ها، نماها و کنترلرها ا�
 
 * **الگوها می توانند منجر به مهندسی بیش از حد شوند:** پیاده سازی الگو ممکن است در مقایسه با راه حل ساده تر کارآمدتر و بیش از حد باشد.
 
-####How to use patterns
-Although some of the previous criticisms are quite valid, they are based on how patterns
-are misused. Here is some advice that can help you understand how best to use design
-patterns:
-* Patterns are best used to communicate that you are following a well-understood
-design approach
-* Don't implement a pattern if your language supports a direct solution
-* Don't try to retrofit everything in terms of patterns
-* Use a pattern only if it is the most elegant solution in your context
-* Don't be afraid to create new patterns
+#### نحوه استفاده از الگوها
+اگرچه برخی از انتقادات قبلی کاملاً معتبر است، اما بر اساس نحوه استفاده نادرست از الگوها است. در اینجا چند توصیه وجود دارد که می تواند به شما در درک بهترین روش استفاده از الگوهای طراحی کمک کند:
+* بهتر است از الگوها برای بیان اینکه شما از یک رویکرد طراحی کاملاً درک شده پیروی می کنید استفاده می شود
+* اگر زبان شما از راه حل مستقیم پشتیبانی می کند، الگو را پیاده سازی نکنید
+* سعی نکنید همه چیز را از نظر الگوها بازسازی کنید
+* از یک الگو فقط در صورتی استفاده کنید که ظریف ترین راه حل در زمینه شما باشد
+* از ایجاد الگوهای جدید نترسید
 
 #### Python Zen and Django's design philosophy
 Generally, the Python community uses the term *Pythonic* to describe a piece of idiomatic
