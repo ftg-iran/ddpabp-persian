@@ -119,41 +119,26 @@ d. در صورت وجود، یک exception بر میگرداند
 
 مجموعه های مختلفی از الگوهای طراحی وجود دارد، اما برخی از آنها به طور قابل توجهی تاثیرگذارتر از بقیه بوده اند.
 
-#### Gang of four patterns
-One of the earliest efforts to study and document design patterns was a book titled *Design
-Patterns: Elements of Reusable Object-Oriented Software* by *Erich Gamma*, *Richard Helm*, *Ralph
-Johnson*, and *John Vlissides*, who later became known as the **Gang of Four (GoF)**. This book
-is so influential that many consider the 23 design patterns in the book as fundamental to
-software engineering itself.
+#### گروه چهار الگو (Gang of four patterns)
+یکی از اولین تلاش‌ها برای مطالعه و مستندسازی الگوهای طراحی، کتابی با عنوان *الگوهای طراحی: عناصر نرم‌افزار شی گرا قابل استفاده مجدد (Design
+Patterns: Elements of Reusable Object-Oriented Software) * توسط *اریش گاما*، *ریچارد هلم*، *رالف جانسون* و *جان ولیسیدز* بود که بعدها به گروه چهار نفر ( **Gang of Four «GoF»** ) معروف شد. ). این کتاب به قدری تأثیرگذار است که بسیاری 23 الگوی طراحی موجود در کتاب را برای خود مهندسی نرم افزار اساسی می دانند.
 
-In reality, the patterns were written primarily for static object-oriented programming
-languages, and it had code examples in C++ and Smalltalk. As we will see shortly, some of
-these patterns might not even be required in other programming languages with better
-higher-order abstractions such as Python.
+در واقع، الگوها عمدتاً برای زبان‌های برنامه‌نویسی شی گرا ثابت نوشته شده‌اند و نمونه‌هایی از کد در C++ و Smalltalk داشتند. همانطور که به زودی خواهیم دید، برخی از این الگوها ممکن است حتی در سایر زبان های برنامه نویسی با انتزاعات بالاتر مانند پایتون مورد نیاز نباشند.
 
-The 23 patterns have been broadly classified by their type as follows:
+23 الگو به طور کلی بر اساس نوع خود به شرح زیر طبقه بندی شده اند:
 
-* **Creational patterns:** These include abstract factory, builder pattern, factory
-method, prototype pattern, and singleton pattern
+* **الگوهای خلاقانه**: این الگوها شامل کارخانه انتزاعی، الگوی سازنده، روش کارخانه، الگوی نمونه اولیه و الگوی تک‌تنه است.
 
-* **Structural patterns:** These include adapter pattern, bridge pattern, composite
-pattern, decorator pattern, facade pattern, flyweight pattern, and proxy pattern
+* **الگوهای ساختاری**: اینها شامل الگوی آداپتور، الگوی پل، الگوی ترکیبی، الگوی تزئینی، الگوی نما، الگوی وزن پرواز و الگوی پروکسی است.
 
-* **Behavioral patterns:** These include chain-of-responsibility, command pattern,
-interpreter pattern, iterator pattern, mediator pattern, memento pattern, observer
-pattern, state pattern, strategy pattern, template pattern, and visitor pattern
+* **الگوهای رفتاری**: این الگوها شامل زنجیره مسئولیت، الگوی فرمان، الگوی مفسر، الگوی تکرارکننده، الگوی میانجی، الگوی یادگاری، الگوی مشاهده گر، الگوی حالت، الگوی استراتژی، الگوی الگو، و الگوی بازدیدکننده است.
 
-While a detailed explanation of each pattern would be beyond the scope of this book, it
-would be interesting to identify some of these patterns present in Django implementation
-itself:
+در حالی که توضیح دقیق هر الگو خارج از محدوده این کتاب است، شناسایی برخی از این الگوهای موجود در خود پیاده‌سازی جنگو جالب خواهد بود:
 
-| **GoF Pattern**   | **Django Component**      | **Explanation**    
-| Command pattern   | HttpRequest               | This encapsulates a request in an object                                                         |
-| Observer pattern  | Signals                   | When one object changes state, all its listeners are notified and updated automatically          |
-| Template method   | Class-based generic views | Steps of an algorithm can be redefined by subclassing without changing the algorithm's structure |
+| **الگوی GoF** | **کامپوننت جنگو** | **توضیح**
+| الگوی فرمان | HttpRequest | این یک درخواست در یک شی | | الگوی مشاهده گر | سیگنال ها | هنگامی که یک شی تغییر حالت می دهد، همه شنوندگان آن به طور خودکار مطلع و به روز می شوند | | روش قالب | نماهای عمومی مبتنی بر کلاس | مراحل یک الگوریتم را می توان با زیر طبقه بندی بدون تغییر ساختار الگوریتم دوباره تعریف کرد |
 
-While these patterns are mostly of interest to those studying the internals of Django, the
-most commonly question asked is, under which pattern is Django itself classified?
+در حالی که این الگوها بیشتر مورد توجه کسانی است که درونیات جنگو را مطالعه می کنند، رایج ترین سؤالی که پرسیده می شود این است که خود جنگو تحت کدام الگو طبقه بندی می شود؟
 
 #### Is Django MVC?
 **Model-View-Controller (MVC)** is an architectural pattern invented by Xerox PARC in the
