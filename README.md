@@ -207,20 +207,20 @@
   
 | تاریخ اتمام ترجمه |       مترجم      |                    فصل             |
 |:-----------------:|:----------------:|:----------------------------------:|
-|        ۱ مرداد           |  mmjsys       |01- Django and Patterns             |
+|        ۱ شهریور           |  محمدامیر لطفی پور       |01- Django and Patterns             |
 |         اتمام     |  Rahimz       |02- Application Design              |
-|                   |  رزرو نشده       |03- Models                          |
+|           ۱ شهریور         |  Alireza Khorami       |03- Models                          |
 |         اتمام          |  Hamed Daneshvar       |04- Views and URLs                  |
-|                   |  رزرو نشده       |05- Templates                       |
-|                   |  رزرو نشده       |06- Admin Interface                 |
-|                   |  رزرو نشده       |07- Forms                           |
-|                   |  رزرو نشده       |08- Working Asynchronously          |
+|            اتمام       |  Rahimz        |05- Templates                       |
+|            اتمام     |  sajjad ebrahimi moghaddam        |06- Admin Interface                 |
+|             اتمام      |  amirajoodani        |07- Forms                           |
+|            اتمام        |  Khalil Farashiani       |08- Working Asynchronously          |
 |          اتمام         |  Hamed Daneshvar       |09- Creating APIs                   |
-|                   |  رزرو نشده       |10- Dealing with Legacy Code        |
-|                   |  رزرو نشده       |11- Testing and Debugging           |
-|                   |  رزرو نشده       |12- Security                        |
-|                   |  رزرو نشده       |13- Production-Ready                |
-|                   |  رزرو نشده       |Appendix A: Python 2 Versus Python 3|
+|              اتمام     |  Fereydoon jafari babookani       |10- Dealing with Legacy Code        |
+|            اتمام       |  Rahimz       |11- Testing and Debugging           |
+|            ۱ شهریور       |  Mohammad Amin Orojloo       |12- Security                        |
+|         اتمام       |  mokarramis        |13- Production-Ready                |
+|              اتمام     |  Hamed Alizade       |Appendix A: Python 2 Versus Python 3|
 
 </div>
 

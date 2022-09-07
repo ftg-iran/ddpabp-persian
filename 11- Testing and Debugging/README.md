@@ -1,71 +1,42 @@
-# Testing and Debugging
+# تست کردن و رفع مشکل
 
-In this chapter, we will discuss the following topics:
+در این بخش موضوعات زیر را بررسی خواهیم کرد:
 
-- TDD
-- Dos and don'ts of writing tests
-- Mocking
-- Debugging
-- Logging
+توسعه تست محور TDD
+- بایدها و نبایدها در نوشتن تست
+- تقلید کردن Mocking
+- عیب‌یابی Debugging 
+- لاگ کردن Logging
 
-Every programmer must have, at least, considered skipping writing tests. In Django, the
-default app layout has a `tests.py` module with some placeholder content. It is a reminder
-that tests are needed. However, we are often tempted to skip it.
+هر برنامه‌نویسی حداقل یک‌بار به این فکر کرده است که نوشتن تست را انجام ندهد. در جنگو، ترکیب‌بندی پیش‌فرض اپ‌ها، دارای یک ماژول `tests.py`به همراه تعدادی محتوای جانگه‌دار (placeholder) است. این برای یادآوری آن است که تست‌ها ضروری هستند. با اینحال ما اغلب تمایل داریم که از نوشتن تست صرفنظر کنیم.
 
-In Django, writing tests is quite similar to writing code. In fact, it is practically code. So, the
-process of writing tests might seem like doubling (or even more) the effort of coding.
-Sometimes, we are under so much time pressure that it might seem ridiculous to spend
-time writing tests when we are just trying to make things work.
+در جنگو، نوشتن تست تقریباً شبیه نوشتن کد است. درواقع عملاً کد است. بنابراین، فرآیند نوشتن تست ممکن است شبیه این به نظر بیاید که کدهای پروژه دوبرابر (یا بعضی وقت‌ها بیشتر) شود. بعضی مواقع، ما تحت چنان فشاری هستیم که ممکن است به نظر احمقانه بیاید که تست بنویسیم در حالی که فقط در تلاش هستیم که پروژه کار کند.
 
-However, eventually, it is pointless to skip tests if you ever want anyone else to use your
-code. Imagine that you invented an electric razor and tried to sell it to your friend saying
-that it worked well for you, but you haven't tested it properly. Being a good friend of yours,
-they might agree, but imagine their horror if you told this to a stranger.
+با اینحال در نهایت، اگر بخواهید کس دیگری از کد شما استفاده کند، ننوشتن تست بی‌معنی است. تصور کنید که یک تیغ ریش‌تراش برقی اختراح کرده‌اید و سعی می‌کنید آن را به دوست خود بفروشید و به او می‌گویید که تیغ به درستی کار می‌کند اما هنوز آن را به درستی تست نکرده‌اید. اگر دوست خوب شما باشند، ممکن است حرف شما را بپذیرند اما اگر این جمله را به غریبه‌ها بگویید، ترسناک خواهد بود.
 
-## Why write tests?
+## چرا تست بنویسیم؟
 
-Tests in a software check whether it works as expected. Without tests, you might be able to
-say that your code works, but you will have no way to prove that it works correctly.
+تست‌ها در یک برنامه، کنترل می‌کنند که آیا برنامه طبق انتظار کار می‌کند یا نه. شما ممکن است بگویید که برنامه شما کار می‌کند اما هیچ راهی برای اثبات آن ندارید.
 
-Additionally, it is important to remember that it can be dangerous to omit unit testing in
-Python because of its duck-typing nature. Unlike languages such as Haskell, type checking
-cannot be strictly enforced at compile time (though type-hinting helps). Unit tests, being
-run at runtime (although in a separate execution), are essential in Python development.
+علاوه بر این، بسیار مهم است که به یاد داشته باشید برعکس زبان‌هایی مانند هسکل که غلط‌های تایپی موقع کامپیال کنترل می‌شوند، حذف یونیت تست در پایتون به خاطر ماهیت duck-typing آن، بسیار خطرناک است (برای همین راهنمای تایپ می‌تواند کمک‌کننده باشد). یونیت تست‌ها در زمان اجرا (هرچند در یک اجرای متفاوت) در هنگام توسعه با پایتون بسیار مهم هستند.
 
-Writing tests can be a humbling experience. The tests will point out your mistakes, and you
-will get a chance to make an early course correction. In fact, there are some who advocate
-writing tests before the code itself.
+نوشتن تست می‌تواند یک تجربه متواضع کننده باشد. تست‌ها می‌توانند ایرادات ما را نشان دهند و این امکان را به شما می‌دهند که زودتر از هر کس دیگری آن‌ها را شناسایی و رفع کنیم. در حقیقت، برخی توصیه می‌کنند که تست را قبل از نوشتن کد اصلی انجام دهید. 
 
-## TDD
+## رویکرد TDD
 
-TDD is a form of software development where you first write the test, run the test (which
-would fail first), and then write the minimum code needed to make the test pass. This
-might sound counterintuitive. Why do we need to write tests when we know that we have
-not written any code and we are certain that it will fail because of that?
+رویکرد TDD یک روش توسعه نرم‌افزار است که در آن شما ابتدا تست را می‌نویسید، آن را اجرا می‌کنید (که ابتدا شکست می‌خورند) و سپس حداقل میزان کدی را می‌نویسید که باعث قبول شدن تست‌ها شود. ممکن است این روش متناقض به نظر برسد که چرا نیاز به تست‌هایی داریم وقتی که می‌دانیم هیچ کدی ننوشته‌ایم و تست‌ها به خاطر همین شکست خواهند خورد؟
+ 
+با اینحال، دوباره نگاه کنید. ما در نهایت کدهایی را خواهیم نوشت که دقیقاً در این تست‌ها قبول خواهند شد. این به معنی آن است که این تست‌ها، تست‌‌های معمولی نیستند آن ها بیشتر شبیه به مشخصات کار هستند. این تست‌ها می‌گویند که چه چیزی انتظار داریم. این تست ها یا مشخصات، دقیقاً از سناریو کاربری مشتری شما، به دست آمده‌اند. شما به اندازه‌ای کد نوشته‌اید که درخواست مورد نظر انجام شود.
 
-However, look again. We do eventually write the code that merely satisfies these tests. This
-means that these tests are not ordinary tests, they are more like specifications. They tell you
-what to expect. These tests or specifications will directly come from your client's user
-stories. You are writing just enough code to make it work.
+فرآیند TDD، مشابهت‌های زیادی به روش علمی دارد که پایه علوم مدرن است. در روش علمی، مهم است که ابتدا فرضیه را مشخص کنید، داده‌ها را جمع‌آوری کنید و سپس آزمایش‌هایی که قابل تکرار باشند انجام دهید تا فرضیه را اثبات یا رد کنند.
 
-The process of TDD has many similarities to the scientific method, which is the basis of
-modern science. In the scientific method, it is important to frame the hypothesis first, gather
-data, and then conduct experiments that are repeatable and verifiable to prove or disprove
-your hypothesis.
+توصیه من این است که TDD را زمانی امتحان کنید که با تست نوشتن برای پروژه راحت هستید. تازه‌کارها ممکن است برای مشخص کردن موضوع تست که قرار است عملکرد پروژه را بررسی کند راحت نباشند. به همین دلیل من TDD را برای برنامه‌نویسی اکتشافی هم، توصیه نمی‌کنم.
 
-My recommendation will be to try TDD once you are comfortable writing tests for your
-projects. Beginners might find it difficult to frame a test case that checks how the code
-should behave. For the same reasons, I won't suggest TDD for exploratory programming.
+## نوشتن یک تست موضوعی
 
-## Writing a test case
+انواع مختلفی از تست وجود دارد. با اینحال به عنوان یک حداقل، یک برنامه‌نویس نیاز دارد که برای نوشتن تست‌های واحد، آن‌ها را بشناسد. تست واحد، کوچکترین بخش قابل آزمودن یک اپلیکیشن را تست می‌کند. تست‌های یکپارچگی، کنترل می‌کنند که آیا این بخش‌های کوچک در کنار یکدیگر درست عمل می‌کنند یا نه.
 
-There are different kinds of tests. However, as a minimum, a programmer needs to know
-unit tests since they have to be able to write them. Unit testing checks the smallest testable
-part of an application. Integration testing checks whether these parts work well with each
-other.
-
-The word unit is the key term here. Just test one unit at a time. Let's take a look at a simple
-example of a test case:
+کلمه واحد در اینجا یک کلمه کلیدی است. فقط یک واحد را در هر مرحله تست کنید. بیایید نگاهی به یک مثال ساده از یک تست موضوعی داشته باشیم:
 
 ```python
 # tests.py
@@ -73,23 +44,17 @@ from django.test import TestCase
 from django.core.urlresolvers import resolve
 from .views import HomeView
 class HomePageOpenTestCase(TestCase):
-def test_home_page_resolves(self):
-view = resolve('/')
-self.assertEqual(view.func.__name__,
-HomeView.as_view().__name__)
+    def test_home_page_resolves(self):
+        view = resolve('/')
+        self.assertEqual(view.func.__name__,
+            HomeView.as_view().__name__)
 ```
 
-This is a simple test that checks whether the user is correctly taken to the home page
-view when they visit the root of our website's domain. Like most good tests, it has a long
-and self-descriptive name. The test simply uses Django's `resolve()` function to match the
-view callable mapped to the / root location to the known view function by their names.
+این یک تست ساده است که چک می‌کند که آیا کاربر هنگامی که به آدرس ریشه‌ای سایت ما مراجعه می‌کند به درستی به صفحه خانه منتقل شده است یا نه. شبیه به اکثر تست‌های خوب، این تست یک نام بلند و توصیفی دارد. این تست به سادگی از فانکشن `resolve()` جنگو استفاده می‌کند تا آدرسی را که به کمک / به موقعیت ریشه سایت نسبت داده شده با نام فانکشن مورد نظر ما مقایسه کند.
 
-It is more important to note what is not done in this test. We have not tried to retrieve the
-HTML content of the page or check its status code. We have restricted ourselves to test just
-one unit, that is, the `resolve()` function, which maps the URL paths to view functions.
+بسیار مهم است که بدانیم چه موضوعی در این تست بررسی نمی‌شود. ما سعی نکرده‌ایم که محتوای HTML این صفحه یا کد وضعیت آن را دریافت کنیم. ما خود را محدود کرده‌ایم که فقط یک موضوع را بررسی کنیم که فانکشن `resolve()` است. یعنی آدرس مورد نظر به کدام فانکشن ویو منتقل می‌شود.
 
-Assuming that this test resides in, say, `app1` of your project, the test can be run with the
-following command:
+بافرض اینکه این تست در اپ `app1` پروژه شما قرار دارد، این تست می‌تواند با دستور زیر اجرا شود:
 
 ```python
 $ ./manage.py test app1
@@ -101,40 +66,25 @@ OK
 Destroying test database for alias 'default'...
 ```
 
-This command runs all the tests in the `app1` application or package. The default test runner
-will look for tests in all modules in this package matching the `test*.py` pattern.
+این دستور تمام تست‌های موجود در اپ یا پکیج `app1` را اجرا می‌کند. اجراکننده پیش‌فرض تست، تمام ماژول‌های این اپ را که با الگوی `test*.py` مطابقت داشته باشد جستجو می‌کند.
 
-Django now uses the standard `unittest` module provided by Python rather than bundling
-its own. You can write a `testcase` class by subclassing from `django.test.TestCase`.
+جنگو در حال حاضر از ماژول استاندارد `unittest` که توسط پایتون ارائه می‌شود استفاده می‌کند. شما می‌توانید یک کلاس `testcase` را با زیرکلاس درست کردن از `django.test.TestCase`، بسازید.
 
-This class typically has methods with the following naming convention:
+این کلاس معمولاً متدهایی با نام‌گذاری زیر دارد:
 
-- `test*`: Any method whose name starts with `test` will be executed as a test
-method. It takes no parameters and returns no values. Tests will be run in
-alphabetical order.
-- `setUp` (optional): This method will be run before each test method. It can be used
-to create shared objects or perform other initialization tasks that bring your test
-case to a known state.
-- `tearDown` (optional): This method will be run after a test method, irrespective of
-whether the test passed or not. Clean-up tasks are usually performed here.
+- متد `test*`: هر متدی که نام آن با `test`شروع شود، به عنوان یک متد تست اجرا خواهد شد. تست‌ها به ترتیب حروف الفبایی نام‌هایشان اجرا خواهند شد.
+- متد `setUp` (اختیاری): این متد قبل از هر متد تست، اجرا خواهد شد. این متد می‌تواند برای ساخت آبژکت‌های مشترک یا آماده کردن سایر کارهای اولیه تست، استفاده شود. 
+- متد `tearDown`( اختیاری): این متد بعد از انجام یک تست، اجرا خواهد شد، فارغ از اینکه تست موفق بوده یا نه. فعالیت‌های پاک‌سازی معمولاً‌  در اینجا تعریف می‌شوند.
 
-A test case is a way to logically group test methods, all of which test a scenario. When all
-the test methods pass (that is, do not raise any exception), the test case is considered passed.
-If any of them fail, the test case fails.
+یک واحد تست، یک راه منطقی برای گروه‌بندی متدهای تستی است که همگی یک سناریو دارند. وقتی که تمام تست‌ها قبول شوند (به این معنی، که هیچ استثنایی را مطرح نکرده باشید)، واحد تست به عنوان قبول شده، در نظر گرفته می‌شود. اگر فقط یکی از متدها قبول نشود، کل واحد تست شکست خورده در نظر گرفته می‌شود.
 
-## The assert method
+## متد assert
 
-Each test method usually invokes an `assert*()` method to check some expected outcome
-of the test. In our first example, we used `assertEqual()` to check whether the function
-name matches the expected function.
+هر متد تست، معمولاً یک متد `assert*()` را فراخوانی می‌کند تا برخی نتایج مورد انتظار را بررسی کند. ما از متد `assertEqual()` استفاده کردیم تا بررسی کنیم که نام تابع با نام مورد انتظار ما یکسان هست یا نه.
 
-Similar to `assertEqual()`, the Python 3 `unittest` library provides more than 32 assert
-methods. It is further extended by Django by more than 19 framework-specific assert
-methods. You must choose the most appropriate method based on the end outcome that
-you are expecting so that you will get the most helpful error message.
+کتابخانه `unittest` پایتون ۳ همانند متد `assertEqual()`، بیش از ۳۲ متد assert ارائه می‌کند. جنگو بر این اساس، ۱۹ متد اختصاصی برای فریمورک خودش را نیز توسعه داده است. شما باید بهترین متد را متناسب با نتیجه‌ای که انتظار دارید انتخاب کنید در نتیجه بهترین نوع خطا، در صورت بروز مشکل، به شما نشان داده خواهد شد.
 
-Let's take a look at why by looking at an example `testcase` that has the
-following `setUp()` method:
+بیایید برای بررسی چرایی این موضوع، به یک `testcase` که دارای متد `setUp()` است نگاهی بیندازیم:
 
 ```python
 def setUp(self):
@@ -142,98 +92,58 @@ def setUp(self):
     self.l2 = [1, 0]
 ```
 
-Our test is to assert that `l1` and `l2` are equal (and it should fail, given their values). Let's
-take a look at several equivalent ways to accomplish this:
+تست ما بررسی می‌کند که آیا `l1` و `l2` برابر هستند (که با توجه به مقادیر آن‌ها باید این ادعا شکست بخورد). بیایید به چندین راه مختلف که این موضوع را بررسی می‌کنند نگاهی بیندازیم:
 
-Test Assertion Statement | What Test Output Looks Like (unimportant lines omitted) |
+بیانیه ادعای آزمون | خروجی‌های تست(خط‌های غیر مهم حذف شده) |
 | :---: | :---: |
 ```assert self.l1 == self.l2``` |  ```assert self.l1 == self.l2 AssertionError```
 ```self.assertEqual(self.l1, self.l2)``` | ```AssertionError: Lists differ: [1, 2] != [1, 0] First differing element 1: 2, 0```
 ```self.assertListEqual(self.l1,self.l2)``` | ```AssertionError: Lists differ: [1, 2] != [1, 0] First differing element 1: 2, 0```
 ```self.assertListEqual(self.l1, None)``` | ```AssertionError: Second sequence is not a list: None```
 
-The first statement uses Python's built-in `assert` keyword. Note that it throws the least
-helpful error. You cannot infer what values or types are in the `self.l1` and `self.l2`
-variables. This is primarily the reason why we need to use the `assert*()` methods.
+اولین عبارت، از عبارت پیش‌فرض `assert` در پایتون استفاده می‌کند. توجه کنید که کمترین میزان توضیحات در گزارش خطا وجود دارد. شما نمی‌توانید تشخیص دهید که چه مقدار یا نوعی از متغیر در `self.l1` و `self.l2` تعریف شده است. این اولین دلیلی است که باعث می‌شود ما از متدهای `assert*()` استفاده کنیم.
 
-Next, the exception thrown by `assertEqual()` very helpfully tells you that you are
-comparing two lists and even tells you at which position they begin to differ. This is exactly
-similar to the exception thrown by the more specialized `assertListEqual()` function.
-This is because, as the documentation would tell you, if `assertEqual()` is given two lists
-for comparison, it hands it over to `assertListEqual()`.
+در عبارت بعدی، گزارش خطایی که توسط `assertEqual()` ارائه شده، به شما نشان می‌دهد که شما دو لیست مختلف را با یکدیگر مقایسه می‌کنید و حتی به شما می‌گوید که در کدام محل از لیست، تغییرات شروع شده است. این دقیقاً همان گزارشی است که اگر از متد `assertListEqual()` استفاده کنید، دریافت خواهید کرد. به این دلیل که بر اساس مستندات، اگر دو لیست را برای مقایسه به متد `assertEqual()` ارجاع دهید، این متد آن را به متد `assertListEqual()` ارسال خواهد کرد.
 
-Despite this, as the last example proves, it is always better to use the most specific `assert*`
-method for your tests. Since the second argument is not a list, the error clearly tells you that
-a list was expected.
+با وجود این، همانطور که آخرین مثال نشان می‌دهد همیشه بهتر است که از دقیق‌ترین متد `assert*`، برای تست‌های خود استفاده کنید. در مثال قبل، وقتی دومین آرگومان، از نوع لیست نیست، گزارش خطا به شما نشان می‌دهد که انتظار دریافت یک لیست را داشته است.
 
-`Use the most specific assert* method in your tests.`
+`از اختصاصی‌ترین متد assert* در تست‌های خود استفاده کنید.`
 
-Therefore, you need to familiarize yourself with all the `assert` methods and choose the
-most specific one to evaluate the result you expect. This also applies when you are checking
-whether your application does not do things it is not supposed to do, that is, a negative test
-case. You can check for exceptions or warnings using `assertRaises` and `assertWarns`,
-respectively.
+بنابراین، لازم است که با تمام متدهای `assert` آشنا باشید و مناسب‌ترین را برای بررسی نتایج مورد انتطار از تست خود انتخاب کنید. این اتفاق در مواقعی که شما انتظار دارید که برنامه شما کار خاصی را انجام ندهد، نیز معتبر است. به این موارد واحد تست منفی گفته می‌شود. شما همچنین می‌توانید برای بررسی اخطارها یا استثناها از متدهای `assertWarns`و `assertRaises` استفاده کنید.
 
-## Writing better test cases
+## نوشتن واحد تست بهتر
 
-We have already seen that the best test cases test a small unit of code at a time. They also
-need to be fast. A programmer needs to run tests at least once before every commit to the
-source control. Even a delay of a few seconds can tempt a programmer to skip running tests
-(which is not a good thing).
+ما قبلاً دیدیم که بهترین واحدهای تست، هر بار یک تکه کوچک کد را آزمایش می‌کنند. علاوه بر این لازم است که تست‌ها سریع نیز باشند. یک برنامه‌نویس احتیاج دارد که تست‌ها را حداقل یک‌بار قبل از هر کامیت به مخزن کنترل نسخه، اجرا کند. حتی یک تأخیر چند ثانیه‌ای ممکن است برنامه‌نویس را از اجرای تست، منصرف کند (که چیز خوبی نیست).
 
-Here are some qualities of a good test case (which is a subjective term, of course) in the
-form of an easy-to-remember mnemonic **fast, independent, repeatable, small,
-transparent (FIRST)** class test case:
+اینجا چند کیفیت از یک واحد تست خوب (که البته یک عبارت ساختگی است) و به صورتی که در ذهن بماند، آمده است؛ **fast, independent, repeatable, small,
+transparent (FIRST)**، واحد تست فرست کلاس:
 
-- **Fast**: The faster the tests, the more often they are run. Ideally, your tests should
-complete in a few seconds.
-Independent: Each test case must be independent of others and can be run in any
-order.
-- **Repeatable**: The results must be the same every time a test is run. Ideally, all
-random and varying factors must be controlled or set to known values before a
-test is run.
-- **Small**: Test cases must be as short as possible for speed and ease of
-understanding.
-- **Transparent**: Avoid tricky implementations or ambiguous test cases.
+- **سریع Fast**: تست‌های سریع‌تر، بیشتر اجرا می‌شوند. به صورت ایده‌آل تست‌های شما باید در چند ثانیه اجرا شوند.
+- **مستقل Independent**: هر واحد تست باید از دیگری مستقل باشد و بتواند به هر ترتیبی اجرا شود. 
+- **تکرارپذیر Repeatable**: نتیجه باید هر بار که تست اجرا می‌شود، یکی باشد. به صورت ایده‌آل هر فاکتور متغیر یا شانسی، باید قبل از اجرای تست کنترل شود. 
+- **کوچک Small**: واحد تست باید تا حد ممکن کوتاه باشد تا با سرعت بیشتر اجرا شود و قابل فهم‌تر باشد.
+- **شفاف Transparent**: از پیاده‌سازی واحدهای تست پیچیده یا مبهم اجتناب کنید.
 
-Additionally, ensure that your tests are automatic. Eliminate any manual steps, no matter
-how small. Automated tests are more likely to be part of your team's workflow and easier
-to use for tooling purposes.
+علاوه بر این، مطمئن شوید که تست شما خودکار است. هر مرحله غیر خودکار را حذف کنید، هرچقدر که کم یا کوچک باشد. فرآیند تست اتوماتیک، مانند یک جریان کار در تیم شما و ابزاری برای استفاده هدفمند است.
 
-Perhaps, even more important are the don'ts to remember while writing test cases:
+شاید مهم‌تر از این، نبایدهایی است که موقع نوشتن واحد تست، باید در نظر گرفته شوند:
 
-- **Do not (re)test the framework**: Django is well tested. Don't check for URL
-lookup, template rendering, and other framework-related functionalities.
-- **Do not test implementation details**: Test the interface and leave the minor
-implementation details. It makes it easier to refactor this later without breaking
-the tests.
-- **Test models most, templates least**: Templates should have the least business
-logic, and they change more often.
-- **Avoid HTML output validation**: Test views use their context variable's output
-rather than its HTML-rendered output.
-- **Avoid using the web test client in unit tests**: Web test clients invoke several
-components and are, therefore, better suited for integration tests.
-- **Avoid interacting with external systems**: Mock them if possible. Database is an
-exception since the test database is in-memory and quite fast.
+- **فریمورک را تست نکنید**: جنگو به خوبی تست شده است. جستجوی URL، رندر شدن تمپلیت و یا هر عملکرد دیگر مرتبط با فریمورک را تست نکنید.
+- **جزییات پیاده‌سازی را تست نکنید**: رابط (interface) را تست کنید و جزییات کوچک پیاده‌سازی را رها کنید. این کار باعث خواهد شد که در آینده بدون شکست خوردن آزمون‌ها بتوانید کد را بازنگری کنید.
+- **بیشتر مدل‌ها، کمتر تمپلیت‌ها**: بیشتر از همه مدل‌ها را تست کنید و کمتر از همه تمپلیت‌ها را. تمپلیت‌ها باید کمترین میزان منطق کسب و کار را داشته باشند و بیشتر از بخش‌های دیگر، تغییر خواهند کرد.
+- **اجتناب از آزمودن خروجی HTML**: خروجی متغیرهای ویو را تست کنید، به جای آن که خروجی رندر شده HTML را بررسی کنید.
+- **اجتناب از آزمودن کلاینت وب در واحدهای تست**: کلاینت‌های وب، کامپوننت‌‌های مختلفی را فراخوانی می‌کنند بنابراین بهتر است در تست‌های یکپارچه‌سازی (integrating tests) استفاده شوند.
+- **پرهیز از تعامل با سیستم‌های بیرونی**: تا حد امکان آن‌ها را کنار بگذارید. دیتابیس یک استثنا است چرا که دیتابیس تست، درون حافظه و بسیار سریع است.
 
-Of course, you can (and should) break the rules where you have a good reason to (just like I
-did in my first example). Ultimately, the more creative you are at writing tests, the earlier
-you can catch bugs and the better your application will be.
+البته که شما می‌توانید (و شاید بهتر است که)، هر جا که دلیل خوبی دارید (مانند کاری که در مثال اول انجام دادیم)، قوانین را زیر پا بگذارید. درنهایت هر چه در نوشتن تست خلاق‌تر باشید، زودتر می‌توانید خطاها را پیدا کنید و اپلیکیشن بهتری خواهید داشت. 
 
-## Mocking
+## تقلید کردن
 
-Most real-life projects have various interdependencies between components. While testing
-one component, the result must not be affected by the behavior of other components. For
-example, your application might call an external web service that might be unreliable in
-terms of service availability or slow to respond.
+پروژه‌های واقعی، وابستگی‌های زیادی بین بخش‌های مختلف دارند. وقتی که یک بخش تست می‌شود ممکن است نتیجه تست، از رفتار بقیه بخش‌های وابسته تأثیری نگیرد. برای مثال ممکن است برنامه شما یک وب سرویس بیرونی را فراخوانی کند که قابل اعتماد نیست یا سرعت پاسخ‌دهی مناسبی ندارد.
 
-Mock objects imitate such dependencies by having the same interface, but they respond to
-method calls with canned responses. After using a mock object in a test, you can assert
-whether a certain method was called and verify that the expected interaction took place.
+آبژکت‌های مقلد، چنین وابستگی‌هایی را با همان رابط کاربری اما به کمک پاسخ‌های بسته‌بندی شده و سریع، تقلید می‌کنند. پس از استفاده از یک آبژکت مقلد، می‌توانید ارزیابی کنید که آیا یک متد مشخص فراخوانی شد و آیا تعامل مورد نظر انجام شد یا نه.
 
-Take the example of the SuperHero profile eligibility test mentioned in *Pattern: Service
-objects* (refer to `Chapter 3`, *Models*). We will mock the call to the service object method in a
-test using the Python 3 `unittest.mock` library:
+مثال تست «واجد شرایط بودن پروفایل ابرقهرمان» را در *الگو: اشیاء سرویس* (مراجعه کنید به `بخش ۳`، *مدل‌ها*)، در نظر بگیرید. ما فراخوانی متد اشیاء سرویس را در یک تست، از کتابخانه `unittest.mock` پایتون ۳، تقلید کردیم:
 
 ```python
 # profiles/tests.py
@@ -250,49 +160,31 @@ class TestSuperHeroCheck(TestCase):
         self.assertTrue(r)
 ```
 
-Here, we are using `patch()` as a context manager in a with statement. Since the profile
-model's `is_superhero()` method will call the `SuperHeroWebAPI.is_hero()` class
-method (which queries an external web service), we need to mock it inside the models
-`module`. We are also hardcoding the return value of this method to be `True`.
+در اینجا ما از `patch()` که یک مدیریت‌کننده زمینه است در قالب یک عبارت with استفاده کرده‌ایم. در حالی‌که متد `is_superhero()` در مدل پروفایل، متدکلاس `SuperHeroWebAPI.is_hero()` (که کوئری به یک سرویس بیرونی می‌فرستد) را فراخوانی می‌کند، ما نیاز داریم که مدل‌های `ماژول` را در همین‌جا شبیه‌سازی کنیم. همچنین ما مقدار بازگشتی را به صورت هاردکد معادل `True` قرارداده‌ایم.
 
-The last two assertions check whether the method was called with the correct arguments
-and whether `is_hero()` returned `True`, respectively. Since all methods of the `SuperHeroWebAPI` class have been mocked, both the assertions will pass.
+دو ارزیابی آخر به ترتیب بررسی می‌کنند که متد با آرگومان‌های درست فراخوانی شده و نیز متد `is_hero()` مقدار `True` را برگردانده یا نه. با توجه به اینکه تمام متدهای کلاس `SuperHeroWebAPI` شبیه‌سازی شده‌اند، هر دو ارزیابی، تأیید خواهند شد.
 
-Mock objects come from a family called **test doubles**, which includes stubs, fakes, and so
-on. Like movie doubles who stand in for real actors, these test doubles are used in place of
-real objects while testing. Although there are no clear lines drawn between them, mock
-objects are objects that can test the behavior, and stubs are simply placeholder
-implementations.
+اشیا مقلد از خانوده‌ای به نام **test doubles** هستند که شامل stubها و fake ها و مانند آن است. مانند بدلکاران در فیلم‌های سینمایی که به جای شخصیت اصلی بازی می‌کنند، این بدل‌های تست، به جای آبژکت‌های اصلی در تست‌ها استفاده می‌شوند. هر چند که خط مشخصی بین آن‌ها وجود ندارد، اشیاء مقلد اشیایی هستند که رفتارها را تست می‌کنند و stubها، جانگهدار(placeholder) پیاده‌سازی‌ها هستند.
 
-## Pattern – Test fixtures and factories
+## الگو – تست کردن با تجهیزات (fixture) و کارخانه‌ها (factory)
 
-**Problem**: Testing a component requires the creation of various prerequisite objects before
-the test. Creating them explicitly in each test method gets repetitive.
+**مشکل**: تست کردن یک بخش، نیازمند ساخت آبژکت‌های پیش‌نیاز زیادی است. ساخت آن‌ها در هر تست، کاری تکراری است.
 
-**Solution**: Utilize factories or fixtures to create the test data objects.
+** راه حل**: از کارخانه‌ها و تجهیزات برای ساخت اشیاء مورد نیاز یک تست استفاده کنید.
 
-### Problem details
+### جزییات مشکل
 
-Before running each test, Django resets the database to its initial state, as it would be after
-running migrations. Most tests will need the creation of some initial objects to set the state.
-Rather than creating different initial objects for different scenarios, a common set of initial
-objects are usually created.
+قبل از اجرا هر تست، جنگو، دیتابیس تست را به مقدارهای اولیه بازمی‌گرداند، دقیقاً در وضعیتی که بعد از اجرای مهاجرت (migration) باید باشد. اکثر تست‌ها برای تنظیم وضعیت، نیاز به ساخت آبژکت‌هایی دارند. به جای ساخت آبژکت‌های اولیه مختلف برای هر سناریو، معمولاً یک گروه مشترک از آبژکت‌های اولیه ساخته می‌شود. 
 
-This can quickly get unmanageable in a large test suite. The sheer variety of such initial
-objects can be hard to read and later understand. This leads to hard-to-find bugs in the test
-data itself.
+در یک پروژه بزرگ، این کار می‌تواند به سادگی از کنترل خارج شود. تنوع زیاد این اشیاء اولیه به سختی می‌تواند خوانده شود و قابل فهم باشد. این موضوع باعث ایجاد مشکلات در داده‌های خود آزمایش می‌شود.
 
-Being such a common problem, there are several means to reduce the clutter and write
-clearer test cases.
+از آنجایی که این مشکل بسیار رایج است، راه‌های زیادی برای کاهش شلوغی و نوشتن واحد تست واضح‌تر، وجود دارد.
 
-### Solution details
+### جزییات راه حل
 
-The first solution we will take a look at is what is given in the Django documentation itself,
-that is, test fixtures. Here, a test fixture is a file that contains a set of data that can be
-imported into your database to bring it to a known state. Typically, they are YAML or
-JSON files previously exported from the same database when it had some data.
+اولین راه‌حلی که به آن نگاه خواهیم کرد، روشی است که در مستندات خود جنگو آمده است؛ تجهیزات تست (test fixtures). تجهیزات تست در اینجا یک فایل شامل مقادیری داده است که می‌تواند به دیتابیس وارد شده و دیتابیس شما را به وضعیت مطلوب برساند. به طور معمول این داده‌ها در فرمت YAML یا JSON هستند که قبلاً از همین دیتابیس استخراج شده‌اند.
 
-For example, consider the following test case, which uses a test fixture:
+برای مثال، واحد تست زیر را در نظر بگیرید که از یک ابزار تست استفاده می‌کند:
 
 ```python
 from django.test import TestCase
@@ -305,20 +197,13 @@ class PostTestCase(TestCase):
         # By now fixtures and setUp() objects are loaded
         pass
 ```
-Before `setUp()` gets called in each test case, the specified fixture, `'posts'`, gets loaded.
-Roughly speaking, the fixture will be searched for in the fixtures directory with certain
-known extensions, for example, `app/fixtures/posts.json`.
+قبل از آن‌که `setUp()` در هر واحد تست فراخوانی شود، فیکسچر مشخص شده `'posts'`، فراخوانی می‌شود. به طور کلی، فیکسچرها در پوشه‌های مشخص شده با پسوندهای شناخته شده جستجو خواهند شد مثلاً `app/fixtures/posts.json`. 
 
-However, there are a number of problems with fixtures. Fixtures are static snapshots of the
-database. They are schema-dependent and have to be changed each time your models
-change. They also might need to be updated when your test-case assertions change.
-Updating a large fixture file manually, with multiple related objects, is no joke.
+با‌این‌حال، فیکسچرها مشکلاتی دارند. فیکسچرها، یک اسنپ‌شات غیر پویا از دیتابیس هستند. آن‌ها به طرح‌واره دیتابیس وابسته هستند و هربار که مدل‌های شما تغییر می‌کند باید به‌روزرسانی شوند. همچنین ممکن است هربار که ارزیابی شما در واحد تست تغییر کند، نیازمند به‌روزرسانی باشند. به‌روزرسانی یک فایل فیکسچر به صورت غیراتوماتیک با آبژکت‌ها و روابط زیاد، اصلاً شوخی نیست.
 
-For all these reasons, many consider using fixtures as an anti-pattern. It is recommended
-that you use factories instead. A factory class creates objects of a particular class that can be
-used in tests. It is a DRY way of creating initial test objects.
+به خاطر تمام این دلایل، بسیاری استفاده از فیکچرها را یک ضدالگو می‌دانند. توصیه می‌شود که به جای آن از کارخانه‌ها استفاده کنید. یک کلاس کارخانه، آبژکت‌هایی از یک کلاس مشخص را می‌سازد که می‌توانند در یک تست استفاده شوند. این روش یک روش DRY برای ساخت آبژکت‌های اولیه مورد نیاز تست‌ها، است. 
 
-Let's use a model's objects.create method to create a simple factory:
+بیایید یک متد ساخت آبژکت در یک کلاس کارخانه ساده درست کنیم:
 
 ```python
 from django.test import TestCase
@@ -335,16 +220,11 @@ class PostTestCase(TestCase):
         pass
 ```
 
-Compared to using fixtures, the initial object creation and the test cases are all in one place.
-Fixtures load static data as is into the database without calling model-defined `save()`
-methods. Since factory objects are dynamically generated, they are more likely to run
-through your application's custom validations.
+درمقایسه با فیکسچرها، ساخت آبژکت اولیه و واحد تست، هر دو یک‌جا هستند. فیکسچر دیتای استاتیک را به همان شکلی که در دیتابیس هست و بدون صدازدن متدهای `save()` مخصوص به مدل، لود می‌کند. درحالیکه آبژکت‌های کارخانه‌ای به صورت دینامیک ساخته می‌شوند و از طریق ولیدیتورهای ساخته شده در مدل شما، اجرا می‌شوند.
 
-However, there is a lot of boilerplate in writing such factory classes yourself. The
-`factory_boy` package, based on thoughtbot's `factory_girl`, provides a declarative
-syntax for creating object factories.
+با اینحال نوشتن چنین کلاس‌های کارخانه‌ای گرفتاری‌های زیادی دارد. پکیج `factory_boy` که بر اساس تفکر پکیج `factory_girl` ساخته شده، یک دستور نوشتن واضح برای ساخت آبژکت کارخانه‌ای دارد. 
 
-When you rewrite the previous code to use `factory_boy`, we get the following result:
+وقتی شما کد قبلی را بازنویسی می‌کنید تا از `factory_boy` استفاده کنید، نتیجه زیر به دست می‌آید:
 
 ```python
 import factory
@@ -366,168 +246,92 @@ from .models import Post
             self.assertEqual(self.silly_message.message, "silly")
 ```
 
-Note how clear the `factory` class becomes when written in a declarative fashion. The
-attribute's values do not have to be static. You can have sequential, random, or computed
-attribute values. If you prefer to have more realistic placeholder data such as US addresses,
-use the `django-faker` package.
+توجه کنید که با این روش نوشتن توصیفی، کلاس `factory`  چقدر واضح‌تر شده است. لزومی ندارد که مقادیر هر صفت کلاس، به صورت استاتیک تعیین شوند. شما می‌توانید از مقادیر ترتیبی، تصادفی و یا محاسبه‌شده استفاده کنید. اگر می‌خواهید جانگه‌دارهای واقعی‌تری مانند فرمت آدرس‌های ایالات متحده داشته باشید، می‌توانید از پکیج `django-faker` استفاده کنید. 
 
-In conclusion, I would recommend factories, especially `factory_boy`, for most projects
-that need initial test objects. You might still want to use fixtures for static data, such as lists
-of countries or t-shirt sizes, since they will rarely change.
+در پایان، من توصیه می‌کنم که از آبژکت‌های کارخانه‌ای مخصوصاً از `factory_boy`برای پروژه‌هایی که نیاز به ساخت آبژکت‌های اولیه دارند استفاده کنید. اما همچنان ممکن است بخواهید از فیکسچرها برای داده‌های استاتیک مانند لیست کشورها یا سایزهای تیشرت‌ها استفاده کنید چرا که این داده‌ها معمولاً به ندرت تغییر می‌کنند. 
 
-**Dire predictions**
+**پیش‌بینی‌های وحشتناک**
 
-After the announcement of the impossible deadline, the entire team
-seemed to be suddenly out of time. They went from 4-week scrum sprints
-to 1-week sprints. Steve wiped every meeting off their calendars except
-"today's 30-minute catch-up with Steve." He preferred to have a one-on-
-one discussion if he needed to talk to someone at their desk.
+پس از اعلام ضرب الاجل غیرممکن، انگار که همه تیم به طور ناگهانی دچار کمبود وقت شدند. آن‌ها از اسپرینت ۴ هفته‌ای اسکرام به اسپرینت ۱ هفته‌ای، رفتند. استیو تمام ملاقات‌های آن‌ها را به غیر از «ملاقات ۳۰ دقیقه‌ای امروز با استیو»، لغو کرد. او ترجیح می‌داد که اگر لازم بود با کسی صحبت کند، یک ملاقات یک به یک با هر نفر داشته باشد.
 
-At Madam O's insistence, the 30-minute meetings were held at
-a soundproof hall 20 levels below the SHIM headquarters. On Monday,
-the team stood around a large circular table with a gray metallic surface
-like the rest of the room. Steve stood awkwardly in front of it and made a
-stiff waving gesture with an open palm.
+به اصرار خانم O ، جلسات ۳۰ دقیقه‌ای در یک سالن عایق صدا، ۲۰ طبقه پایین‌تر از دفتر مرکزی SHIM، برگزار شد. روز دوشنبه، همه تیم دور یک میز بزرگ دایره‌ای با روکش فلزی خاکستری، مانند بقیه اتاق،  ایستاده بودند. استیو به طرز ناخوشایندی، جلوی میز ایستاده بود و با کف دست، حرکتی موجی را نشان می‌داد.
 
-Even though everyone had seen the holographs come alive before, it never
-failed to amaze them each time. The disc almost segmented itself into
-hundreds of metallic squares and rose like miniature skyscrapers in a
-futuristic model city. It took them a second to realize that they were
-looking at a 3D bar chart.
+اگرچه قبلاً همه واقعی شدن هولوگرام‌ها را دیده بودند، باز هم هر بار، تیم را شگفت‌زده می‌کرد. این دیسک تقریباً خود را به صدها مربع فلزی کوچک تقسیم کرده بود و مانند آسمانخراش‌‌های مینیاتوری در یک شهر آینده‌نگر، در حال رشد بود. چند ثانیه برای آن‌ها طول کشید تا تشخیص دهند که به یک نمودار میله‌ای سه بعدی نگاه می‌کنند.
 
-"Our burn-down chart seems to be showing signs of slowing down. I am
-guessing it is the outcome of our recent user tests, which is a good thing.
-But..." Steve's face seemed to show the strain of trying to stifle a sneeze.
-He gingerly flicked his forefinger upward in the air, and the chart
-smoothly extended to the right.
+«به نظر می‌رسد نمودار burn-down ما (نموداری که کارهای باقی‌مانده را نسبت به زمان نشان می‌دهد) نشانه‌هایی از کند شدن نشان می‌دهد. من فکر می‌کنم که این از نتایج تست‌های کاربری اخیر باشد. اما ...» در چهره‌ی استیو نشانه‌هایی از یک عطسه که جلوی آن گرفته شده، ظاهر شد. او مشتاقانه انگشت سبابه خود را در هوا به سمت بالا تکان داد و نمودار به آرامی به سمت راست گسترش پیدا کرد.
 
-"At this rate, projections indicate that we will miss the go-live by several
-days, at best. I did a bit of analysis and found several critical bugs late in
-our development. We can save a lot of time and effort if we can catch
-them early. I want to put your heads together and come up with some i..."
+«با این نسبت، پیش‌بینی‌ها نشان می‌دهد که ما زمان انتشار به صورت زنده را در بهترین حالت، احتمالاً با چند روز تاخیر از دست خواهیم داد. من مقداری آنالیز انجام دادم و باگ‌های مهم زیادی را در آخرین نسخه توسعه، پیدا کردم. اگر بتوانیم به موقع آن‌ها را پیدا کنیم، زمان و انرژی زیادی را صرفه‌جویی خواهیم کرد. من می‌خواهم که عقل‌ها را روی هم بگذارید و چند ... ».
 
-Steve clasped his mouth and let out a loud sneeze. The holograph
-interpreted this as a sign to zoom into a particularly uninteresting part of
-the graph. Steve cursed under his breath and turned it off. He borrowed a
-napkin and started noting down everyone's suggestions with an ordinary
-pen.
+استیو دهانش را بست و یک عطسه بلند کرد. هولوگراف این حرکت را نشانه‌ای برای زوم کردن روی یک بخش غیر جذاب از نمودار، تفسیر کرد. استیو زیرلب فحش داد و آن را خاموش کرد. دستمالی گرفت و با یک قلم معمولی شروع کرد به یادداشت برداشتن از پیشنهادها.
 
-One of the suggestions that Steve liked most was a coding checklist listing
-the most common bugs, such as forgetting to apply migrations. He also
-liked the idea of involving users earlier in the development process for
-feedback. He also noted down some unusual ideas, such as a Twitter
-handle for tweeting the status of the continuous integration server.
+یکی از پیشنهادهایی که استیو بیش از بقیه دوست داشت یک چک لیست کدنویسی بود که تمام باگ‌های رایج را مانند فراموش کردن مهاجرت دیتابیس، فهرست کند. او همچنین این ایده را هم دوست داشت که کاربران را برای دریافت بازخورد، زودتر وارد فرآیند توسعه کرد. همچنین برخی ایده‌های غیر معمول را نیز مانند یک ابزار مدیریتی توییتر، که وضعیت سرور یک‌پارچه‌سازی را توییت کند.
 
-At the close of the meeting, Steve noticed that Evan was missing. "Where
-is Evan?" he asked. "No idea," said Brad looking confused, "he was here a
-minute ago."
+در پایان جلسه، استیو متوجه شد که اوان نیست. پرسید «اوان کجاست؟». برد که گیج شده بود گفت «ایده‌ای ندارم». چند دقیقه پیش اینجا بود.
 
-## Learning more about testing
+اجرا کننده پیش‌فرض‌ تست‌ها در جنگو، در طی سال‌ها توسعه بسیار زیادی پیدا کرده است. با اینحال، اجرا کننده‌های تست مانند `py.test`و `nose` از نظر عملکرد برتر هستند. آن‌ها تست شما را در نوشتن و اجرا، ساده‌تر می‌کنند. حتی از این هم بهتر، با تست‌های موجود شما هم سازگار هستند.
 
-Django's default test runner has improved a lot over the years. However, test runners such
-as `py.test` and `nose` are still superior in terms of functionality. They make your tests
-easier to write and run. Even better, they are compatible with your existing test cases.
+ممکن است علاقمند باشید بدانید که چند درصد از کد شما توسط تست‌ها پوشش داده شده است. به این کار **پوشش کد** یا **code coverage** گفته می‌شود و `coverage.py` یک ابزار بسیار شناحته شده برای بررسی آن است. 
 
-You might also be interested in knowing what percentage of your code is covered by tests.
-This is called **code coverage**, and `coverage.py` is a very popular tool for finding this out.
+این روزها پروژه‌های بیشتری تمایل پیدا کرده‌اند که از کدهای جاوااسکریپت استفاده کنند. تست نوشتن برای آن‌ها معمولاً نیازمند یک محیط اجرایی مانند مرورگر است. سلنیوم (Selenium) یک ابزار اتوماسیون مروگر، برای انجام چنین تست‌هایی است.
 
-Most projects today tend to use a lot of JavaScript functionality. Writing tests for them
-usually requires a browser-like environment for execution. Selenium is a great browser
-automation tool for executing such tests.
+در حالیکه بررسی جزییات تست‌ها در جنگو از محدوده تمرکز این کتاب خارج است، من قویاً توصیه می‌کنم که در مورد تست کردن بیشتر یاد بگیرید.
 
-While a detailed treatment of testing in Django is outside the scope of this book, I would
-strongly recommend that you learn more about it.
+اگر بخواهیم بقیه مسایل را کنار بگذاریم، دو نکته بسیار مهم در این بخش منتقل شد؛ یک اینکه تست بنویسید و دیگری اینکه اگر در نوشتن تست قوی شده‌اید کدنویسی به صورت TDD را تمرین کنید.
 
-If nothing else, the two main takeaways I wanted to convey through this section are first,
-write tests, and second, once you are confident at writing them, practice TDD.
+## رفع اشکال
 
-## Debugging
+با وجود سخت‌ترین آزمون‌ها، حقیقت ناراحت‌کننده این است که ما هنوز هم باید با باگ‌ها سر و کله بزنیم. جنگو حداکثر تلاشش را می‌کند که در زمان گزارش خطا تا حد ممکن کمک‌کننده باشد. با اینحال، مهارت زیادی لازم است که علت ریشه‌ای مشکلات شناسایی شود. 
 
-Despite the most rigorous testing, the sad reality is that we still have to deal with bugs.
-Django tries its best to be as helpful as possible while reporting an error to help you in
-debugging. However, it takes a lot of skill to identify the root cause of the problem.
+با تشکر از ترکیب مناسب ابزارها و تکنیک‌ها، نه تنها می‌توانیم مشکلات را شناسایی کنیم، بلکه می‌توانیم شناخت خوبی از رفتار کد در هنگام اجرا به دست آوریم. بیایید نگاهی به برخی از این ابزارها بیندازیم.
 
-Thankfully, with the right set of tools and techniques, we can not only identify the bugs but
-also gain great insight into the runtime behavior of your code. Let's take a look at some of
-these tools.
+## صفحه حل مشکل جنگو
 
-## Django debug page
-
-If you have encountered any exception in development, that is, when `DEBUG=True`, you
-would have already seen an error page similar to the following screenshot:
+اگر در هنگام توسعه، یعنی در زمانی که `DEBUG=True` است، به هر نوعی از استثنا برخورد کنید، احتمالاً صفحه خطایی مانند این خواهید دید:
 
 ![debug image](1.jpg)
 
-Since it comes up so frequently, most developers tend to miss the wealth of information in
-this page. Here are some places to take a look at:
+صفحه معمول خطاها در جنگو وقتی که تنظیمات رفع مشکل روشن باشد
 
-- **Exception details**: Obviously, you need to read what the exception tells you very
-carefully.
-- **Exception location**: This is where Python thinks where the error has occurred. In
-Django, this may or may not be where the root cause of the bug is.
-- **Traceback**: This was the call stack when the error occurred. The line that caused
-the error will be at the end. The nested calls that led to it will be above it. Don't
-forget to click on the Local vars arrow to inspect the values of the variables at the
-time of the exception.
-- **Request information**: This is a table (not shown in the screenshot) that shows
-context variables, meta information, and project settings; check for malformed
-input in the requests here.
+از آنجایی که این صفحه زیاد دیده می‌شود، بسیاری از توسعه‌دهندگان به اندازه کافی به اطلاعات بسیار ارزشمند این صفحه اهمیت نمی‌دهند. بخش‌هایی از این صفحه که ارزش نگاه کردن دارد:
 
-## A better debug page
+- **جزییات استثناء Exception details**: واضح است که شما باید به دقت بخوانید که این استثناء چه چیزی به شما می‌گوید.
+- **محل استثناء Exception location**: این محل جایی است که پایتون گمان می‌کند مشکل در آن‌جا اتفاق افتاده. در جنگو ممکن است مشکل در همین موقعیت باشد یا ریشه مشکل در جای دیگر باشد
+- **ردپا یا Traceback**: اینجا یک دسته‌‌ای از مشکلات را داریم که موقع پیش‌آمد خطا، ایجاد شده‌اند. خطی که باعث ایجاد خطا شده است آخرین خط است و خطاهای تودرتو که موجب بروز این مشکل شده‌اند در خط‌های بالاتر قرار دارند. فراموش نکنید که روی فلش‌های متغیرهای محلی (Local vars) کلیک کنید تا مقدار متغیرها را در زمان وقوع استثناء، ببینید.
+- **اطلاعات درخواست Request information**: این جدولی است که متغیرهای زمینه، اطلاعات اضافه و تنظیمات پروژه را در خود دارد. ورودی‌های ناقص در ریکوئست را در اینجا کنترل کنید.
 
-Often, you may wish for more interactivity in the default Django error page. The `django-extensions` package is shipped with the fantastic Werkzeug debugger that provides
-exactly this feature. In the following screenshot of the same exception, note the fully
-interactive Python interpreter available at each level of the call stack:
+## یک صفحه عیب‌یاب بهتر
+
+اغلب ممکن است آرزو کرده باشید که تعامل بیشتری در صفحه پیش‌فرض خطا در جنگو وجود می‌داشت. پکیج `django-extensions` به همراه عیب‌یاب فوق‌العاده Werkzeug ارائه می‌شود که دقیقاً همین ویژگی را دارد. در تصویر بعد همان استثناء قبلی دیده می‌شود، به مفسر تعاملی پایتون در هر مرحله از دسته‌ی خطاها، توجه کنید:
 
 ![new debug image](2.jpg)
 
-To enable this, in addition to adding `django_extensions` to your `INSTALLED_APPS`, you
-will need to run your test server as follows:
+برای فعال کردن این عیب‌یاب، `django_extensions` را به بخش `INSTALLED_APPS` اضافه کنید. لازم است که سرور تست خود را مانند زیر اجرا کنید:
 
 ```python
 $ python manage.py runserver_plus
 ```
 
-Despite the reduced debugging information, I find the Werkzeug debugger to be more
-useful than the default error page.
+علیرغم کاهش داده‌های عیب‌یابی، به نظر من عیب‌یاب Werkzeug، بسیار مفیدتر از صفحه گزارش خطا پیش‌فرض است.
 
-## The print function
+## فانکشن پرینت
 
-Sprinkling `print()` functions all over the code for debugging might sound primitive, but it
-has been the preferred technique for many programmers.
+پاشیدن تابع `print()` در سراسر کد و برای عیب‌یابی ممکن است ابتدایی به نظر برسد، ولی تکنیک منتخب بسیاری از برنامه‌نویسان است.
 
-Typically, the `print()` functions are added before the line where the exception has
-occurred. It can be used to print the state of variables in various lines leading to the
-exception. You can trace the execution path by printing something when a certain line is
-reached.
+معمولاً تابع `print()` قبل از خطی که استثاء به جود آمده اضافه می‌شود. این تابع برای نشان دادن مقدار متغیرها در خطوط منتهی به استثناء استفاده کرد. می‌توانید با چاپ کردن داده‌ها مسیر اجرا را تا رسیدن به یک خط مشخص، دنبال کنید.
 
-In development, the print output usually appears in the console window where the test
-server is running, whereas in production, these print outputs might end up in your server
-log file where they will add a runtime overhead.
+در فرآیند توسعه، خروجی چاپ شده معمولاً در پنچره کنسولی که سرور توسعه در آن در حال اجرا است،‌دیده می‌شود در حالیکه در تولید نهایی، احتمالاً در فایل لاگ سرور شما ذخیره خواهد شد که البته سرباری هم برای سرور ایجاد خواهد کرد. 
 
-In any case, it is not a good debugging technique to use in production. Even if you do, the
-print functions that are added for debugging should be removed from being committed to
-your source control.
+در هر حال این روش خوبی برای استفاده در هنگام تولید نهایی نیست. حتی اگر از آن استفاده می‌کنید باید قبل از کامیت کد به مخزن کنترل نسخه‌ها، آن‌ها را از داخل کد حذف کنید.
 
-## Logging
+## لاگ کردن
 
-The main reason for including the previous section was to say that you should replace the
-`print()` functions with calls to logging functions in Python's `logging` module. Logging
-has several advantages over printing: it has a timestamp, a clearly marked level of urgency
-(for example, INFO, DEBUG), and you don't have to remove them from your code later.
+دلیل در نظر گرفتن بخش قبل آن بود که بگوییم شما باید توابع `print()` را با صدا زدن تابع لاگ کردن در ماژول `logging` پایتون، جابجا کنید. لاگ کردن مزیت‌های زیادی به نسبت پرینت دارد: یک برچسب زمان دارد، سطح فوریت در آن مشخص شده (برای مثال INFO و DEBUG) و در ضمن لازم نیست آن‌ها را بعداً از درون کد حذف کنید.
 
-Logging is fundamental to professional web development. Several applications in your
-production stack, such as web servers and databases, already use logs. Debugging might
-take you to all these logs to retrace the events that lead to a bug. It is only appropriate that
-your application follows the same best practice and adopts logging for errors, warnings,
-and informational messages.
+لاگ کردن برای توسعه حرفه‌ای، بسیاری حیاتی است. اپلیکیشن‌های زیادی در بخش تولید، مانند دیتابیس‌ها و وب سرورها، از لاگ کردن استفاده می‌کنند. فرآیند عیب‌یابی ممکن است شما را به سراغ همه این لاگ‌ها بفرستد تا بتوانید رد پای مشکل را پیدا کنید. بهتر است که برنامه شما بهترین روش را استفاده کند و لاگ کردن را برای خطاها (errors)، هشدارها (warnings) و پیغام‌های اطلاع‌رسانی (informational messages) استفاده کند.
 
-Unlike the common perception, using a logger does not involve too much work. Sure, the
-setup is slightly involved, but it is merely a one-time effort for your entire project. Even
-more, most project templates (for example, the `edge` template) already do this for you.
+برخلاف تصور رایج، استفاده از لاگر نیازمند کار زیادی نیست. البته احتیاج به تنظیم اولیه دارد اما برای کل پروژه فقط یک‌بار انجام می‌شود. اضافه براین بسیاری از تمپلیت‌ها (برای مثال تمپلیت `edge`) این کار را برای شما انجام داده‌اند.
 
-Once you have configured the `LOGGING` variable in `settings.py`, adding a logger to your
-existing code is quite easy, as shown here:
+هنگامی که متفیر `LOGGING` را در فایل `settings.py`، تنظیم کردید، همانطور که در اینجا نشان داده شده، اضافه کردن یک لاگر به کد بسیار ساده است:
 
 ```python
 # views.py
@@ -537,88 +341,61 @@ def complicated_view():
     logger.debug("Entered the complicated_view()!")
 ```
 
-The `logging` module provides various levels of logged messages so that you can easily
-filter out less urgent messages. The log output can also be formatted in various ways and
-routed to many places, such as standard output or log files. Read the documentation of
-Python's `logging` module to learn more.
+ماژول `logging` مراحل مختلفی از پیغام‌های لاگ را ارائه می‌کند در نتیجه شما می‌توانید به سادگی پیام‌های کم اهمیت را فیلتر کنید. خروجی نیز می‌تواند در شکل‌های مختلفی قالب‌بندی شود یا به جاهای مختلفی مانند خروجی استاندارد یا فایل‌ها، فرستاده شود. برای آشنایی بیشتر، مستندات ماژول `logging` پایتون را بخوانید.
 
-## The Django Debug Toolbar
+## پکیج Django Debug Toolbar
 
-The Django Debug Toolbar is an indispensable tool not just for debugging, but also for
-tracking detailed information about each request and response. Rather than appearing only
-during exceptions, the toolbar is always present in your rendered page.
+پکیج Django Debug Toolbar یک ابزار ضروری نه تنها برای عیب‌یابی، بلکه برای ردگیری اطلاعات جزیی درباره هر درخواست و پاسخ است. به جای آنکه فقط در هنگام خطا دیده شود، نوار ابزار آن همیشه در صفحه رندر شده شما حضور دارد. 
 
-Initially, it appears as a clickable graphic on the right-hand side of your browser window.
-On clicking, a toolbar appears as a dark semi-transparent sidebar with several sections:
+در ابتدا مانند یک کلید گرافیکی در سمت راست صفحه مرورگر دیده می‌شود. بعد از آنکه آن را کلیک کنید یک نوار ابزار نیمه شفاف با بخش‌های زیادی ظاهر می‌شود:
 
 ![header image](3.jpg)
 
-Each section is filled with detailed information about the page from the number of SQL
-queries executed to the templates that we use to render the page. Since the toolbar
-disappears when `DEBUG` is set to False, it is pretty much restricted to being a development
-tool.
+نوار ابزار بازشده Django Debug Toolbar
 
-## The Python debugger pdb
+هر بخش با اطلاعات جزیی درباره صفحه، مانند تعداد SQLهای اجرا شده یا تمپلیتی که برای رندر صفحه استفاده شده، پر شده است. از آنجایی که وقتی مقدار متغیر `DEBUG` در تنظیمات False باشد این پنجره دیده نخواهد شد، Django Debug Toolbar یک ابزار اختصاصی برای مرحله توسعه است.
 
-While debugging, you might need to stop a Django application in the middle of execution
-to examine its state. A simple way to achieve this is to raise an exception with a simple
-`assert False` line in the required place.
+## عیب‌یاب پایتونی pdb
 
-What if you wanted to continue the execution step by step from that line? This is possible
-with the use of an interactive debugger such as Python's `pdb`. Simply insert the following
-line wherever you want the execution to stop and switch to `pdb`:
+در هنگام عیب‌یابی، ممکن است نیاز داشته باشید که یک اپلیکیشن جنگو در میانه اجرا متوقف کنید تا وضعیت آن را بررسی کنید. یک راه حل ساده آن است که یک استثنا با مقدار `assert False` در محل مورد نظر اضافه کنید. 
+
+حالا اگر بخواهید اجرای برنامه را مرحله به مرحله از همان خط ادامه دهید، چه باید کرد؟ این کار با استفاده از عیب‌یاب‌های تعاملی مانند عیب‌یاب `pdb` پایتون امکان‌پذیر است. به سادگی با اضافه کردن این خط در هرجایی که می‌خواهید برنامه متوقف شود و به `pdb` منتقل شود، انجام پذیر است:
 
 ```python
 import pdb; pdb.set_trace()
 ```
 
-Once you enter `pdb`, you will see a command-line interface in your console window with a
-(`Pdb`) prompt. At the same time, your browser window will not display anything, as the
-request has not finished processing.
+هنگامی که `pdb` را وارد می‌کنید، یک خط فرمان با نشانه (`Pdb`) در کنسول شما ظاهر می‌شود. در همان زمان مرورگر شما چیزی را نشان نخواهد داد،‌ برای آنکه ریکوئست هنوز به طور کامل پردازش نشده است.
 
-The `pdb` command-line interface is extremely powerful. It allows you to go through the
-code line by line, examine the variables by printing them, or execute arbitrary code that can
-even change the running state. The interface is quite similar to GDB, the GNU debugger.
+خط فرمان `pdb` بسیار قدرتمند است. این خط فرمان به شما اجازه می‌دهد که در میان کد، خط به خط جلو بروید و متغیرها را چاپ کنید یا آن‌ها را تغییر دهید و در نتیجه وضعیت اجرا را تحت تأثیر قرار دهید. این صفحه تعاملی بسیار شبیه به عیب‌یاب GNU، یعنی GDB است. 
 
-## Other debuggers
+## سایر عیب‌یاب‌ها
 
-There are several drop-in replacements for `pdb`. They usually have a better interface. Some
-of the console-based debuggers are as follows:
+عیب‌یاب‌های بسیار دیگری نیز می‌توانند جایگزین `pdb` شوند. معمولاً این عیب‌یاب‌ها صفحه ارتباطی بهتری دارند. موارد زیر، تعدادی از عیب‌یاب‌های مبتنی بر کنسول هستند:
 
-- `ipdb`: Like IPython, this has autocomplete, syntax-colored code, and so on.
-- `pudb`: Like old Turbo C IDEs, this shows the code and variables side by side.
-- `IPython`: This is not a debugger. You can get a full IPython shell anywhere
-in your code by adding the `from IPython import embed; embed()` line.
+- پکیج `ipdb`: شبیه به IPython دارای تکمیل خودکار، رنگ‌بندی تکه‌های کد و مانند آن است.
+- پکیج `pudb`: شبیه به IDEهای قدیمی توربو C، کدها و مقادیر را در کنار هم نشان می‌دهد.
+- پکیج `IPython`: این پکیج، یک عیب‌یاب نیست. شما می‌توانید یک شل `IPython` کامل را در هرجای کد به کمک اضافه کردن `from IPythonimport embed; embed()`، اجرا کنید.
 
-`pudb` is my preferred replacement for `pdb`. It is so intuitive that even beginners can easily
-use this interface. Like `pdb`, just insert the following code to break the execution of the
-program:
+پکیج منتخب من برای جایگزینی با `pdb`، پکیج `pudb` است. چنان ساده است که حتی مبتدی‌ها هم به سادگی می‌توانند با آن کار کنند. فقط کافی است شبیه به `pdb`، دستور زیر را اضافه کنید تا اجرا متوقف شود:
 
 ```python
 import pudb; pudb.set_trace()
 ```
 
-When the preceding line is executed, a full-screen debugger is launched, as shown here:
+وقتی که این خط اجرا می‌شود یک عیب‌یاب تمام صفحه مانند زیر، ظاهر می‌شود:
 
 ![pudb image](4.jpg)
 
-Press the ? key to get help on the complete list of keys that you can use.
+کلید ? را فشار دهید تا راهنمای کاملی در مورد همه کلیدها و دستورات ببینید.
 
-Additionally, there are several graphical debuggers, some of which are stand alone, such as
-`winpdb` and others, which are integrated to the IDE, such as PyCharm, PyDev, and
-Komodo. I would recommend that you try several of them until you find the one that suits
-your workflow.
+علاوه براین، عیب‌یاب‌های گرافیکی بسیار زیاد و مستقلی هم وجود دارند مانند `winpdb`، که درون IDE هایی مانند PyCharm، PyDev و Komodo، جایگذاری شده‌اند. پیشنهاد می‌کنم چندتایی از آن‌ها را امتحان کنید تا نمونه‌ای را که بیش از همه با فرآيند کار شما هماهنگ است، پیدا کنید. 
 
-## Debugging Django templates
+## عیب‌یابی در تمپلیت‌های جنگو
 
-Projects can have very complicated logic in their templates. Subtle mistakes while creating a
-template can lead to hard-to-find bugs. We need to set `TEMPLATE_DEBUG` to `True` (in
-addition to `DEBUG`) in `settings.py` so that Django shows a better error page when there is
-an error in your templates.
+پروژه‌ها ممکن است منطق بسیار پیچیده‌ای در تمپلیت‌های خود داشته باشند. اشتباهات ظریف در هنگام ساخت یک تمپلیت، ممکن است به باگ‌هایی منجر شود که پیداکردنشان ساده نیست. ما باید `TEMPLATE_DEBUG` را (علاوه بر `DEBUG`)‌ در فایل `settings.py`، مساوی مقدار `True` قرار دهیم تا چنانچه خطایی در تمپلیت وجود داشت، جنگو گزارش خطای بهتری را نشان دهد.
 
-There are several crude ways to debug templates, such as inserting the variable of interest,
-such as {{ `variable` }}, or if you want to dump all the variables, use the built-in `debug`
-tag like this (inside a conveniently clickable text area):
+چندین روش خام برای عیب‌یابی تمپلیت‌ها وجود دارد مانند اضافه کردن متغیرها مانند {{ `variable` }}، اما اگر می‌خواهید همه متغیرها را نشان دهید از تگ پیش‌ساخته `debug` (درون یک محیط نوشتاری قابل کلیک)، به صورت زیر استفاده کنید:
 
 ```HTML
 <textarea onclick="this.focus();this.select()" style="width: 100%;">
@@ -628,15 +405,11 @@ tag like this (inside a conveniently clickable text area):
 </textarea>
 ```
 
-A better option is to use the Django Debug Toolbar mentioned earlier. It not only tells you
-the values of the context variables, but also shows the inheritance tree of your templates.
+یک گزینه بهتر استفاده از  Django Debug Toolbar است که قبل‌تر به آن اشاره شد. نه تنها متغیرهای زمینه را نشان می‌دهد بلکه درخت وراثت تمپلیت‌های شما را هم نشان می‌دهد. 
 
-However, you might want to pause in the middle of a template to inspect the state (say,
-inside a loop). A debugger will be perfect for such cases. In fact, it is possible to use any one
-of the aforementioned Python debuggers for your templates using custom template tags.
+با اینحال، ممکن است بخواهید در میانه تمپلیت (مثلاً درون یک حلقه) توقفی ایجاد کنید و وضعیت تمپلیت را بررسی کنید. یک عیب‌یاب می‌تواند در این موقعیت، کمک خوبی باشد. در حقیقت، می‌توانید با استفاده از تگ‌های اختصاصی تمپلیت، از هرکدام از عیب‌یاب‌های معرفی شده پایتونی، در تمپلیت خود استفاده کنید.
 
-The following is a simple implementation of such a template tag. Create the following file
-inside a `templatetag` package directory:
+مثال زیر، یک پیاده‌سازی ساده از چنین تگ‌های تمپلیت اختصاصی است. فایل زیر را در دایرکتوری `templatetag`، درون یک پکیج بسازید:
 
 ```python
 # templatetags/debug.py
@@ -657,8 +430,7 @@ class PdbNode(Node):
         return PdbNode()
 ```
 
-In your template, load the template tag library, insert the `pdb` tag wherever you need the
-execution to pause, and enter the debugger:
+در تمپلیت خود، کتابخانه تگ‌های تمپلیت را فراخوانی کنید و تگ `pdb` را هر جا که لازم است اجرای برنامه متوقف شود، بگذارید و وارد عیب‌یاب شوید:
 
 ```jinja
 {% load debug %}
@@ -668,23 +440,17 @@ execution to pause, and enter the debugger:
 {% endfor %}
 ```
 
-Within the debugger, you can examine anything, including the context variables using the
-`context` dictionary:
+درون عیب‌یاب، شما می‌توانید همه چیز را کنترل کنید. مثلاً برای دیدن متغیرهای زمینه از دیکشنری `context` مانند زیر، استفاده کنید:
 
 ```python
 >>> print(context["item"])
 Item0
 ```
 
-If you need more such template tags for debugging and introspection, I would recommend
-that you check out the `django-template-debug` package.
+اگر به تگ‌های تمپلیت‌ بیشتری برای عیب‌یابی و بررسی کد، احتیاج داشتید پیشنهاد می‌کنم پیکج `django-template-debug` را بررسی کنید.
 
-## Summary
+## خلاصه
 
-In this chapter, we looked at the motivation and concepts behind testing in Django. We also
-found the various best practices to be followed while writing a test case. In the section on
-debugging, we got familiar with the various debugging tools and techniques to find bugs in
-Django code and templates.
+در این بخش، به انگیزه‌ها و کانسپت‌‌های درون تست‌نویسی در جنگو نگاه کردیم. همچنین بهترین روش‌ها برای نوشتن یک واحد تست را پیدا کردیم. در بخش عیب‌یابی، با ابزارها و روش‌های عیب‌یابی مختلف برای پیدا کردن باگ‌ها در کدهای جنگو و تمپلیت‌ها آشنا شدیم.
 
-In the next chapter, we will get one step closer to production code by understanding the
-various security issues and how to reduce threats from various kinds of malicious attacks.
+در بخش بعد، یک قدم به فرآیند تولید نهایی کد و فهم مشکلات امنیتی و کاهش خطرات و تهدیدها بر اثر حمله‌های مختلف، آشنا خواهیم شد.

@@ -1,122 +1,75 @@
-# Dealing with Legacy Code
+# سرو کار داشتن با کد مورثی
 
-In this chapter, we will discuss the following topics:
+در این فصل، ما در مورد موضوعات زیر صحبت خواهیم کرد:
 
-- Reading a Django code base
-- Discovering relevant documentation
-- Incremental changes versus full rewrites
-- Writing tests before changing code
-- Legacy database integration
+- یک کد اولیه جنگو را می خوانیم
+-	بررسی اسناد مرتبط
+- تغییرات افزایشی در مقابل بازنویسی کامل
+- تست نوشتن قبل از ایجاد هر گونه تغییر
+- اتصال دیتابیس  موروثی
 
-It sounds exciting when you are asked to join a project. Powerful new tools and cutting-
-edge technologies might await you. However, quite often, you are asked to work with an
-existing, possibly ancient, code base.
+وقتی از شما در خواست می شود تا به یک پروژه ملحق بشوید، هیجان انگیز به نظر میرسد. چرا که ابزارهای قدرتمند جدید و فناوری‌های پیشرفته احتمالا در انتظار شما است. اما با این حال، اغلب از شما درخواست می شود که با یک مجموعه ای از کدهای موجود که احتمالا قدیمی است کار کنید.
 
-To be fair, Django has not been around for that long. However, projects written for older
-versions of Django are sufficiently different to cause concern. Sometimes, having the entire
-source code and documentation might not be enough.
+در تعبیری  منصفانه ، از پیدایش جنگو مدت زمان زیادی نمی گذرد. به هر حال، پروژه‌های نوشته شده برای نسخه‌های قدیمی جنگو به اندازه کافی متفاوت هستند که باعث نگرانی می‌شود. گاهی اوقات، داشتن همه کدهای منبع و اسناد مرتبط با آن شاید کافی نباشد.
 
-If you are asked to recreate the environment, you might need to fumble with the OS
-configuration, database settings, and running services locally or on the network. There are
-so many pieces to this puzzle that you might wonder how and where to start.
+اگر از شما خواسته شد که محیط را دوباره ایجاد کنید ممکن است که لازم باشد تا شما با پیکربندی سیستم عامل، تنظیمات پایگاه داده و اجرای سرویس‌ها به صورت محلی و یا در بستر شبکه کار کنید. بخش های مختلفی برای انجام این پازل وجود دارد که ممکن است تعجب کنید که چطور و از کجا باید شروع کنید.
 
-Understanding the Django version used in the code is a key piece of information. As
-Django evolved, everything from the default project structure to the recommended best
-practices have changed. Therefore, identifying which Version of Django was used is a vital
-piece in understanding it.
+پی بردن به اینکه در پروژه از چه نسخه ای از جنگو استفاده شده است یک نکته کلیدی است. با تکامل جنگو، همه چیز از ساختار پروژه پیش‌فرض گرفته تا بهترین روش‌های توصیه شده تغییر کرده است. بنابراین تشخیص اینکه از کدام نسخه جنگو استفاده شده است، یک بخش حیاتی در درک آن است.
 
-***Change of guards***
+***تغییر نگهبانان***
 
-Sitting patiently on the ridiculously short beanbags in the training room,
-the SuperBook team waited for Hart. He had convened an emergency go-
-live meeting. Nobody understood the emergency part since go-live was at
-least three months away.
+تیم superBook صبورانه روی کیسه‌های لوبیای کوتاه مسخره در اتاق تمرین نشسته و منتظر هارت بودند. او یک جلسه اضطراری حضوری تشکیل داده بود. هیچ کس بخش اضطراری را درک نکرد، زیرا حداقل سه ماه از شروع به کار آنها گذشته بود.
 
-Madam O rushed in holding a large designer coffee mug in one hand and
-a bunch of printouts of what looked like project timelines in the other.
-Without looking up she said, "We are late, so I will get straight to the
-point. In the light of last week's attacks, the board has decided to
-summarily expedite the SuperBook project and has set the deadline to the
-end of next month. Any questions?"
+خانم O با عجله در حالی که یک لیوان قهوه با طراحی بزرگ در یک دست داشت و در دست دیگر مشتی پرینت از چیزی که شبیه جدول زمانی پروژه بود وارد شد. او بدون اینکه به بالا نگاه کند، گفت: "خیلی زمان نداریم، بنابراین مستقیماً به سر اصل مطلب می‌روم. با توجه به حملات هفته گذشته، هیئت مدیره تصمیم گرفته است که پروژه SuperBook سریعا به جمع بندی برسد و مهلت را تا پایان ماه آینده تعیین کرده است. سوالی هست؟"
 
-"Yeah," said Brad, "Where is Hart?" Madam O hesitated and replied,
-"Well, he resigned. Being the head of IT security, he took moral
-responsibility for the perimeter breach." Steve, evidently shocked, was
-shaking his head. "I am sorry," she continued, "But I have been assigned to
-head SuperBook and ensure that we have no roadblocks to meet the new
-deadline."
+برد گفت: بسیار خب، هارت کجاست؟ خانم O مکث کرد، و پاسخ داد: "خوب استعفا داد. او به عنوان رئیس امنیت فناوری اطلاعات مسئولیت اخلاقی رخنه محیطی <sup>[1](#footnote-1)</sup> را بر عهده گرفت." استیو که ظاهراً شوکه شده بود، سرش را تکان می داد. او ادامه داد: متاسفم، اما من به عنوان سرپرست SuperBook گمارده شده‌ام و باید اطمینان حاصل کنم که هیچ مانعی برای انجام پروژه تا موعد مقرر نداریم.
 
-There was a collective groan. Undeterred, Madam O took one of the sheets
-and began, "It says here that the remote archive module is the most high-
-priority item in the incomplete status. I believe Evan is working on this."
+یک ناله جمعی شنیده شد. خانم O که دلسرد نشد، یکی از برگه ها را گرفت و گفت، "اینجا می گوید که ماژول بایگانی از راه دور در وضعیت ناقص بالاترین اولویت را دارد. من معتقدم که ایوان روی این موضوع کار می کند."
+ایوان از انتهای اتاق گفت: "درست است." او به دیگران لبخند زد: "تقریباً آنجاست." خانم O از بالای لبه عینکش نگاه کرد و خیلی مؤدبانه لبخند زد.
 
-"That's correct," said Evan from the far end of the room. "Nearly there," he
-smiled at others, as they shifted focus to him. Madam O peered above the
-rim of her glasses and smiled almost too politely.
+ایوان از انتهای اتاق گفت: "درست است." او به دیگران لبخند زد: "تقریباً آنجاست." خانم O از بالای لبه عینکش نگاه کرد و خیلی مؤدبانه لبخند زد.
 
-"Considering that we already have an extremely well-tested and working
-archiver in our Sentinel code base, I would recommend that you leverage
-that instead of creating another redundant system."
+"با توجه به اینکه ما در حال حاضر یک بایگانی بسیار آزمایش شده و کارآمد در پایگاه کد سنتینل خود داریم، توصیه می کنم به جای ایجاد یک سیستم اضافی دیگر، از آن استفاده کنید."
 
-"But," Steve interrupted, "it is hardly redundant. We can improve over a
-legacy archiver, can't we? If it isn't broken, then don't fix it", replied
-Madam O tersely. He said, "He is working on it," said Brad almost
-shouting, "What about all that work he has already finished?"
+استیو حرفش را قطع کرد، "این کار خیلی اضافه‌ای است. ما می توانیم نسبت به بایگانی کننده قدیمی پیشرفت کنیم، نه؟ اگر خراب نیست، پس نیازی به اصلاح ندارد". خانم O خیلی خلاصه پاسخ داد. برد با صدای بلندگفت  "او دارد روی آن کار می کند" "در مورد همه کارهایی که قبلاً به پایان رسانده است؟"
 
-"Evan, how much of the work have you completed so far?" asked O,
-rather impatiently. "About 12 percent," he replied looking defensive.
-Everyone looked at him incredulously. "What? That was the hardest 12
-percent" he added.
+خانم O با بی حوصلگی پرسید. "ایوان، چه مقدار از کار را تا کنون تکمیل کرده ای؟" او با حالت دفاعی پاسخ داد: «حدود 12 درصد». همه با ناباوری به او نگاه کردند.  او گفت : "چی؟ این 12 درصد سخت‌ترین بخش کار بود."
 
-O continued the rest of the meeting in the same pattern. Everybody's work
-was re-prioritized and shoe-horned to fit the new deadline. As she picked
-up her papers, ready to leave, she paused and removed her glasses.
+خانم O ادامه جلسه را با همین حالت ادامه داد. کار همه دوباره اولویت‌بندی شد و متناسب با مهلت زمانی جدید، فشرده شد. همانطور که کاغذهایش را برداشت، آماده رفتن بود، مکثی کرد و عینکش را برداشت و گفت:
 
-"I know what all of you are thinking... literally, but you need to know that
-we had no choice about the deadline. All I can tell you now is that the
-world is counting on you to meet that date, somehow or other." Putting
-her glasses back on, she left the room.
 
-"I am definitely going to bring my tinfoil hat," said Evan loudly to himself.
+"من به معنای واقعی کلمه می دانم که همه شما به چه چیزی فکر می کنید ، اما باید بدانید که ما هیچ انتخابی در مورد  تعیین ضرب الاجل نداشتیم. تنها چیزی که اکنون می توانم به شما بگویم این است که جهان برای رسیدن به آن تاریخ، به هر نحوی، روی شما حساب می کند" عینکش را دوباره گذاشت و از اتاق خارج شد.
 
-## Finding the Django Version
+ایوان با صدای بلند با خود گفت: "حتما کلاه فویل خود را خواهم آورد<sup>[2](#footnote-2)</sup>
+. "
 
-Ideally, every project will have a `requirements.txt` or `setup.py` file at the root directory, and it will have the exact Version of Django used for that project. Let's look for a
-line similar to this:
+
+## یافتن نسخه جنگو
+
+در حالت ایده آل، هر پروژه ای یک فایل requirements.txt یا setup.py در دایرکتوری اصلی خود دارد، و داخل آن نسخه دقیق جنگو استفاده شده وجود دارد. 
  
  `Django==1.5.9`
 
-The version number is mentioned precisely (rather than `Django>=1.5.9`),
-which is called **pinning**. Pinning every package is considered a good
-practice since it reduces surprises and makes your build more
-deterministic.
+شماره نسخه دقیقا ذکر شده است (به جای Django>=1.5.9) که به آن پینینگ می گویند. پینینگ هر بسته یک عمل خوب در نظر گرفته می‌شود، زیرا مشکلات پیش‌بینی نشده را کاهش می‌دهد و ساخت پروژه  شما را قطعی‌تر می‌کند.
 
-As a best practice, it is advisable to create a completely repeatable environment for a
-project. This includes having a requirements file with all transitive dependencies listed,
-pinning, and with `--hash` digests. `--hash` digests of the packages look like this:
+
+به عنوان بهترین روش، ایجاد یک محیط کاملاً تکرارپذیر برای یک پروژه توصیه می شود. این محیط شامل داشتن یک فایل نیازمندی‌ها با تمام وابستگی‌های مختلف لیست شده(پینینگ) به همراه خروجی یک تابع هش است. –خروجی تابع هش بسته‌ها به این صورت است:
 
 `Django==1.5.9 --hash=sha256:2cf24dba5fb0a30e26e83b2ac5...`
 
-Hashes protect against remote tampering and save the need to create private package index
-servers containing approved packages.
-Unfortunately, there are real-world code bases where the `requirements.txt` file was not
-updated or even completely missing. In such cases, you will need to probe for various
-telltale signs to find out the exact version.
+هش ها در برابر دستکاری از راه دور محافظت می کنند و نیاز به ایجاد سرورهای فهرست بسته خصوصی حاوی بسته های تایید شده را کاهش می دهند. متأسفانه، پایگاه‌های کد در دنیا واقعی هستند که در آن‌ها فایل requires.txt به‌روزرسانی نشده یا حتی اصلاً وجود ندارد. در چنین مواردی، برای یافتن نسخه دقیق باید علائم مختلف را بررسی کنید.
 
-## Activating the virtual environment
+## فعال سازی محیط مجازی
 
-In most cases, a Django project will be deployed within a virtual environment. Once you
-locate the virtual environment for the project, you can activate it by jumping to that
-directory and running the activated script for your OS.
+در بیشتر موارد، یک پروژه جنگو در یک محیط مجازی دیپلوی  می شود. هنگامی که محیط مجازی پروژه را پیدا کردید، می توانید آن را با رفتن به آن دایرکتوری و اجرای اسکریپت فعال شده برای سیستم عامل خود فعال کنید.
 
-For Linux, the command is as follows:
+برای لینوکس، دستور به صورت زیر است:
 
 ```bash
 $ source venv_path/bin/activate
 ```
 
-Once the virtual environment is active, start a Python shell and query the Django Version,
-as shown:
+هنگامی که محیط مجازی فعال شد، یک شل پایتون را راه اندازی کنید و نسخه جنگو را با دستورات زیر، همانطور که در زیر نشان داده شده است مشاهده خواهید کرد:
 
 ```bash
 $ python
@@ -124,18 +77,13 @@ $ python
 >>> print(django.get_version())
 1.5.9
 ```
-
-The Django Version used in this case is Version `1.5.9`.
-Alternatively, you can run the `manage.py` script in the project to get a similar output:
+نسخه جنگو استفاده شده در این مورد نسخه `1.5.9` است. همچنین، می‌توانید اسکریپت `manage.py` را در پروژه اجرا کنید تا خروجی مشابهی دریافت کنید:
 
 ```bash
 $ python manage.py --version
 1.5.9
 ```
-
-However, this option will not be available if the legacy project source snapshot was sent to
-you in an undeployed form. If the virtual environment (and packages) was also included,
-you can easily locate the version number (in the form of a tuple) in the `__init__.py` file of the Django directory. Consider the given example:
+با این حال، اگر سورس کد پروژه قدیمی به صورت دیپلوی نشده برای شما ارسال شده باشد، این گزینه در دسترس نخواهد بود. اگر محیط مجازی (و بسته ها) نیز گنجانده شده بود، می توانید به راحتی شماره نسخه (به شکل یک تاپل) را در فایل `__init__.py` دایرکتوری جنگو پیدا کنید. مثال داده شده را در نظر بگیرید:
 
 ```bash
 $ cd envs/foo_env/lib/python2.7/site-packages/django
@@ -144,45 +92,27 @@ VERSION = (1, 5, 9, 'final', 0)
 ...
 ```
 
-If all these methods fail, you will need to go through the release notes of the past Django
-Versions to determine the identifiable changes (for example, the `AUTH_PROFILE_MODULE`
-setting was deprecated since version 1.5) and match them to your legacy code. Once you
-pinpoint the correct Django Version, then you can move on to analyzing the code.
+اگر به کمک روش‌های ذکر شده موفق به یافتن نسخه جنگو نشدید، باید یادداشت‌های نسخه‌های منتشر شده قدیمی جنگو را مرور کنید تا تغییرات قابل شناسایی را تعیین کنید (به عنوان مثال، تنظیم `AUTH_PROFILE_MODULE` از نسخه 1.5 منسوخ شده است) و آنها را با کد خود مطابقت دهید. هنگامی که نسخه صحیح جنگو را مشخص کردید، می توانید به سراغ تجزیه و تحلیل کد بروید.
 
-[Pipenv](https://docs.pipenv.org/), a recent but [officially recommended](https://packaging.python.org/tutorials/managing-dependencies/#installing-pipenv) Python packaging tool, aims to solve many of these problems. It combines the functionality of `pip` and `virtualenv` so that when you install a package, it updates its requirements file (called pipenv) automatically. Last but not least, it enables repeatable builds using a `Pipenv.lock` file, which is fully pinned and
-includes hashes.
+یکی از ابزارهای جدید بسته‌بندی پایتون [Pipenv](https://docs.pipenv.org/) است. اما ،[ به طور رسمی توصیه شده است](https://packaging.python.org/tutorials/managing-dependencies/#installing-pipenv) چرا که بسیاری از این مشکلات را حل می‌کند. این ابزار عملکرد `pip` و `virtualenv` را با هم ترکیب می کند به طوری که وقتی یک بسته را نصب می کنید، فایل مورد نیاز آن (به نام pipenv) را به طور خودکار به روز می کند نکته مهم آخر اینکه، بیلدهای تکرار پذیر با استفاده از یک فایل `Pipenv.lock`، که کاملاً پین شده و شامل هش است، فعال می‌کند.
 
-## Where are the files? This is not PHP
+## فایل ها کجا هستند؟ این PHP نیست
 
-One of the most difficult ideas to get used to, especially if you are from the PHP or
-ASP.NET world, is that the source files are not located in your web server's document root
-directory, which is usually named `wwwroot` or `public_html`. Additionally, there is no
-direct relationship between the code's directory structure and the website's URL structure.
+یکی از سخت‌ترین تصورها برای عادت کردن (مخصوصاً اگر اهل دنیای PHP یا ASP.NET هستید) این است که فایل‌های منبع در دایرکتوری ریشه پوشه وب سرور شما( که معمولاً `wwwroot` یا `public_html` نامیده می‌شود) قرار نگیرند. علاوه بر این، هیچ رابطه مستقیمی بین ساختار دایرکتوری کد و ساختار URL وب سایت وجود ندارد.
 
-In fact, you will find that your Django website's source code is stored in an obscure path
-such as `/opt/webapps/my-django-app`. Why is this? Among many good reasons, it is
-often more secure to move your confidential data outside your public web root. This way, a
-web crawler will not be able to accidentally stumble into your source code directory.
+در واقع، متوجه خواهید شد که کد منبع وب سایت جنگو شما در یک مسیر مبهم مانند `/opt/webapps/my-django-app` ذخیره شده است. چرا اینطور هست؟ در میان بسیاری از دلایل خوب، انتقال داده های محرمانه خود به خارج از ریشه وب عمومی شما اغلب ایمن تر است. به این ترتیب، یک خزنده وب نمی تواند به طور تصادفی به لیست کد منبع شما برخورد کند.
 
-As you will read in `Chapter 13`, _Production-Ready_, the location of the source code can be
-found by examining your web server's configuration file. Here, you will find either the
-`DJANGO_SETTINGS_MODULE` environment variable being set to the module's path, or it will
-pass on the request to a WSGI server that will be configured to point to
-your `project.wsgi` file.
+همانطور که در `فصل 13`(آمادگی برای محیط پروداکشن) خواهید خواند، محل کد منبع را می توان با بررسی فایل پیکربندی وب سرور خود پیدا نمایید. در اینجا، متغیر محیطی `DJANGO_SETTINGS_MODULE` را می‌بینید که روی مسیر ماژول تنظیم شده است، یا درخواست را به سرور WSGI ارسال می‌کند که برای اشاره به فایل `project.wsgi` شما پیکربندی خواهد شد.
 
-## Starting with urls.py
+## شروع با urls.py
 
-Even if you have access to the entire source code of a Django site, figuring out how it works
-across various apps can be daunting. Often, it is best to start from the root `URLconf` located
-in the `urls.py`, file since it is literally a map that ties every request to the respective views.
+حتی اگر به کل کد منبع یک سایت جنگو دسترسی داشته باشید، فهمیدن نحوه عملکرد آن در برنامه های مختلف می تواند دشوار باشد. اغلب، بهتر است از `URLconf` واقع در فایل `urls.py` شروع کنید، زیرا به معنای واقعی کلمه یک نقشه است که هر درخواست را به نماهای مربوطه مرتبط می کند.
 
-With normal Python programs, I often start reading from the start of its execution–say,
-from the top-level main module or wherever the `__main__` check idiom starts. In the case
-of Django applications, I usually start with `urls.py` since it is easier to follow the flow of
-execution based on the various URL patterns a site has.
 
-In Linux, you can use the following `find` command to locate the `settings.py` file and the
-corresponding line specifying the `urls.py` root:
+با برنامه‌های معمولی پایتون، من اغلب از ابتدای اجرای آن شروع به خواندن می‌کنم – مثلاً از ماژول اصلی سطح بالا یا هرجا که اصطلاح چک `__main__` شروع می‌شود. در مورد برنامه‌های جنگو، من معمولاً با `urls.py` شروع می‌کنم زیرا دنبال کردن جریان اجرای کد بر اساس الگوهای URL مختلف یک سایت آسان‌تر است.
+
+در لینوکس، می توانید از دستور `find` به صورت زیر برای یافتن محل فایل `settings.py` و خط مربوطه که ریشه `urls.py` را مشخص می کند استفاده کنید:
+
 
 ```bash
 $ find . -iname settings.py -exec grep -H 'ROOT_URLCONF' {} \;
@@ -191,277 +121,175 @@ $ ls projectname/urls.py
 projectname/urls.py
 ```
 
-## Jumping around the code
+## پرش در اطراف کد
 
-Reading code sometimes feels like browsing the web without the hyperlinks. When you
-encounter a function or variable defined elsewhere, you will need to jump to the file that
-contains that definition. Some IDEs can do this automatically for you as long as you tell it
-which files to track as part of the project.
+گاهی اوقات خواندن کد مانند مرور صفحات وب بدون لینک است. هنگامی که با یک تابع یا متغیری روبرو می شوید که در جای دیگری تعریف شده است، باید به فایلی که حاوی آن تعریف است بروید. برخی از IDE ها می توانند این کار را به صورت خودکار برای شما انجام دهند به شرطی که به آن ها بگویید که کدام فایل ها را به عنوان بخشی از پروژه ردیابی کند.
 
-If you use Emacs or Vim instead, you can create a TAGS file to quickly navigate between
-files. Go to the project root and run a tool called **Exuberant Ctags**, as follows:
+اگر به جای آن از Emacs یا Vim استفاده می کنید، می توانید یک فایل TAGS برای پیمایش سریع بین فایل ها ایجاد کنید. به پوشه اصلی پروژه بروید و ابزاری به نام  **Exuberant Ctags** را به صورت زیر اجرا کنید:
 
 ```bash
 find . -iname "*.py" -print | etags -
 ```
+این یک فایل به نام TAGS ایجاد می کند که حاوی اطلاعات موقعیت است، جایی که هر واحد نحوی، مانند کلاس ها و توابع، تعریف شده است. در Emacs، می توانید تعریف تگ را پیدا کنید، جایی که مکان نما (یا نقطه همانطور که در Emacs نامیده می شود) با استفاده از فرمان `M-` است. 
 
-This creates a file called TAGS that contains the location information, where every syntactic
-unit, such as classes and functions, is defined. In Emacs, you can find the definition of the
-tag, where your cursor (or point as it is called in Emacs) is at using the `M-`. command.
+در حالی که استفاده از یک فایل تگ برای کد بزرگ بسیار سریع است، اما کاملاً ابتدایی است و از یک محیط مجازی (جایی که بیشتر تعاریف ممکن است قرار داشته باشند) آگاه نیست. یک جایگزین عالی استفاده از بسته `elpy` در Emacs است. می توان آن را برای شناسایی یک محیط مجازی پیکربندی کرد. پرش به تعریف یک عنصر نحوی با استفاده از همان فرمان `M-` است. با این حال، جستجو به فایل برچسب محدود نمی‌شود، بنابراین می‌توانید به طور یکپارچه به تعریف کلاس در کد منبع جنگو بروید. اکثر IDE ها این ویژگی را تحت نام `Navigate/Go
+to definition` ارائه می کنند. 
 
-While using a tag file is extremely fast for large code bases, it is quite basic and is not aware
-of a virtual environment (where most definitions might be located). An excellent alternative
-is to use the `elpy` package in Emacs. It can be configured to detect a virtual environment.
-Jumping to a definition of a syntactic element is using the same `M-`. command. However,
-the search is not restricted to the tag file, so you can even jump to a class definition within
-the Django source code seamlessly. Most IDEs provide this feature under the `Navigate/Go
-to definition` name.
+## درک کردن پایه‌ی کد
 
-## Understanding the code base
-
-It is quite rare to find legacy code with good documentation. Even if you do, the
-documentation might be out of sync with the code in subtle ways that can lead to further
-issues. Often, the best guide to understanding the application's functionality is the
-executable test cases and the code itself.
-
-The official Django documentation has been organized according to versions at
-[https://docs.djangoproject.com](https://docs.djangoproject.com). On any page, you can quickly switch to the
-corresponding page in the previous versions of Django with a selector in the bottom right-
-hand section of the page:
+یافتن کد قدیمی با مستندات خوب بسیار نادر است. حتی اگر این کار را انجام دهید، ممکن است اسناد تا حدی با کد هماهنگ نباشد که می‌تواند منجر به مشکلات بیشتر شود. اغلب، بهترین راهنما برای درک عملکرد برنامه، اجرای کدهای تست و یا اجرای خود کد است. اسناد رسمی جنگو بر اساس نسخه هایی در [https://docs.djangoproject.com](https://docs.djangoproject.com) سازماندهی شده است. در هر صفحه‌ای، می‌توانید به سرعت به صفحه مربوطه در نسخه‌های قبلی جنگو (با یک انتخابگر در قسمت پایین سمت راست صفحه) بروید: 
 
 ![image 01](1.png)
 
-In the same way, documentation for any Django package hosted on [readthedocs.org](http://readthedocs.org) can
-also be traced back to its previous versions.
+به همین ترتیب، اسناد مربوط به هر بسته جنگو که در  [readthedocs.org](http://readthedocs.org)  میزبانی شده است را نیز می توان به نسخه های قبلی آن ریشه‌یابی کرد.
 
-For example, you can select the documentation of `django-braces` all the way back to
-v1.0.0 by clicking on the selector in the bottom left-hand section of the page:
+به عنوان مثال، می توانید با کلیک بر روی انتخابگر در قسمت پایین سمت چپ صفحه، مستندات `django-braces` را تا نسخه 1.0.0 انتخاب کنید:
+
 
 ![image 02](2.png)
 
-## Creating the big picture
+## ایجاد تصویر کلی
 
-Most people find it easier to understand an application if you show them a high-level
-diagram. While this is ideally created by someone who understands the workings of the
-application, there are tools that can create very helpful high-level depictions of a Django
-application.
+بیشتر مردم با مشاهده نمودار سطح بالا از یک برنامه کاربردی راحت تر آن را درک می کنند. در حالی که این به طور ایده‌آل توسط شخصی ایجاد می‌شود که عملکرد برنامه را می‌فهمد، ابزارهایی وجود دارند که می‌توانند تصاویر بسیار مفیدی در سطح بالا از یک برنامه جنگو ایجاد کنند.
 
-A graphical overview of all models in your apps can be generated by the `graph_models`
-management command, which is provided by the `django-command-extensions`
-package. As shown in the following diagram, the model classes and their relationships can
-be understood at a glance:
+با دستور مدیریت `graph_models` که توسط بسته `django-command-extensions` ارائه می شود، می توان یک نمای کلی گرافیکی از همه مدل ها در برنامه های شما ایجاد کرد. همانطور که در نمودار زیر نشان داده شده است، کلاس های مدل و روابط آنها را می توان در یک نگاه درک کرد:
 
 ![image 03](3.png)
 
-This visualization is actually created using PyGraphviz. This can get really large for
-projects of even medium complexity. Hence, it might be easier if the applications are
-logically grouped and visualized separately.
+این تجسم در واقع با استفاده از PyGraphviz ایجاد می شود. این می تواند برای پروژه های حتی با پیچیدگی متوسط واقعاً بزرگ باشد. از این رو، اگر برنامه ها به طور منطقی گروه بندی شده و جداگانه تجسم شوند، ممکن است آسان تر باشد.
 
-## PyGraphviz installation and usage
 
-If you find the installation of PyGraphviz challenging, then don't worry, you are not alone.
-Recently, I faced numerous issues while installing on Ubuntu, ranging from Python 3
-incompatibility to incomplete documentation. To save your time, I have listed the steps that
-worked for me to reach a working setup:
+## نصب و استفاده از PyGraphviz
 
-1. On Ubuntu, you will need the following packages installed to install
+اگر فکر مکنید که نصب PyGraphviz چالش برانگیز است، نگران نباشید، شما تنها نیستید. اخیراً هنگام نصب در اوبونتو با مشکلات متعددی مواجه شدم، از ناسازگاری پایتون 3 تا اسناد ناقص. برای صرفه جویی در وقت شما، مراحلی را که برای رسیدن به یک راه‌اندازی صحیح نیاز است، لیست کرده‌ام:
+
+1.	در اوبونتو، برای نصب PyGraphviz به بسته های زیر نیاز دارید:
 PyGraphviz:
 
 ```bash
 $ sudo apt-get install python-dev graphviz libgraphviz-dev pkg-config
 ```
 
-2. Now, activate your virtual environment and run pip to install the development
-version of PyGraphviz directly from GitHub, which supports Python 3:
+2.	اکنون محیط مجازی خود را فعال کنید و pip را اجرا کنید تا نسخه توسعه PyGraphviz را مستقیماً از GitHub که از Python 3 پشتیبانی می کند نصب کنید:
 
 ```bash
 $ pip install
 git+http://github.com/pygraphviz/pygraphviz.git#egg=pygraphviz
 ```
 
-3. Next, install `django-extensions` and add it to your `INSTALLED_APPS`. Now,
-you are all set.
+3. سپس،`django-extensions` را نصب کنید و آن را به `INSTALLED_APPS` خود اضافه کنید. اکنون، شما آماده اید. 
+4. در اینجا نمونه ای وجود دارد که برای ایجاد یک فایل GraphViz با پسوند dot فقط برای دو برنامه و تبدیل آن به یک تصویر با پسوند PNG برای مشاهده استفاده می شود:
 
-4. Here's a sample used to create a GraphViz dot file for just two apps and to
-convert it to a PNG image for viewing:
+ 
 
 ```bash
 $ python manage.py graph_models app1 app2 > models.dot
 $ dot -Tpng models.dot -o models.png
 ```
 
-## Incremental change or a full rewrite?
+## تغییرات افزایشی یا نوشتن مجدد به صورت کامل؟
 
-Often, you will be handed over legacy code by the application owners in the earnest hope
-that most of it can be used right away or after a couple of minor tweaks. However, reading
-and understanding a huge and often outdated code base is not an easy job. Unsurprisingly,
-most programmers prefer working on greenfield development.
+اغلب، کدهای قدیمی توسط صاحبان برنامه به شما تحویل داده می شود به این امید که بیشتر آن می تواند فوراً یا پس از چند تغییر جزئی استفاده شود. با این حال، خواندن و درک یک پایگاه کد عظیم و اغلب قدیمی کار آسانی نیست. جای تعجب نیست که بیشتر برنامه نویسان کار روی greenfield  را ترجیح می دهند.
 
-In the best case scenario, the legacy code ought to be easily testable, well documented, and
-flexible to work in modern environments so that you can start making incremental changes
-in no time. In the worst case, you might recommend discarding the existing code and go for
-a full rewrite. Alternatively, as it is in most cases, the short-term approach will be to keep
-making incremental changes, and a parallel long-term effort might be underway for a
-complete reimplementation.
+در بهترین حالت، کد قدیمی باید به راحتی قابل آزمایش، به خوبی مستند و انعطاف پذیر باشد تا در محیط های مدرن کار کند تا بتوانید در کمترین زمان تغییرات تدریجی را شروع کنید. در بدترین حالت، ممکن است توصیه کنید کد موجود را دور بیندازید و به بازنویسی کامل بروید. روش دیگر، همانطور که در بیشتر موارد وجود دارد، رویکرد کوتاه‌مدت ادامه ایجاد تغییرات تدریجی است و ممکن است یک تلاش بلندمدت موازی برای اجرای مجدد کامل انجام شود.
 
-A general rule of thumb to follow while taking such decisions is that if the cost of rewriting
-the application and maintaining the application is lower than the cost of maintaining the
-old application over time, it is recommended to go for a rewrite. Care must be taken to
-account for all the factors, such as the time taken to get new programmers up to speed, and
-the cost of maintaining outdated hardware.
+یک قانون کلی که هنگام اتخاذ چنین تصمیماتی باید رعایت شود این است که اگر هزینه بازنویسی برنامه و نگهداری برنامه کمتر از هزینه نگهداری برنامه قدیمی در طول زمان است، توصیه می شود به سراغ بازنویسی بروید. باید مراقب تمام عوامل، مانند زمان صرف شده برای به روز رسانی برنامه نویسان جدید، و هزینه نگهداری سخت افزار قدیمی باشید.
 
-Sometimes, the complexity of the application domain becomes a huge barrier against a
-rewrite, since a lot of knowledge learned in the process of building the older code gets lost.
-Often, this dependency on the legacy code itself is a sign of poor design in the application,
-like failing to externalize the business rules from the application logic.
+گاهی اوقات، پیچیدگی حوزه برنامه به مانع بزرگی در برابر بازنویسی تبدیل می شود، زیرا بسیاری از دانش‌های آموخته شده در فرآیند ساخت کدهای قدیمی از بین می رود. اغلب، این وابستگی به کد قدیمی خود نشانه ای از طراحی ضعیف در برنامه است، مانند شکست در برون‌سپاری قوانین تجاری از منطق برنامه.
 
-The worst form of a rewrite you can probably undertake is a conversion or a mechanical
-translation from one language to another without taking any advantage of the existing best
-practices. In other words, you lost the opportunity to modernize the code base by removing
-years of cruft.
+بدترین شکل بازنویسی که احتمالاً می توانید انجام دهید تبدیل یا ترجمه مکانیکی از یک زبان به زبان دیگر بدون استفاده از بهترین شیوه های موجود است. به عبارت دیگر، شما فرصت مدرن سازی پایه کد را با حذف سال‌ها شکست از دست دادید.
 
-Code should be seen as a liability and not as an asset. As counter-intuitive as it might
-sound, if you can achieve your business goals with a smaller amount of code, you have
-dramatically increased your productivity. Having less code to test, debug, and maintain can
-not only reduce ongoing costs, but also make your organization more agile and flexible to
-change.
+کد باید به عنوان یک بدهی و نه به عنوان یک دارایی در نظر گرفته شود. هرچقدر هم که ممکن است غیر شهودی به نظر برسد، اگر بتوانید با مقدار کمتری کد به اهداف تجاری خود برسید، بهره وری خود را به طرز چشمگیری افزایش داده اید. داشتن کد کمتر برای آزمایش، اشکال زدایی و نگهداری نه تنها می تواند هزینه های جاری را کاهش دهد، بلکه سازمان شما را در برابر تغییرات چابک تر و انعطاف پذیرتر می کند.
 
-`Code is a liability, not an asset. Less code is more maintainable.`
+`کد یک بدهی است، نه یک دارایی. کد کمتر قابل نگهداری است.`
 
-Irrespective of whether you are adding features or trimming your code, you must not touch
-your working legacy code without tests in place.
+صرف نظر از اینکه ویژگی‌ها را اضافه می‌کنید یا کد خود را مرتب می‌کنید، شما نباید بدون انجام آزمایشات به کد قدیمی کاری خود دست بزنید
 
-## Writing tests before making any changes
+## تست نوشتن قبل از ایجاد هرگونه تغییر
 
-In the *Working Effectively with Legacy Code* book by *Michael Feathers*, legacy code is defined
-as, simply, code without tests. He elaborates that with tests, you can easily modify the
-behavior of the code quickly and verifiably. In the absence of tests, it is impossible to gauge
-whether the change made the code better or worse.
+در کتاب *کارکرد موثر با کد مورثی* (Working Effectively with Legacy Code) توسط *Michael Feathers*، کدهای قدیمی به سادگی به صورت کد بدون آزمون تعریف شده است. او توضیح می‌دهد که با آزمایش‌ها، می‌توانید به راحتی رفتار کد را به سرعت و به‌طور قابل تأیید تغییر دهید. در غیاب آزمایش، نمی توان ارزیابی کرد که آیا این تغییر باعث بهتر یا بدتر شدن کد شده است.
 
-Often, we do not know enough about legacy code to confidently write a test. Michael
-recommends writing tests that preserve and document the existing behavior, which are
-called characterization tests.
 
-Unlike the usual approach of writing tests, while writing a characterization test, you will
-first write a failing test with a dummy output, say X, because you don't know what to
-expect. When the test harness fails with an error, such as **Expected output X but got Y**, you
-will change your test to expect Y. So, now the test will pass, and it becomes a record of the
-code's existing behavior.
+اغلب، ما به اندازه کافی درباره کدهای قدیمی نمی دانیم تا بتوانیم با اطمینان یک تست بنویسیم. مایکل نوشتن تست هایی را توصیه می کند که رفتار موجود را حفظ و مستند کند، که به آنها تست مشخصه‌سازی می گویند.
 
-`We might record buggy behavior as well. After all, this is unfamiliar code.
-Nevertheless, writing such tests are necessary before we start changing
-the code. Later, when we know the specifications and code better, we can
-fix these bugs and update our tests (not necessarily in that order).`
+برخلاف دیدگاه‌های معمول تست‌ نوشتن، هنگام نوشتن تست مشخصه‌سازی ابتدا یک تست شکست با خروجی ساختگی (مثلا X) می‌نویسید، زیرا نمی‌دانید از خروجی چه نتیجه‌ای حاصل می شود. هنگامی که تست با یک خطا از کار می افتد **مثلا خروجی X انتظار می رود اما Y را دریافت می کند**، تست خود را به Y تغییر می دهید. بنابراین، اکنون تست با موفقیت انجام می شود و به یک رکورد از رفتار موجود کد تبدیل می شود.
 
-## Step-by-step process to writing tests
+`ممکن است رفتار باگ‌دار را نیز ثبت کنیم. گذشته از همه اینها، به این کد شناخت کافی نداریم. با این اوصاف، نوشتن چنین تست هایی قبل از شروع تغییر کد ضروری است. بعداً، وقتی مشخصات و کدها را بهتر دانستیم، می‌توانیم این باگ‌ها را برطرف کرده و آزمایش‌های خود را به‌روزرسانی کنیم (نه لزوماً به این ترتیب).`
 
-Writing tests before changing the code is similar to erecting a scaffolding before the
-restoration of an old building. It provides a structural framework that helps you
-confidently undertake repairs.
+## مراحل گام به گام جهت نوشتن تست
 
-You might want to approach this process in a stepwise manner as follows:
+نوشتن تست قبل از تغییر کد شبیه به نصب داربست قبل از مرمت یک ساختمان قدیمی است. این یک چارچوب ساختاری را فراهم می کند که به شما کمک می کند تا تعمیرات را با اطمینان انجام دهید.
 
-1. Identify the area you need to make changes to. Your bug reports can be a good
-guide for narrowing down the problem area. Write characterization tests
-focusing on this area until you have satisfactorily captured its behavior.
+ممکن است بخواهید این فرآیند را به صورت گام به گام به شرح زیر انجام دهید:ب
 
-2. Look at the changes you need to make and write specific test cases for those.
-Resist the temptation to add new functionality. Prefer smaller unit tests to larger
-and slower integration tests.
+1. بخشی را که باید در آن تغییرات ایجاد کنید، مشخص کنید. گزارش اشکال شما می تواند راهنمای خوبی برای محدود کردن حوزه مشکل باشد. تست های  مشخصه‌سازی را با تمرکز بر روی این ناحیه بنویسید تا زمانی که رفتار آن را به نحوی که مورد رضایتتان است دریافت کنید. 
+2.	به تغییراتی که باید ایجاد کنید نگاه کنید و موارد تستی خاص را برای آن ها بنویسید. در برابر وسوسه افزودن قابلیت های جدید مقاومت کنید. سعی کنید که تست های واحد  را به صورت کوچک بنویسید و از نوشتن تست های بزرگ دوری کنید 
+3. تغییرات افزایشی را تعیین کنید و در در یک حالت گام‌به‌گامِ تست کنید. اگر تست‌ها شکست خورد، سعی کنید آن را تجزیه و تحلیل کنید که آیا مورد انتظار بود یا خیر. اگر آن رفتار چیزی است که قصد تغییر آن را داشته اید، از شکست حتی تست های مشخصه‌سازی نترسید.
 
-3. Introduce incremental changes and test in lockstep. If tests break, try to analyze
-whether it was expected. Don't be afraid to break even the characterization tests
-if that behavior is something that was intended to change.
+توجه داشته باشید که تست های مشخصه تمام رفتارهای موجود کد شما از جمله اشکالات را ثبت می کنند. هنگامی که کد شما وارد مرحله پروداکشن شد و کاربران با آن آشنا شدند، اشکالات می توانند به رفتار مورد انتظار تبدیل شوند. بنابراین این تست ها به عنوان یک مستند قابل آزمایش از عملکرد همانطور که هست عمل می کنند.
 
-Observe that characterization tests capture all the existing behavior of your code, including
-bugs. Once your code goes into production and users become familiar with it, the bugs can
-become the expected behavior. So these tests serve as a testable documentation of the as-is
-functionality.
+اگر مجموعه خوبی از تست های دانه ایی در اطراف کد خود دارید، می توانید به سرعت تأثیر تغییر کد خود را پیدا کنید. از این رو، ارزش نوشتن تست های واحد بیشتر با پوشش خوب به شما کمک می کند تا تأثیر یک تغییر را سریع تشخیص دهید.
 
-If you have a good set of granular tests around your code, you can quickly find the effect of
-changing your code. Hence, the value of writing more unit tests with good coverage will
-help you quickly identify the impact of a change.
+از سوی دیگر، اگر تصمیم به بازنویسی با حذف کد خود دارید، اما نه داده های خود، جنگو می تواند کمک قابل توجهی به شما کند.
 
-On the other hand, if you decide to rewrite by discarding your code but not your data,
-Django can help you considerably.
+## یکپارچگی دیتابیس میراثی
 
-## Legacy database integration
 
-There is an entire section on legacy databases in Django documentation and rightly so, as
-you will run into them many times. Data is more important than code, and databases are
-the repositories of data in most enterprises.
+یک بخش کامل در مورد پایگاه داده های قدیمی در اسناد جنگو وجود دارد و این کار درستی است، زیرا بارها با آنها برخورد خواهید کرد. داده ها مهم تر از کد هستند و پایگاه های داده مخازن داده ها در اکثر شرکت ها هستند.
 
-You can modernize a legacy application written in other languages or frameworks by
-importing their database structure into Django. As an immediate advantage, you can use
-the Django admin interface to view and change your legacy data.
+شما می توانید یک برنامه قدیمی را که به زبان ها یا فریم ورک های دیگر نوشته شده است، با وارد کردن ساختار پایگاه داده آنها به جنگو مدرن کنید. به عنوان یک مزیت ، می توانید از رابط مدیریت جنگو برای مشاهده و تغییر داده های قدیمی خود استفاده کنید.
 
-Django makes this easy with the `inspectdb` management command, which looks as
-follows:
+جنگو با دستور مدیریت `inspectdb` که به صورت زیر است این کار را آسان می کند:
+
 
 ```bash
 $ python manage.py inspectdb > models.py
 ```
 
-This command, if run while your settings are configured to use the legacy database, can
-automatically generate the Python code that will go into your models file. By default, these
-models are unmanaged, that is, `managed = False`. In this state, Django will not control
-the model's creation, modification, or deletion.
+اگر این دستور در حالی اجرا شود که تنظیمات شما برای استفاده از پایگاه داده قدیمی پیکربندی شده است، می تواند به طور خودکار کد پایتون را ایجاد کند که در بخش فایل مدل های شما می رود. به طور پیش فرض، این مدل ها بدون مدیریت هستند، یعنی `managed = False`. در این حالت، جنگو ایجاد، اصلاح یا حذف مدل را کنترل نخواهد کرد.
 
-Here are some best practices if you are using this approach to integrate in a legacy
-database:
+اگر از این رویکرد برای ادغام یک پایگاه داده قدیمی استفاده می کنید، در اینجا بهترین روش ها آورده شده است: بق
+- از قبل محدودیت های ORM جنگو را بشناسید. در حال حاضر، کلیدهای اولیه چند ستونی (کامپوزیت) و پایگاه داده های NoSQL پشتیبانی نمی شوند. 
+- فراموش نکنید که مدل های تولید شده را به صورت دستی اصلاح کنید. به عنوان مثال، فیلدهای `id` اضافی را حذف کنید زیرا جنگو آنها را به طور خودکار ایجاد می کند. 
+- روابط کلید خارجی ممکن است به صورت دستی تعریف شوند. در برخی پایگاه‌های داده، مدل‌های تولید شده به صورت خودکار دارای فیلدهای عدد صحیح (با پسوند `_id`) هستند. 
+- مدل های خود را در برنامه های جداگانه سازماندهی کنید. بعداً افزودن نماها، فرم‌ها و تست‌ها در پوشه‌های مناسب آسان‌تر خواهد بود.  
+- به یاد داشته باشید که اجرای migrations، جداول مدیریت جنگو (`django_*` و `auth_*`) را در پایگاه داده قدیمی ایجاد می کند.
 
-- Know the limitations of Django ORM beforehand. Currently, multicolumn
-(composite) primary keys and NoSQL databases are not supported.
+در حالت ایده‌آل، باید بتوان از مدل‌های تولید خودکار بلافاصله استفاده کرد، اما در عمل، آزمون و خطای زیادی می‌طلبد. گاهی اوقات، نوع داده ای که جنگو استنباط می کند ممکن است با انتظارات شما مطابقت نداشته باشد. در موارد دیگر، ممکن است بخواهید متا اطلاعات اضافی، مانند `unique_together` را به مدل خود اضافه کنید.
 
-- Don't forget to manually clean up the generated models; for example, remove the
-redundant `id` fields since Django creates them automatically.
 
-- Foreign key relationships may have to be manually defined. In some databases,
-the autogenerated models will have them as integer fields (suffixed with `_id`).
+در نهایت، شما باید بتوانید تمام داده‌هایی را که در داخل برنامه قدیمی PHP داشتید، در رابط کاربری Django خود مشاهده کنید. من مطمئن هستم که مشاهده این دیتاها در جنگو لبخند به لب شما خواهد آورد.
 
-- Organize your models into separate apps. Later, it will be easier to add the views,
-forms, and tests in the appropriate folders.
+## آینده نگری<sup>[3](#footnote-3)</sup>  (Future proof)
 
-- Remember that running the migrations will create Django's administrative tables
-(`django_*` and `auth_*`) in the legacy database
+یک پایه کد خوب نوشته شده برای کار کردن لذت بخش است. یک پایگاه کد بد سازماندهی شده و  شکننده معمولاً به عنوان کد قدیمی در نظر گرفته می شود و مانع نوآوری می شود. بنابراین چگونه می توانید شانس در نظر گرفتن برنامه خود را به عنوان کد مورثی کاهش دهید؟ در اینجا چند توصیه وجود دارد:
 
-In an ideal world, your autogenerated models will immediately start working, but in
-practice, it takes a lot of trial and error. Sometimes, the data type that Django inferred
-might not match your expectations. In other cases, you might want to add additional meta-
-information, such as `unique_together`, to your model.
+- **منسوخ ‌شده‌های جنگو**: منسوخ شده ها به شما می‌گویند که آیا یک ویژگی یا اصطلاح در آینده از جنگو حذف خواهد شد. از جنگو 1.11 آنها به طور پیش فرض غیر فعال هستند. از `python -Wd`  استفاده کنید تا اخطارهای منسوخ شدن نمایش داده شوند.
+- **بررسی کد**: از کیفیت بالای کد اطمینان حاصل کنید و روش برتر را در بررسی ها تشویق کنید.
+- **قالب‌بندی ثابت**: برای کاهش زمان بازبینی، از یک برنامه قالب‌بندی کد مانند `black` جهت مرتب شدن کدها قبل از اجرای آن استفاده کنید
+- **افزایش پوشش کد<sup>[4](#footnote-4)</sup>**: تست های بیشتری بنویسید، به خصوص تست های واحد.
+- **اشاره به نوع<sup>[5](#footnote-5)</sup>**: از سرنخ‌های نوع برای انجام تحلیل ایستای کد  پایتون 3 و کاهش تعداد موارد تست استفاده کنید.
+- **مدیریت پیکربندی**: کنترل نسخه قوی و سایر شیوه های مدیریت پیکربندی را برای انجام پروژه خود در نظر بگیرید تا اطمینان از محیط های قابل تکرار و بازگشت بدون دردسر را داشته باشید. این شامل استفاده از مجموعه ای از ابزارها از Git تا  Ansible است، در حالی که فرهنگ DevOps چابکی دارید.
 
-Eventually, you should be able to see all the data that was locked inside that aging PHP
-application in your familiar Django admin interface. I am sure this will bring a smile to
-your face.
+## خلاصه
+در این فصل، تکنیک‌های مختلفی را برای درک کدهای قدیمی بررسی کردیم. خواندن کد اغلب یک مهارت دست کم گرفته شده است. با این حال، به جای اختراع مجدد چرخ، ما نیاز داریم تا زمانی که ممکن است از کدهای با عملکرد مناسب دوباره استفاده کنیم. در این فصل و در سراسر کتاب، ما بر اهمیت نوشتن موارد تست به عنوان بخشی جدایی ناپذیر از کدنویسی تاکید می کنیم.
 
-## Future proofing
+در فصل بعدی، در مورد نوشتن موارد تست و کار اغلب خسته کننده اشکال زدایی که به دنبال آن انجام می شود صحبت خواهیم کرد.
 
-A well-written code base is a pleasure to work with. A poorly organized and brittle code
-base usually ends up as legacy code and hinders innovation. So how can you reduce the
-chances of your application being considered as legacy? Here are some recommendations:
 
-- **Django deprectations**: Deprectations tell you whether a feature or idiom will be
-discontinued from Django in the future. Since Django 1.11, they are quiet by
-default. Use `python -Wd` so that deprecation warnings do appear.
-- **Code reviews**: Ensure high code quality and encourage best practices in reviews.
-- **Consistent Formatting**: Use a code formatter like `black` before committing code
-to reduce review time
-- Increase code coverage: Write more tests, especially unit tests.
-- **Type hinting**: Use type hinting to perform static analysis of Python 3 code and
-reduce the number of test cases.
-- **Configuration management**: Have strong version control and other
-configuration management practices to ensure replicable environments and
-painless rollbacks. This includes using a host of tools from Git to Ansible, while
-having an agile DevOps culture.
+---
+<a name="footnote-1">1</a>:   محیط، منظور محیط شبکه است که در واقع مرز بین شبکه داخلی امن یک سازمان و هر شبکه خارجی کنترل نشده دیگری مثل اینترنت است.  در اینجا اشاره به نفوذ به داخل شبکه آن سازمان توسط حملات سایبری دارد.
 
-## Summary
+<a name="footnote-2">2</a>:  زمانی از این اصطلاح استفاده می شود که فرد به تئوری های توطئه اعتقاد دارد و یا اصطلاحا اعتقاد به این دارد که رویداد فعلی نتیجه نقشه های مخفی افراد قدرتمند هستند
 
-In this chapter, we looked at various techniques to understand the legacy code. Reading
-code is often an underrated skill. However, rather than reinventing the wheel, we need to
-judiciously reuse good working code whenever possible. In this chapter, and throughout
-the rest of the book, we emphasize the importance of writing test cases as an integral part of
-coding.
+<a name="footnote-3">3</a>:  ‌ فرآیند پیش‌بینی آینده و ارائه روش‌هایی جهت حداقل شدن شوک‌ها و تنش‌های رخدادها و حوادث آینده است. جهت به خداقل رسیدن تغییرات در کد ها است.
 
-In the next chapter, we will talk about writing test cases and the often frustrating task of
-debugging that follows this.
+<a name="footnote-4">4</a>:  پوشش کد (Code Coverage) به میزان خط کدی که توسط تست های نوشته شده شما پاس می شوند گفته می شود   
+
+<a name="footnote-5">5</a>: اشاره به نوع (Type hinting) در واقع قابلیتی است که از طریق آن می توانید تعیین کنید که انتظار چه نوع داده ای را از به عنوان نمونه تابع مد نظر خود داریم.
+
+
+
+
+
 
