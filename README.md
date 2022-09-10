@@ -207,7 +207,7 @@
   
 | تاریخ اتمام ترجمه |       مترجم      |                    فصل             |
 |:-----------------:|:----------------:|:----------------------------------:|
-|        ۱ شهریور           |  محمدامیر لطفی پور       |01- Django and Patterns             |
+|        اتمام           |  محمدامیر لطفی پور       |01- Django and Patterns             |
 |         اتمام     |  Rahimz       |02- Application Design              |
 |           ۱ شهریور         |  Alireza Khorami       |03- Models                          |
 |         اتمام          |  Hamed Daneshvar       |04- Views and URLs                  |
@@ -218,7 +218,7 @@
 |          اتمام         |  Hamed Daneshvar       |09- Creating APIs                   |
 |              اتمام     |  Fereydoon jafari babookani       |10- Dealing with Legacy Code        |
 |            اتمام       |  Rahimz       |11- Testing and Debugging           |
-|            ۱ شهریور       |  Mohammad Amin Orojloo       |12- Security                        |
+|            اتمام       |  Mohammad Amin Orojloo       |12- Security                        |
 |         اتمام       |  mokarramis        |13- Production-Ready                |
 |              اتمام     |  Hamed Alizade       |Appendix A: Python 2 Versus Python 3|
 
