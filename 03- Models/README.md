@@ -17,12 +17,10 @@ Show me your tables, and I won't usually need your flowcharts; they'll be obviou
 
 ```
 
-Traditionally, designing code around well thought-out data is always recommended. But in this age of big data, that advice has become more relevant. If your data model is poorly designed, the volume of data will eventually cause scalability and maintenance issues. I recommend using the following adage on how to balance code and data:
+به طور سنتی, طراحی کد با در نظر گرفتن دیتایی که روش خوب فکر شده رو همیشه پیشنهاد میدن. ولی تو این دوره زمونه دیتای بزرگ , این توصیه خیلی بیشتر مربوط شده. اگه مدل    یا  از نظر نگهداری مشکلاتی ایجاد خواهد کرد. من پیشنهاد میکنم از این ضرب المثل برای ایجاد تعادل بین کد و داده استفاده کنید.  (scalability)دیتای شما بد طراحی شده باشه, حجم دیتای شما از نظر مقیاس پذیری  
 
 ```
-Rule of Representation: Fold knowledge into data so program logic can
-be stupid and robust.
-
+قانون نمایندگی: دانش رو در دیتا قرار بدید تا منطق برنامه به صورت احمقانه و قدرتمند نمایان باشه.  
 ```
 
 فکر کن چطوری میتونی پیچیدگی رو از کد به دیتا ببری. همیشه سخت تره که منطق کد رو بفهمی تا منطق دیتارو. یونیکس از همین فلسفه خیلی خوب خوب استفاده میکنه با استفاده از دادن یک عالمه وسیله ساده که میتونن با هم ترکیب(پایپ) بشن تا هر گونه تغییر رو روی دیتا های متنی انچام بدی
@@ -86,6 +84,7 @@ be stupid and robust.
 ```
 
 ### شکار مدل ها 
+
 این اولین دید از شناختن مدل ها توی ابرکتابه. معمول برای اولین تلاش,ما فقط مدل اصلی و روابطش رو به صورت نمودار ساده نمایان میکنیم.
 
 ![./images/1.png](./images/1.png)
@@ -99,13 +98,12 @@ be stupid and robust.
 - 'اسم' ها معمولا وقتی دارید شرح میدید به صورت موجودیت معنا پیدا میکنن
 - جعبه هایی که موجودیت ها رو نشون میدن به مدل تبدیل میشوند.
 - خط های متصل کننده که دو جهتی هستند و سه نوع از روابط رو در جنگو تعریف میکنند:
-یک-به-یک , یک-به-خیلی (با کلید خارجی پیاده سازی میشن) و خیلی-به-خیلی
+  یک-به-یک , یک-به-خیلی (با کلید خارجی پیاده سازی میشن) و خیلی-به-خیلی
 - بخشی که رابطه یک-به-یک رو تعریف میکنه در **موجودیت-رابطه مدل** وجود دارد. در کلماتی دیگه,طرف ان ام جایی هست که کلید خارجی تعریف میشه.
 
 نمودار کلاس ها میتونن به این کدهای جنگو ارتباط داده بشن. (که بین چندین اپ پخش میشن.): 
 
 ```
-
 class Profile(models.Model):
     user = models.OneToOneField(User)
 
@@ -139,6 +137,7 @@ class Like(models.Model):
 باید فایل هایی با نام هایی مثل [postable.py](http://postable.py) , [post.py](http://post.py) و [comment.py](http://comment.py) بسازیم و سپس ساختمان اون فولدر به شکل زیر خواهد بود:  
 
 models/
+
 - [comment.py](http://comment.py/)
 - **init**.py
 - [postable.py](http://postable.py/)
@@ -203,56 +202,61 @@ from comment import Comment
 
 ![./images/4.png](./images/4.png)
 
-The preceding geographic data has been extracted from
-[http://www.golombek.com/locations.html](http://www.golombek.com/locations.html)
+دیتای جغرافیای زیر از [http://www.golombek.com/locations.html](http://www.golombek.com/locations.html)  به دست اومده. 
 
-- No attribute (cell) with multiple values
-- A primary key defined as a single column or a set of columns (composite key)
+- هیچ خصوصیتی(بخش) چندین ارزش نداره
 
-Let's try to convert our spreadsheet into a database table. Evidently, our Power column breaks the first rule.
+- یک کلید اصلی(پرایمری) به صورت یک ستون یا چندین ستون(کامپوزیت کی) تعریف می شود.
 
-The updated table here satisfies the first normal form. The primary key (marked with a *) is a combination of **Name** and **Power**, which should be unique for each row:
+  
+
+بیاید سعی کنیم تا اسپردشیت مون رو تبدیل به یک جدول دیتابیس کنیم. به صورت تجربی, قدرت ستون ما اولین قانون رو میشکنه 
+
+جدول تغییر کرده اینجا اولین نرمال فرم رو راضی میکنه. کلید اصلی(پرایمری کی) که به صورت  (a*) نشون داده میشه یک ترکیبی از اسم و قدرت هستش , که باید برای هر ردیف به صورت یکتا تعریف بشه.  
 
 ![./images/5.png](./images/5.png)
 
 ![./images/5-2.png](./images/5-2.png)
 
-##Second normal form (2NF)
+## دومین نرمال فرم (2NF)
 
-The second normal form must satisfy all the conditions of the first normal form. In addition, it must satisfy the condition that all non-primary key columns must be dependent on the entire primary key.
+  دومین نرمال فورم باید همه شرط های فرم اول رو رعایت کنه. در کنارش , باید شرطی رو اجرا کنه که تمام  ستون هایی که کلید اصلی(پرایمری کی) نیستند.باید به تمام کلید اصلی بستگی داشته باشند. 
 
-In the previous table, notice that Origin depends only on the superhero, that is, Name. It doesn't matter which Power we are talking about. So, Origin is not entirely dependent on the composite primary key — Name and Power.
+در جدول قبلی, دقت کن که ریشه فقط به ابرقهرمان بستگی داره,که , نامش هست. فرقی نداره در مورد کدوم قدرت داریم حرف میزنیم. پس, ریشه تماما به کامپوزیت پرایمری کی وابسته نیست. --- نام و قدرت. 
 
-Let's extract just the origin information into a separate table called Origin, as shown here:
+بیا ریشه اطلاعات رو در یک جدول جداگانه به نام ''Origin'' قرار بدیم. همینطور که نمایش داده شده:  
 
 ![./images/6.png](./images/6.png)
 
-Now our Sightings table updated to be compliant to the second normal form looks as follows:
+حالا جدول Sightings رو طوری تغییر میدیم که به نرمال فرم دوم هم تطابق داشته باشه.
 
 ![./images/7.png](./images/7.png)
 
-##Third normal form (3NF)
+## سومین فرم نرمال (3NF)
 
-In third normal form, the tables must satisfy the second normal form and should additionally satisfy the condition that all non-primary key columns must be directly dependent on the entire primary key and must be independent of each other.
+در سومین نرمال فورم, جدول ها باید دومین نرمال فرم را رعایت کنند و در کنار آن باید شرطی که همه ستون های کلید غیر اصلی(پرایمری) باید رعایت کند این است که این ستون ها باید به طور مستقیم به تمامی کلید اصلی وابسته باشد و باید به همدیگر وابسته نباشند. 
 
-Think about the **Country** column for a moment. Given the **Latitude** and **Longitude** , you can easily derive the **Country** column. Even though the country where a superpower was sighted is dependent on the Name-Power composite primary key, it is only indirectly dependent on them.
+به ستون **Country**  فک کنید یک لحظه. 
 
-So, let's separate the location details into a separate countries table as follows:
+با داشتن  **Latitude** and **Longitude**  **Country** رو به دست بیارید. خیلی راحت میتونید  ستون 
+
+فقط به صورت غیر مستقیم به آنها وابسته است., البته که کشوری که توش یک ابر قدرت دیده شده به کامپوزیت کی  اسم-قدرت وابسته است.  
+
+خب بیاید جزییات مکان رو به یک جدول کشورهای دیگه به صورت زیر جدا کنیم: 
 
 ![./images/8.png](./images/8.png)
 
-Now our Sightings table in its third normal form looks as follows:
+حالا جدول Sightings در سومین نرمال فورمش به صورت زیر خواهد بود:
 
 ![./images/9.png](./images/9.png)
 
-As before, we have replaced the superhero's name with the corresponding User ID that can be used to reference the user table.
+ User ID که میتوتیم ازش استفاده کنیم تا به جدول کاربران اشاره کنه جایگزین کردیم.  قبلا, ما اسم ابرقهرمان رو با 
 
-#Django models
+# مدل های جنگو 
 
-We can now take a look at how these normalized tables can be represented as Django models. Composite keys are not directly supported in Django. The solution used here is to apply the surrogate keys and specify the *unique_together* property in the *Meta* class:
+حالا میتونیم نگاه کنیم که این حدول های طبیعی سازی شده چطور میتونن به صورت مدل های جنگو نمایش داده بشوند. کامپوزیت کی ها به صورت مستقیم در جنگو ساپورت نمیشوند. راه       در یکی از خواص کلاس متا استفاده کنیم *unique_together*  و در آن یک surrogate keys  استفاده کنیم و راه حلی که اینجا استفاده شده اینه که از 
 
 ```
-
 class Origin(models.Model):
     superhero = models.ForeignKey(
     settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -298,16 +302,27 @@ class Sighting(models.Model):
 
 #Performance and denormalization
 
-Normalization can adversely affect performance. As the number of models increase, the number of joins needed to answer a query also increase. For instance, to find the number of superheroes with the Freeze capability in the USA, you will need to join four tables. Prior to normalization, any information can be found by querying a single table.
+#  کارایی و عادی سازی نکردن 
 
-You should design your models to keep the data normalized. This will maintain data integrity. However, if your site faces scalability issues, then you can selectively derive data from those models to create denormalized data.
+عادی سازی میتونه روی کارایی تاثیر منفی دارد. هر چقد که تعداد مدل ها افزایش پیدا میکند, تعداد جوین هایی که نیاز است تا یک کویری رو پاسخ بدهند افزایش پیدا میکند. به طور مثال, برای پیدا کردن تعداد ابرقهرمان ها با قابلیت یخ زدن در آمریکا, شما نیاز دارید که چهار تا جدول را جوین کنند. قبل از نرمال سازی, هر اطلاعاتی که میخواید توسط کویری زدن به یک جدول حل می شود. 
 
-#####Best Practice:
-*Normalize while designing, but denormalize while optimizing.*
+ باید سعی کنید که مدل ها رو جوری طراحی کنید که داده شما نرمالایزد باشد. این به یکپارچگی داده  
 
-For instance, if counting the sightings in a certain country is very common, then add it as an additional field to the *Location* model. Now, you can include the other queries using Django **object-relational mapping (ORM)** , unlike a cached value.
+شما باید به نحوی مدلتون رو طراحی کنید که داده ها نرمال سازی بشوند. این شرافت دیتا رو تضمین خواهد کرد.گرچه,اگر سایت شما با مشکلات مقیاس پذیری مواجه بشه,بعدش شما میتونید به صورت انتخابی داده رو از اون مدل ها خارج کنید تا دیتای غیرطبیعی(دی نرمالایزد) تحویل بگیرید.
 
-However, you need to update this count each time you add or remove a sighting. You need to add this computation to the *save* method of Sighting, add a signal handler, or even compute using an asynchronous job.
+##### بهترین تمرین ها
+
+*در حال طراحی نرمالایز کنید, ولی بعدا برای بهینه سازی دی نرمالایز کنید*
+
+برای مثال , اگر تعداد باری که یک رخداد در یک کشور رو بخوایم بشماریم کار بسیار شایعی کردیم, پس یک فیلد اضافی به مدل *Location* خودمون اضافه میکنیم. 
+
+  جنگو رو بزنید. در تقابل با یک ارزش کش شده. **object-relational mapping (ORM)**  حالا, شما میتونید کویری های دیگری رو توسط 
+
+گرچه,شما باید این تعداد رو هر بار که یک سایتینگ رو اضافه یا حذف میکنید باید تغییر بدید. شما باید این محاسبه رو توی متود *save* ذخیره کنید مدل Sighting. 
+
+یک سینگنال هندلر اضافه کنید, یا اضافه کردن با محاسبه یک کار اسینکرس.  
+
+
 
 If you have a complex query spanning several tables, such as a count of superpowers by country, then creating a separate denormalized table might improve performance.
 Typically, this table will be in a faster in-memory database or a cache. As before, we need to update this denormalized table every time the data in your normalized models changes (or you will have the infamous cache-invalidation problem).
@@ -357,7 +372,6 @@ Limitations of abstract models are as follows:
 Here is how the post and comment classes can be initially designed with an abstract base class:
 
 ```
-
 class Postable(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -389,7 +403,6 @@ Smaller mixins are better. Whenever a mixin becomes large and violates the singl
 In our previous example, the model mixin used to update *created* and *modified* time can be easily factored out, as shown in the following code:
 
 ```
-
 class TimeStampedModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now =True)
@@ -417,7 +430,7 @@ We have two base classes now. However, the functionality is clearly separated. T
 #Pattern — user profiles
 
 - *Problem: ** Every website stores a different set of user profile details. However, Django's built-in user model is meant for authentication details.
-**Solution: ** Create a user profile class with a one-to-one relation with the user model.
+  **Solution: ** Create a user profile class with a one-to-one relation with the user model.
 
 ####Problem details
 
@@ -432,7 +445,6 @@ Certain projects need multiple types of users. For example, SuperBook can be use
 The officially recommended solution is to create a user profile model. It should have a one-to-one relation with your user model. All the additional user information is stored in this model:
 
 ```
-
 class Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -453,7 +465,6 @@ Ideally, every time a user model instance is created, a corresponding user profi
 For example, we can listen for the *post_save* signal from the user model using the following signal handler in *profiles/signals.py*:
 
 ```
-
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
@@ -491,7 +502,6 @@ class ProfilesConfig(AppConfig):
 Next, change the line mentioning profiles in your *INSTALLED_APPS* to a dotted path pointing to this *AppConfig*. So your settings should look as follows:
 
 ```
-
 INSTALLED_APPS = [
     'profiles.apps.ProfilesConfig',
     'posts',
@@ -508,7 +518,6 @@ Now, a user's details will be in two different places within the admin: the auth
 For convenience, the profile admin can be made inline to the default user admin by defining a custom *UserAdmin* in *profiles/admin.py* as follows:
 
 ```
-
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import Profile
@@ -534,7 +543,6 @@ An aggregate *Profile* approach is recommended since it gives the flexibility to
 For example, SuperBook will need a superhero type profile and an ordinary (non superhero) profile. It can be implemented using a single unified profile model as follows:
 
 ```
-
 class BaseProfile(models.Model):
     USER_TYPES = (
         (0, 'Ordinary'),
@@ -594,11 +602,11 @@ Consider refactoring out a *Service* object if your model contains code for any 
 following:
 
 1. Interactions with external services, for example, checking whether the user is
-eligible to get a *SuperHeroProfile* with a web service
+   eligible to get a *SuperHeroProfile* with a web service
 2. Helper tasks that do not deal with the database, for example, generating a short
-URL or random captcha for a user
+   URL or random captcha for a user
 3. Making a short-lived object without a database state, for example, creating a
-JSON response for an AJAX call
+   JSON response for an AJAX call
 4. Functionality spanning multiple model instances yet do not belong to anyone
 5. Long-running tasks such as Celery tasks
 
@@ -618,7 +626,6 @@ interactions with a system. They are usually kept in a separate file named *[ser
 For example, checking a web service is sometimes dumped into a model method as follows:
 
 ```
-
 class Profile(models.Model):
     ...
     def is_superhero(self):
@@ -642,7 +649,6 @@ def is_superhero(self):
 The service object can now be defined in *[services.py](http://services.py/)* as follows:
 
 ```
-
 API_URL = "<http://api.herocheck.com/?q={0}>"
 
 class SuperHeroWebAPI:
@@ -665,7 +671,6 @@ Imagine there is a business reason to blacklist certain users from becoming supe
 based on their username. Our service object can be easily modified to support this:
 
 ```
-
 class SuperHeroWebAPI:
     ...
     @staticmethod
@@ -709,7 +714,6 @@ A straightforward way to implement this is to define functions, such as get_age 
 the following:
 
 ```
-
 class BaseProfile(models.Model):
     birthdate = models.DateField()
     #...
@@ -735,7 +739,6 @@ models can use it as well. In the previous example, replace the function definit
 the following:
 
 ```
-
  @property
  def age(self):
 
@@ -775,7 +778,6 @@ calculation, we might want to cache the result. This way, the next time the *pro
 accessed, the *cached* value is returned:
 
 ```
-
 from django.utils.functional import cached_property
 
     #...
@@ -809,7 +811,6 @@ often our core business logic. For example, we can find the posts accessible to 
 by the following code:
 
 ```
-
 public = Posts.objects.filter(privacy="public")
 
 ```
@@ -818,7 +819,6 @@ This criterion might change in the future. For example, we might want to also ch
 whether the post was marked for editing. This change might look as follows:
 
 ```
-
     public = Posts.objects.filter(privacy=POST_PRIVACY.Public, draft=False)
 
 ```
@@ -842,7 +842,6 @@ managers are implemented as very thin wrappers around a *QuerySet* object. Notic
 identical interface:
 
 ```
-
     >>> Post.objects.filter(posted_by__username="a")
     [<Post: a: Hello World>, <Post: a: This is Private!>]
     >>> Post.objects.get_queryset().filter(posted_by__username="a")
@@ -862,7 +861,6 @@ Our previous example for public posts can be easily converted into a custom mana
 follows:
 
 ```
-
 # managers.py
 from django.db.models.query import QuerySet
 
@@ -883,7 +881,6 @@ It sometimes makes sense to replace the default *objects* manager with our custo
 manager, as shown in the following code:
 
 ```
-
 from .managers import PostManager
 
 class Post(Postable):
@@ -896,7 +893,6 @@ By doing this, to access *public_posts* our code gets considerably simplified to
 following:
 
 ```
-
 public = Post.objects.public_posts()
 
 ```
@@ -904,7 +900,6 @@ public = Post.objects.public_posts()
 Since the returned value is a *QuerySet*, they can be further filtered:
 
 ```
-
 public_apology = Post.objects.public_posts().filter(message_startswith="Sorry")
 
 ```
@@ -919,7 +914,6 @@ True to their name (or rather the latter half of their name), *QuerySets* suppor
 contain the user objects:
 
 ```
-
     >>> q1 = User.objects.filter(username__in=["a", "b", "c"])
     [<User: a>, <User: b>, <User: c>]
     >>> q2 = User.objects.filter(username__in=["c", "d"])
@@ -940,7 +934,6 @@ a>, <User: b>]*.
 The same operations can be done on *QuerySets* using the *Q* objects:
 
 ```
-
     from django.db.models import Q
 
     # Union
@@ -975,7 +968,6 @@ chronological order. The previous methods of combining *QuerySets* won't work. A
 solution would be to convert them to lists, concatenate, and sort them, as follows:
 
 ```
-
  >>>recent = list(posts)+list(comments)
  >>>sorted(recent, key=lambda e: e.modified, reverse=True)[:3]
  [<Post: user: Post1>, <Comment: user: Comment1>, <Post: user: Post0>]
@@ -990,7 +982,6 @@ A much better solution uses iterators to reduce the memory consumption. Use the
 *itertools.chain* method to combine multiple *QuerySets* as follows:
 
 ```
-
  >>> from itertools import chain
  >>> recent = chain(posts, comments)
  >>> sorted(recent, key=lambda e: e.modified, reverse=True)[:3]
@@ -1010,34 +1001,35 @@ migrations are essential to a methodical development workflow.
 The new workflow is essentially as follows:
 
 1. The first time you define your model classes, you will need to run the following:
-    
-    ```
-    
-        python manage.py makemigrations <app_label>
-    
-    ```
-    
+
+   ```
+       python manage.py makemigrations <app_label>
+   
+   ```
+
 2. This will create migration scripts in the *app/migrations* folder
+
 3. Run the following command in the same (development) environment:
-    
-    ```
-        python manage.py migrate <app_label>
-    
-    ```
-    
+
+   ```
+       python manage.py migrate <app_label>
+   
+   ```
+
 4. This will apply the model changes to the database. Sometimes, questions are
-asked to handle the default values, renaming, and so on.
+   asked to handle the default values, renaming, and so on.
+
 5. Propagate the migration scripts to other environments. Typically, your version
-control tool, for example Git, will take care of this. As the latest source is checked
-out, the new migration scripts will also appear.
+   control tool, for example Git, will take care of this. As the latest source is checked
+   out, the new migration scripts will also appear.
+
 6. Run the following command in these environments to apply the model changes:
-    
-    ```
-    
-        python manage.py migrate <app_label>
-    
-    ```
-    
+
+   ```
+       python manage.py migrate <app_label>
+   
+   ```
+
 7. Whenever you make changes to the models classes, repeat step 1 to step 5.
 
 If you omit the *app_label* in the commands, Django will find unapplied changes in every
