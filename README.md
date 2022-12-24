@@ -209,7 +209,7 @@
 |:-----------------:|:----------------:|:----------------------------------:|
 |        اتمام           |  محمدامیر لطفی پور       |01- Django and Patterns             |
 |         اتمام     |  Rahimz       |02- Application Design              |
-|           ۱ شهریور         |  Alireza Khorami       |03- Models                          |
+|           -         |  -       |03- Models                          |
 |         اتمام          |  Hamed Daneshvar       |04- Views and URLs                  |
 |            اتمام       |  Rahimz        |05- Templates                       |
 |            اتمام     |  sajjad ebrahimi moghaddam        |06- Admin Interface                 |
