@@ -1,124 +1,96 @@
-# Models
+# مدل‌ها
 
-In this chapter, we will discuss the following topics:
-* The importance of models
-* Class diagrams
-* Model structural patterns
-* Model behavioral patterns
-* Migrations
+در این بخش به بحث‌های زیر می‌پردازیم:
 
-I was once consulted by a data analytics start-up in their early stages. Despite data retrieval being limited to a window of recent data, they had performance issues with page load sometimes taking several seconds. After analyzing their architecture, the problem seemed to be in their data model. However, migrating and transforming petabytes of structured live data seemed impossible.
+- اهمیت مدل‌ها
+- نمودار کلاس‌ها
+- الگوی‌های ساختاری مدل
+- الگوهای رفتاری مدل 
+- مایگریشن‌ها (مهاجرت‌ها)
 
-    Show me your flowcharts and conceal your tables, and I shall continue to be mystified.
-    Show me your tables, and I won't usually need your flowcharts; they'll be obvious.
-    (Fred Brooks, The Mythical Man-month)
-    
+من یک بار به یک استارت آپ تحلیل داده، در مراحل اولیه‌شان مشاوره دادم. با وجود اینکه گرفتن دیتا به یک بازه زمانی اخیر محدود شده بود، آن‌ها مشکلات کارایی(performance) داشتند. باز کردن برخی صفحات بعضی اوقات چند ثانیه طول می‌کشید. بعد از بررسی معماری‌شان، به تظر می‌آمد که مشکل از مدل داده‌شان بود. در عین حال، مهاجرت کردن(migrating) و تبدیل پتابایت‌هایی از دیتای ساختاریافته و زنده، غیر ممکن به نظر می‌رسید.
 
-Traditionally, designing code around well thought-out data is always recommended. But in this age of big data, that advice has become more relevant. If your data model is poorly designed, the volume of data will eventually cause scalability and maintenance issues. I recommend using the following adage on how to balance code and data:
+> "فلوچارت خود را به من نشان بدهید و جداول خود را پنهان کنید و من همچنان مبهوت خواهم ماند.
+جداول خود را به من نشان دهید و من معمولاً نیازی به فلوچارت‌ها نخواهم داشت، آن‌ها آشکار خواهند بود." (فرد بروکز، The Mythical Man-month)
 
-    Rule of Representation: Fold knowledge into data so program logic can
-    be stupid and robust.
-
-Think about how you can move the complexity from code to data. It is always harder to understand logic in code compared to data. UNIX has used this philosophy very successfully by giving many simple tools that can be piped to perform any kind of manipulation on textual data.
-
-Finally, data has greater longevity than code. Enterprises might decide to rewrite entire codebases because they don't meet their needs anymore, but the databases are usually maintained and even shared across applications.
-
-Well-designed databases are more of an art than a science. This chapter will give you some fundamental principles such as Normalization and best practices around organizing your data. But before that, let's look at where data models fit in a Django application.
+به طور سنتی، طراحی کد بر اساس داده‌های فکر شده همیشه توصیه می‌شود. اما در این عصر داده‌های بزرگ، این توصیه‌ها مرتبط‌تر هم شده است. اگر مدل داده شما ضعیف طراحی شده باشد، حجم داده‌ها در نهایت باعث مشکلات مقیاس پذیری و نگهداری می‌شود. توصیه می‌کنم از ضرب المثل زیر در مورد نحوه تعادل کد و داده استفاده کنید:  
 
 
-#M is bigger than V and C
-In Django, models are classes that provide an object-oriented way of dealing with databases. Typically, each class refers to a database table and each attribute refers to a database column. You can make queries to these tables using an automatically generated API.
-
-Models can be the base for many other components. Once you have a model, you can rapidly derive model admins, model forms, and all kinds of generic views. In each case, you would need to write a line of code or two, just so that it does not seem too magical.
-
-Also, models are used in more places than you would expect. This is because Django can be run in several ways. Some of the entry points of Django are as follows:
-
-* The familiar web request-response flow
-* Django interactive shell
-* Management commands
-* Test scripts
-* Asynchronous task queues such as Celery
-
-In almost all of these cases, the model modules would get imported (as a part of **django.setup()**). Hence, it is best to keep your models free from any unnecessary dependencies or to import any other Django components such as views.
-
-In short, designing your models properly is quite important. Now let's get started with the SuperBook model design.
-
-####The Brown Bag Lunch:
-    Author's Note: The progress of the SuperBook project will appear in a box
-    like this. You may skip the box, but you will miss the insights,
-    experiences, and drama of working in a web application project.
-
-    Steve's first week with his client, the SuperHero Intelligence and
-    Monitoring (SHIM) for short, was a mixed bag. The office was incredibly
-    futuristic, but getting anything done needed a hundred approvals and
-    sign-offs.
-
-    Being the lead Django developer, Steve had finished setting up a midsized development server hosting four virtual machines over two days.
-    The next morning, the machine itself had disappeared. A washing
-    machine-sized robot nearby said that it had been taken to the forensic
-    department due to unapproved software installations.
+> **قانون بازنمایی** (Rule of Representation): دانش را در دیتا قرار بدهید تا منطق برنامه قدرتمند و احمق باشد.  
 
 
-    The CTO, Hart, was, however, of great help. He asked the machine to be
-    returned in an hour with all the installations intact. He had also sent preapprovals for the SuperBook project to avoid any such roadblocks in the
-    future.
+فکر کنید که چطور می‌توانید پیچیدگی را از کد به دیتا ببرید. همیشه فهمیدن منطق کد از فهمیدن منطق دیتا سخت‌تر است. یونیکس از همین فلسفه به خوبی استفاده کرده است تا تعداد زیادی ابزار ساده ایجاد شود که می‌توانند با هم ترکیب (پایپ) شوند و هر گونه تغییر روی دیتاهای متنی را انجام دهند.
+
+در نهایت، داده‌ها طول عمر بیشتری نسبت به کد دارند. شرکت‌ها ممکن است تصمیم بگیرند کل پایگاه‌های کد را بازنویسی کنند زیرا دیگر نیازهای آن‌ها را برآورده نمی‌کنند، اما پایگاه‌های داده معمولاً نگهداری می‌شوند و حتی در بین برنامه‌ها به اشتراک گذاشته می‌شوند.
+
+پایگاه‌های داده‌ای که به خوبی طراحی شده اند بیشتر یک هنر هستند تا یک علم. این فصل برخی از اصول اساسی مانند نرمال سازی(Normalization) و بهترین شیوه‌ها در مورد سازماندهی داده‌ها را به شما ارائه می‌دهد. اما قبل از آن، بیایید ببینیم مدل‌های داده در برنامه جنگو کجا قرار می‌گیرند.
+
+# ام بزرگ تر از وی و سی بزرگ تر از وی است
+
+در جنگو، مدل‌ها کلاس‌هایی هستند که روشی شیءگرا برای برخورد با پایگاه‌های داده ارائه می‌کنند. به طور معمول، هر کلاس به یک جدول پایگاه داده و هر ویژگی به یک ستون پایگاه داده اشاره دارد. می‌توانید با استفاده از یک API که به طور خودکار تولید می‌شود، کوئری‌هایی را در این جداول ایجاد کنید.
+
+مدل‌ها می‌توانند پایه بسیاری از اجزای دیگر باشند. هنگامی که یک مدل دارید، می‌توانید به سرعت ادمین‌های مدل، فرم‌های مدل و انواع نماهای عمومی‌را استخراج کنید. در هر مورد، باید یک یا دو خط کد بنویسید تا خیلی هم جادویی به نظر نرسد.
+
+همچنین، مدل‌ها در مکان‌های بیشتری از آنچه انتظار دارید، استفاده می‌شوند. این به این دلیل است که جنگو را می‌توان به روش‌های مختلفی اجرا کرد. برخی از نقاط ورود جنگو به شرح زیر است:
 
 
-    Later that afternoon, Steve was having a brown-bag lunch with him.
-    Dressed in a beige blazer and light blue jeans, Hart arrived well in time.
-    Despite being taller than most people and having a clean-shaven head, he
-    seemed cool and approachable. He asked if Steve had checked out the
-    previous attempt to build a superhero database in the sixties.
+- جریان آشتای درخواست-پاسخ وب
+- شل اینترکتیو جنگو
+- دستورات مدیریتی (management commands)
+- اسکریپت‌های تست
+- صف‌های وظایف ناهمزمان همانند سلری
 
-    "Oh yes, the Sentinel project, right?" said Steve. "I did. The database
-    seemed to be designed as an Entity-Attribute-Value model, something
-    that I consider an anti-pattern. Perhaps they had very little idea about the
-    attributes of a superhero those days."
+تقریباً در همه این موارد، ماژول‌های مدل وارد می‌شوند (به عنوان بخشی از **django.setup()**). از این رو، بهتر است مدل‌های خود را از هر گونه وابستگی غیر ضروری یا هر جزء دیگر جنگو، مانند view‌ها دور نگه دارید.
 
-    Hart almost winced at the last statement. In a slightly lowered voice, he
-    said, "you are right, I didn't. Besides, they gave me only two days to
-    design the whole thing. I believe there was literally a nuclear bomb ticking
-    somewhere."
+به طور خلاصه، طراحی درست مدل‌های شما، بسیار مهم است. حالا بیایید با طراحی مدل SuperBook شروع کنیم.
 
-    Steve's mouth was wide open and his sandwich had frozen at its entrance.
-    Hart smiled. "Certainly not my best work. Once it crossed about a billion
-    entries, it took us days to run any kind of analysis on that damn database.
-    SuperBook would zip through that in mere seconds, right?"
+####  کیف قهوه‌ای نهار:
 
-    Steve nodded weakly. He had never imagined that there would be around
-    a billion superheroes in the first place.
+    یادداشت نویسنده: پیشروی این پروژه سوپرکتاب در یک بخش مثل این نمایش داده خواهد شد. شاید شما از جعبه عبور کنید, ولی بینش‌ها و تجربه‌های زیاد و درامای کار کردن روی یک پروژه وب اپلیکیشن را از دست می‌دهید.
+
+    هفته اول استیو با مشتریش، هوش ابرقهرمانی و مانیتورینگ (شیم) به صورت کوتاه، خیلی قاطی پاتی بود. دفتر فوق‌العاده آینده‌نگر بود، اما انجام هر کاری به صدها تائید و امضا نیاز داشت.
 
 
+    استیو به عنوان توسعه‌دهنده اصلی جنگو، راه‌اندازی یک سرور توسعه متوسط را که میزبان چهار ماشین مجازی بود بعد از دو روز به پایان رسانده بود. صبح روز بعد، خود دستگاه ناپدید شده بود. یک ربات به اندازه ماشین لباسشویی در همان نزدیکی گفت که به دلیل نصب نرم افزار تایید نشده به بخش پزشکی قانونی منتقل شده است.
 
-####The model hunt
-Here is a first cut at identifying the models in SuperBook. As typical for an early attempt,
-we have represented only the essential models and their relationships in the form of a
-simplistic class diagram:
+    با این حال، مدیر ارشد فناوری، هارت، کمک بزرگی بود. او درخواست کرد دستگاه تا یک ساعت دیگر با تمام سیستم‌های نصب‌شده سالم برگردانده شود. او همچنین پیش تأییدیه‌هایی را برای پروژه سوپربوک ارسال کرده بود تا از چنین موانعی در آینده جلوگیری کند.
 
-![The model hunt](./images/1.png)
+    بعد از ظهر همان روز، استیو یک کیف قهوه‌ای ناهار همراهش بود. یک کت بلیزر بژ و شلوار جین آبی روشن پوشیده بود. هارت به موقع رسید. علیرغم اینکه از بیشتر مردم بلندتر بود و سرش تراشیده بود، خونسرد و خوش برخورد به نظر می‌رسید. او پرسید که آیا استیو تلاش قبلی برای ساخت پایگاه داده ابرقهرمانی در دهه شصت را بررسی کرده است؟
 
-Let's forget models for a moment and talk in terms of the objects we are modeling. Each user has a profile. A user can make several comments or several posts. A Like can be related to a single user/post combination.
 
-Drawing a class diagram of your models like this is recommended . Class attributes might be missing at this stage, but you can detail them later. Once the entire project is represented in the diagram, it makes separating the apps easier.
+    استیو گفت: "اوه بله، پروژه Sentinel، درست است؟". "به نظر می‌رسد پایگاه داده به عنوان یک مدل *Entity-Attribute-Value* طراحی شده است، چیزی که من آن را یک ضد الگو می‌دانم. شاید آن‌ها در آن روزها تصور بسیار کمی در مورد ویژگی‌های یک ابرقهرمان داشتند".
 
-Here are some tips to create this representation:
-* Nouns in your write-up typically end up as entities.
-* Boxes represent entities, which become models.
-* Connector lines are bi-directional and represent one of the three types of
-relationships in Django: one-to-one, one-to-many (implemented with Foreign
-Keys), and many-to-many.
-* The field denoting the one-to-many relationship is defined in the model on
-the **Entity-relationship model (ER-model)**. In other words, the n side is where
-the Foreign Key gets declared.
+    هارت در زمان شنیدن آخرین جمله تقریباً خم شد. با صدای کمی آهسته تر گفت: "درست می‌گویی. من چنین تصوری ندارم. علاوه بر این، آن‌ها فقط دو روز به من فرصت دادند تا همه چیز را طراحی کنم. من معتقدم به معنای واقعی کلمه یک بمب هسته‌ای در جایی تیک تاک می‌کند."
 
-The class diagram can be mapped into the following Django code (which will be spread
-across several apps):
+    دهان استیو کاملاً باز بود و ساندویچش در ورودی آن یخ زده بود. هارت لبخند زد. "مطمئنا بهترین کار من نیست. زمانی که از حدود یک میلیارد ورودی عبور کرد، روزها طول می‌کشد تا هر نوع تحلیلی را روی آن پایگاه داده لعنتی اجرا کنیم.
+    سوپر بوک در عرض چند ثانیه آن را انجام می‌دهد، درست است؟"
 
-```python
+    استیو به آرامی سر تکان داد. او هرگز تصور نمی‌کرد که در وهله اول حدود یک میلیارد ابرقهرمان وجود داشته باشد.
 
+### شکار مدل‌ها 
+
+در اینجا اولین برش از شناسایی مدل‌ها در سوپربوک است. به عنوان نمونه برای یک تلاش اولیه، ما فقط مدل‌های اساسی و روابط آن‌ها را در قالب یک نمودار ساده کلاس‌ها نشان داده‌ایم:
+
+![./images/1.png](./images/1.png)
+
+بیایید یک لحظه مدل‌ها را فراموش کنیم و در مورد اشیایی که مدل سازی می‌کنیم صحبت کنیم. هر کاربر یک پروفایل دارد. یک کاربر می‌تواند چندین نظر یا چندین پست بگذارد. یک لایک می‌تواند مربوط به یک ترکیب کاربر/پست باشد.
+
+توصیه می‌شود نموداری کلاسی مانند این از مدل‌های خود ترسیم کنید. ممکن است در این مرحله ویژگی‌های کلاس وجود نداشته باشد، اما می‌توانید بعداً آن‌ها را توضیح دهید. هنگامی که کل پروژه در نمودار نشان داده می‌شود، جداسازی برنامه‌ها آسان تر می‌شود.
+
+اینجا چند نکته وجود دارد تا این بازنمایی را انجام بدهیم:
+
+* اسم‌ها معمولاً تبدیل به هویت مدل‌ها می‌شود.
+* مستطیل‌ها که هر موجودیت را نشان می‌دهند به مدل‌ها تبدیل می‌شوند.
+* خط‌های متصل کننده که دو جهتی هستند و سه نوع از روابط را در جنگو تعریف میکنند:
+  یک-به-یک , یک-به-خیلی (با کلید خارجی یا Foreign Keys پیاده سازی می‌شوند) و خیلی-به-خیلی
+* بخشی که رابطه یک-به-خیلی را تعریف می‌کند در سمت  **Entity-relationship model (ER-model)** قرار دارد. به عبارتی دیگر، طرف n جایی هست که کلید خارجی تعریف می‌شود.
+
+نمودار کلاس‌ها می‌توانند به کدهای جنگو مانند زیر ارتباط داده شوند. (که بین چندین اپ، پخش خواهند شد): 
+
+```
 class Profile(models.Model):
     user = models.OneToOneField(User)
-    
+
 class Post(models.Model):
     posted_by = models.ForeignKey(User)
 
@@ -129,128 +101,125 @@ class Comment(models.Model):
 class Like(models.Model):
     liked_by = models.ForeignKey(User)
     post = models.ForeignKey(Post)
+
 ```
 
-Later, we will not reference the **User** directly, but use the more general **settings.AUTH_USER_MODEL** instead. 
-We are also not concerned about field attributes such as **on_delete** or **primary_key** at this stage. We will get into those details soon.
+بعداً مستقیماً به **User** ارجاع نخواهیم داد، بلکه از **settings.AUTH_USER_MODEL** استفاده می‌کنیم. همچنین در این مرحله نگران ویژگی‌های فیلد مانند **on_delete** یا **primary_key** نیستیم. به زودی به این جزئیات خواهیم پرداخت.
 
+# تقسیم کردن فایل models.py به چندین فایل
 
-#Splitting models.py into multiple files
+مانند بسیاری از اجزای جنگو، یک فایل models.py بزرگ را می‌توان به چندین فایل در یک پکیج تقسیم کرد. یک پکیج به صورت دایرکتوری پیاده سازی می‌شود که می‌تواند حاوی چندین فایل باشد یکی از آن‌ها باید فایلی با نام خاص به نام `__init__.py` باشد. این فایل می‌تواند خالی باشد، اما باید وجود داشته باشد.
 
-
-Like most components of Django, a large models.py file can be split up into multiple files within a package. A package is implemented as a directory, which can contain multiple files, one of which must be a specially named file called __init__.py. This file can be
-empty, but should exist.
-
-All definitions that can be exposed at package level must be defined in __init__.py with global scope. For example, if we split models.py into individual classes, in corresponding files inside the models subdirectory such as postable.py, post.py, and comment.py, then the directory structure would look as follows: 
+همه تعاریفی که باید در سطح پکیج نمایش داده شوند باید در `__init__.py` به صورت عمومی (global scope) تعریف شوند. به عنوان مثال، اگر models.py را به کلاس‌های جداگانه تقسیم کنیم، در فایل‌های مربوطه در داخل زیرشاخه مدل‌ها مانند postable.py، post.py، و comment.py، ساختار دایرکتوری به شکل زیر خواهد بود:
 
 models/
-    - comment.py
-    - __init__.py
-    - postable.py
-    - post.py
 
-To ensure that all the models are imported correctly, __init__.py should have the following lines:
+- comment.py
+- ــinitــ.py
+- postable.py
+- post.py
 
-```python
+برای اطمینان از اینکه همه مدل‌ها به درستی فراخوانی شده اند فایل ، `__init__.py` باید خطوط زیر را داشته باشد:
+
+```
 from postable import Postable
 from post import Post
 from comment import Comment
+
 ```
 
-Now you can import models.Post as previously
-Any other code in the __init__.py file will be run when the package is imported. Hence, it is the ideal place for any package-level initialization code.
+اکنون می‌توانید models.Post را مانند قبل فراخوانی کنید. هر کد دیگری که در فایل `__init__.py`  باشد هنگام فراخوانی پکیج، اجرا می‌شود. بنابراین، این فایل، محل ایده‌آلی برای تعریف مقادیر اولیه در سطح پکیج است.
 
-#Structural patterns
+# الگوهای ساختاری
 
-This section contains several design patterns that can help you design and structure your models. Structural patterns mentioned here would help you realize the relationships between models more effectively.
+این بخش شامل چندین الگوی طراحی است که می‌تواند به شما در طراحی و ساختار مدل‌های خود کمک کند. الگوهای ساختاری ذکر شده در اینجا به شما کمک می‌کند تا روابط بین مدل‌ها را به طور موثرتری درک کنید.
 
-##Patterns — normalized models
+## الگو‌ها — مدل‌های نرمال شده
 
-**Problem:** By design, model instances have duplicated data that causes data inconsistencies.
-**Solution:** Break down your models into smaller models through normalization. Connect these models with logical relationships between them.
+ **مشکل:** به صورت ساختاری, هر کپی از مدل‌ها، شامل داده‌های تکراری هستند که باعث ناسازگاری داده‌ها می‌شود 
 
-##Problem details
+ **راه حل** مدل‌های خود را از طریق نرمال سازی به مدل‌های کوچکتر تقسیم کنید. این مدل‌ها را با روابط منطقی به هم وصل کنید.
 
-Imagine if someone designed our post table (omitting certain columns) in the following way:
+## جزییات مشکل
 
-![Problem details](./images/2.png)
+تصور کنید کسی جدول پست ما را (با حذف ستون‌های خاص) به روش زیر طراحی کند:
 
-I hope you noticed the inconsistent superhero names in the first column (and captain's consistent lack of patience).
+![./images/2.png](./images/2.png)
 
-If we were to look at the first column, we are not sure which spelling is correct __ **Captain Temper** or **Capt. Temper**  . This is the kind of data redundancy that we would like to eliminate through normalization.
+امیدوارم که به اسم‌های ابرقهرمان‌ها که به صورت ناسازگار در ستون اول( و کاپیتان تمپری که صبر ندارد) آمده توجه کرده‌باشید.
 
-##Solution details
+اگه به اولین ستون نگاه کنیم, ما مطمئن نیستیم که کدام روش هجی کردن درست است، **Captain Temper** یا **Capt. Temper**. این نوعی از افزونگی داده است که ما دوست داریم توسط نرمال سازی دیتا از بین ببریم.  
 
-Before we take a look at the fully normalized solution, let's have a brief primer on database normalization in the context of Django models.
+## جزییات راه حل
 
-####Three steps of normalization
+قبل از اینکه نگاهی به راه حل کاملا نرمال شده بیندازیم، اجازه دهید یک توضیح مختصر در مورد نرمال سازی پایگاه داده در زمینه مدل‌های جنگو داشته باشیم.
 
-Normalization helps you efficiently store data. Once your models are fully normalized, they will not have redundant data, and each model should contain data that is only logically related to it.
+### سه قدم در نرمال سازی
 
-To give a quick example, if we were to normalize the post table so that we can unambiguously refer to the superhero who posted that message, then we need to isolate the user details in a separate table. Django already creates the user table by default. So, you only need to refer to the ID of the user who posted the message in the first column, as shown in the following table:
+عادی سازی به شما کمک می‌کند تا داده‌ها را به طور موثر ذخیره کنید. هنگامی که مدل‌های شما به طور کامل نرمال‌سازی شدند، داده‌های اضافی نخواهند داشت و هر مدل باید حاوی داده‌هایی باشد که فقط از نظر منطقی به آن مرتبط هستند.
 
-![Three steps of normalization](./images/3.png)
+برای ارائه یک مثال سریع، اگر می‌خواهیم جدول پست را عادی کنیم تا بتوانیم بدون ابهام به ابرقهرمانی که آن پیام را ارسال کرده است اشاره کنیم، باید جزئیات کاربر را در یک جدول جداگانه جدا کنیم. جنگو قبلاً جدول کاربر را به طور پیش فرض ایجاد می‌کند. بنابراین، همانطور که در جدول زیر نشان داده شده است، فقط باید به شناسه کاربری که پیام را در ستون اول ارسال کرده است مراجعه کنید:
 
-Now, it is not only clear that there were three messages posted by the same user (with an arbitrary user ID), but we can also find that user's correct name by looking up the user table.
+![./images/3.png](./images/3.png)
 
-Generally, you will design your models to be in their fully normalized form and then selectively denormalize them for performance reasons (see the next section on Performance to know why). In databases, **normal forms** are a set of guidelines that can be applied to a table to ensure that it is normalized. Commonly found normal forms are first, second, and third normal forms, although they could go up to the fifth normal form.
+اکنون نه تنها مشخص است که سه پیام توسط یک کاربر ارسال شده است (با یک شناسه کاربری دلخواه)، بلکه می‌توانیم با جستجوی جدول کاربر نام صحیح آن کاربر را نیز پیدا کنیم.
 
+به طور کلی، شما مدل‌های خود را به گونه‌ای طراحی می‌کنید که کاملاً نرمال شده باشند و سپس به دلیل بهبود عملکرد، به طور انتخابی برخی از آن‌ها را از حالت نرمال خارج می‌کنید (برای اطلاع از علت آن، به بخش بعدی در مورد عملکرد مراجعه کنید). در پایگاه‌های داده، **فرم‌های نرمال** مجموعه‌ای از دستورالعمل‌ها هستند که می‌توان آن‌ها را برای اطمینان از نرمال‌سازی جدول به کار برد. فرم‌های معمولی که معمولاً یافت می‌شوند، فرم‌های نرمال نوع اول،نوع دوم و نوع سوم هستند، اگرچه می‌توانند تا پنج مرحله هم، نرمال بشوند.
 
-In the next example, we will normalize a table and create the corresponding Django models. Imagine a spreadsheet called Sightings that lists the first time someone spots a superhero using a power or superhuman ability. Each entry mentions the known origins, superpowers, and location of the first sighting, including latitude and longitude:
+در مثال بعدی,ما یک جدول را نرمال سازی می‌کنیم و مدل‌های جنگو متناظر را میسازیم. صفحه گسترده‌ای به نام Sightings را تصور کنید که اولین باری که فردی یک ابرقهرمان را با استفاده از قدرت یا توانایی مافوق بشری می‌بیند، وی را در این صفحه، فهرست می‌کند. هر ورودی در این صفحه گسترده، به منشاء ابرقهرمان، نوع قدرت وی و محل اولین مشاهده که شامل از جمله طول و عرض جغرافیایی است، اشاره می‌کند:
 
-![](./images/4.png)
+![./images/4.png](./images/4.png)
 
-The preceding geographic data has been extracted from
-http://www.golombek.com/locations.html
+دیتای جغرافیای زیر از [http://www.golombek.com/locations.html](http://www.golombek.com/locations.html)  به دست آمده است. 
 
-##First normal form (1NF)
+## فرم نرمال نوع اول (1NF)
 
-- No attribute (cell) with multiple values
-- A primary key defined as a single column or a set of columns (composite key)
+- هیچ خصوصیتی(سلول) با داده تکراری وجود نداشته باشد
+- یک کلید اصلی(پرایمری) به صورت یک ستون یا چندین ستونی(کامپوزیت کی) تعریف شود.
 
-Let's try to convert our spreadsheet into a database table. Evidently, our Power column breaks the first rule.
+ بیایید سعی کنیم صفحه گسترده خود را به یک جدول پایگاه داده تبدیل کنیم. بدیهی است که ستون **Power** ما قانون اول را زیر پا می‌گذارد.
 
-The updated table here satisfies the first normal form. The primary key (marked with a *) is a combination of **Name** and **Power**, which should be unique for each row:
+جدول به روز شده در اینجا اولین فرم نرمال بودن را برآورده می‌کند. کلید اصلی (با علامت *) ترکیبی از **Name** و **Power** است که باید برای هر ردیف منحصر به فرد باشد:
 
-![](./images/5.png)
-![](./images/5-2.png)
+![./images/5.png](./images/5.png)
 
-##Second normal form (2NF)
+![./images/5-2.png](./images/5-2.png)
 
-The second normal form must satisfy all the conditions of the first normal form. In addition, it must satisfy the condition that all non-primary key columns must be dependent on the entire primary key.
+## فرم نرمال نوع دوم (2NF)
 
-In the previous table, notice that Origin depends only on the superhero, that is, Name. It doesn't matter which Power we are talking about. So, Origin is not entirely dependent on the composite primary key — Name and Power.
+فرم نرمال نوع دوم باید تمام شرایط فرم نرمال اول را برآورده کند. علاوه بر این، باید این شرط را برآورده کند که تمام ستون‌های کلید غیر اصلی، باید به کل کلید اصلی وابسته باشند.
 
-Let's extract just the origin information into a separate table called Origin, as shown here:
+در جدول قبلی توجه کنید که Origin فقط به ابرقهرمان یعنی Name بستگی دارد. مهم نیست در مورد کدام Power صحبت می‌کنیم. بنابراین، Origin کاملاً به کلید اولیه ترکیبی - Name و Power وابسته نیست.
 
-![](./images/6.png)
+بیایید فقط اطلاعات مبدا را در یک جدول جداگانه به نام Origin استخراج کنیم، همانطور که در اینجا نشان داده شده است: 
 
-Now our Sightings table updated to be compliant to the second normal form looks as follows:
+![./images/6.png](./images/6.png)
 
-![](./images/7.png)
+حالا جدول Sightings را طوری تغییر می‌دهیم که با  فرم نرمال نوع دوم هم تطابق داشته باشد.
 
-##Third normal form (3NF)
+![./images/7.png](./images/7.png)
 
-In third normal form, the tables must satisfy the second normal form and should additionally satisfy the condition that all non-primary key columns must be directly dependent on the entire primary key and must be independent of each other.
+## فرم نرمال نوع سوم (3NF)
 
-Think about the **Country** column for a moment. Given the **Latitude** and **Longitude** , you can easily derive the **Country** column. Even though the country where a superpower was sighted is dependent on the Name-Power composite primary key, it is only indirectly dependent on them.
+در فرم نرمال نوع سوم، جداول باید فرم نرمال نوع دوم را برآورده کنند و علاوه بر این باید شرایطی را داشته باشند که تمام ستون‌های کلید غیراصولی باید مستقیماً به کل کلید اصلی وابسته باشند و در ضمن باید مستقل از یکدیگر باشند.
 
-So, let's separate the location details into a separate countries table as follows:
+برای لحظه‌ای به ستون **Country** فکر کنید. با توجه به **Longitude** و **Latitude**، می‌توانید به راحتی ستون **Country** را استخراج کنید. حتی اگر کشوری که در آن یک ابرقدرت دیده شده است به کلید اولیه ترکیبی Name-Power وابسته است، اما فقط به طور غیرمستقیم به آن‌ها وابسته است.
 
-![](./images/8.png)
+بنابراین، اجازه دهید جزئیات مکان را  در جدول  جداگانه کشورها به صورت زیر، جدا کنیم:
 
-Now our Sightings table in its third normal form looks as follows:
+![./images/8.png](./images/8.png)
 
-![](./images/9.png)
+حالا جدول Sightings ما در سومین نوع نرمال سازی قرار دارد:
 
-As before, we have replaced the superhero's name with the corresponding User ID that can be used to reference the user table.
+![./images/9.png](./images/9.png)
 
-#Django models
+ مانند قبل، نام ابرقهرمان را با User ID مربوطه جایگزین کرده ایم که می‌تواند برای ارجاع به جدول کاربر استفاده شود.
 
-We can now take a look at how these normalized tables can be represented as Django models. Composite keys are not directly supported in Django. The solution used here is to apply the surrogate keys and specify the *unique_together* property in the *Meta* class:
+# مدل‌های جنگو 
+
+حالا می‌توانیم نگاه کنیم که این حدول‌های نرمال سازی شده چطور می‌توانند به صورت مدل‌های جنگو نمایش داده بشوند. کلیدهای ترکیبی یا کامپوزیت کی‌ها به صورت مستقیم در جنگو پشتیبانی نمی‌شوند.راه حل استفاده شده در اینجا اعمال کلیدهای جایگزین و مشخص کردن ویژگی *unique_together* در کلاس *Meta* است:
 
 ```python
-
 class Origin(models.Model):
     superhero = models.ForeignKey(
     settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -258,7 +227,6 @@ class Origin(models.Model):
 
     def __str__(self):
         return "{}'s orgin: {}".format(self.superhero, self.origin)
-
 
 class Location(models.Model):
     latitude = models.FloatField()
@@ -268,13 +236,12 @@ class Location(models.Model):
     def __str__(self):
         return "{}: ({}, {})".format(
             self.country,
-            self.latitude, 
+            self.latitude,
             self.longitude
             )
 
     class Meta:
         unique_together = ("latitude", "longitude")
-
 
 class Sighting(models.Model):
     superhero = models.ForeignKey(
@@ -296,68 +263,69 @@ class Sighting(models.Model):
 
 ```
 
-#Performance and denormalization
+#  کارایی و نرمال سازی نکردن (denormalization)
 
-Normalization can adversely affect performance. As the number of models increase, the number of joins needed to answer a query also increase. For instance, to find the number of superheroes with the Freeze capability in the USA, you will need to join four tables. Prior to normalization, any information can be found by querying a single table.
+نرمال سازی می‌تواند بر کارایی، تأثیر منفی بگذارد. با افزایش تعداد مدل‌ها، تعداد پیوست‌های مورد نیاز برای پاسخ به یک کوئری نیز افزایش می‌یابد. به عنوان مثال، برای یافتن تعداد ابرقهرمانان با قابلیت Freeze در ایالات متحده، باید به چهار جدول درخواست ارسال شود. قبل از نرمال سازی، می‌توانستیم همه اطلاعات را با کوئری فرستادن به یک جدول، به دست بیاوریم.
 
-You should design your models to keep the data normalized. This will maintain data integrity. However, if your site faces scalability issues, then you can selectively derive data from those models to create denormalized data.
+شما باید مدل‌های خود را طوری طراحی کنید که داده‌ها نرمال نگه داشته شوند. این کار، یکپارچگی داده‌ها را حفظ می‌کند. با این حال، اگر سایت شما با مشکلات مقیاس پذیری مواجه است، می‌توانید به طور انتخابی داده‌ها را از آن مدل‌ها استخراج کنید تا داده‌های دی‌نرمال ایجاد کنید.
 
-#####Best Practice:
-*Normalize while designing, but denormalize while optimizing.*
+##### بهترین الگوها
 
+*در حال طراحی نرمال‌سازی کنید, ولی برای بهینه سازی دی نرمالایز کنید*
 
-For instance, if counting the sightings in a certain country is very common, then add it as an additional field to the *Location* model. Now, you can include the other queries using Django **object-relational mapping (ORM)** , unlike a cached value.
+به عنوان مثال، اگر تعداد مشاهدات در یک کشور خاص بسیار زیاد است، آن را به عنوان یک فیلد اضافی به مدل *Location* اضافه کنید. اکنون، می‌توانید کوئری‌های دیگر را با استفاده از  **object-relational mapping (ORM)**،  در جنگو، بر خلاف مقدار ذخیره شده، اضافه کنید.
 
-However, you need to update this count each time you add or remove a sighting. You need to add this computation to the *save* method of Sighting, add a signal handler, or even compute using an asynchronous job.
+با این حال، هر بار که یک مشاهده را اضافه یا حذف می‌کنید، باید این تعداد را به روز کنید. شما یا باید این محاسبه تعداد را به متد *save* در مدل Sighting اضافه کنید یا یک سیگنال اضافه کنید یا با استفاده از یک روش انجام کار ناهمزمان، محاسبات را انجام دهید.  
 
-If you have a complex query spanning several tables, such as a count of superpowers by country, then creating a separate denormalized table might improve performance. 
-Typically, this table will be in a faster in-memory database or a cache. As before, we need to update this denormalized table every time the data in your normalized models changes (or you will have the infamous cache-invalidation problem).
+اگر کوئری پیچیده‌ای دارید که چندین جدول را در بر می‌گیرد، مانند تعداد ابرقدرت‌ها بر اساس کشور، ایجاد یک جدول دی‌نرمال شده جداگانه ممکن است عملکرد را بهبود بخشد.
+به طور معمول، این جدول در یک پایگاه داده دررون-حافظه یا کش سریعتر، اجرا می‌شود. مانند قبل، هر بار که داده‌های مدل‌های نرمال‌شده شما تغییر می‌کند، باید این جدول دی‌نرمال شده را به‌روزرسانی کنیم (در غیر این صورت با مشکل دوست‌نداشتنی  Cache-Invalidation مواجه خواهید شد).
 
-Denormalization is surprisingly common in large websites because it is a tradeoff between speed and space. Today, space is cheap, but speed is crucial to user experience. So, if your queries are taking too long to respond, then you might want to consider it.
+دی‌نرمال کردن به‌طور شگفت‌انگیزی در وب‌سایت‌های بزرگ متداول است، زیرا تعادلی بین سرعت و فضا است. امروزه فضا ارزان است، اما سرعت برای تجربه کاربر بسیار مهم است. بنابراین، اگر پاسخ کوئری شما بیش از حد طول می‌کشد، ممکن است بخواهید آن را در نظر بگیرید.
 
-#Should we always normalize?
+# آیا همیشه باید نرمال‌سازی کنیم؟
 
-Too much normalization is not necessarily a good thing. Sometimes, it can introduce unnecessary tables that can complicate updates and lookups.
+نرمال‌سازی بیش از حد لزوماً چیز خوبی نیست. گاهی اوقات، می‌تواند باعث به وجود آمدن جداول غیر ضروری شود که به روز رسانی‌ها و جستجوها را پیچیده کند.
 
-For example, your user model might have several fields for their home address. Strictly speaking, you can normalize these fields into an address model. However, in many cases, it would be unnecessary to introduce an additional table to the database.
+به عنوان مثال، مدل کاربری شما ممکن است چندین فیلد برای آدرس خانه آن‌ها داشته باشد. به طور دقیق، می‌توانید این فیلدها را به یک مدل آدرس نرمال کنید. با این حال، در بسیاری از موارد، معرفی یک جدول اضافی به پایگاه داده غیر ضروری خواهد بود.
 
-Rather than aiming for the most normalized design, carefully weigh each opportunity to normalize and consider the trade offs before refactoring.
+به‌جای هدف نرمال‌سازی‌شده‌ترین طرح، هر فرصتی را برای نرمال‌سازی با دقت بسنجید و قبل از ایجاد آن، فواید و مضراتش را در نظر بگیرید.
 
-#Pattern — model mixins
+# الگو — مدل‌های میکسین
 
-**Problem:** Distinct models have the same fields and/or methods duplicated violating the DRY principle .
-**Solution:** Extract common fields and methods into various reusable model mixins.
+**مشکل:** مدل‌های متمایز دارای فیلدها و/یا روش‌های مشابه هستند که اصل DRY را نقض می‌کنند.
 
-####Problem details
+**راه حل:** زمینه‌ها و روش‌های مشابه و تکراری را به مدل‌های میکسین‌ قابل استفاده مجدد، تقسیم کنید.
 
-While designing models, you might find certain common attributes or behaviors shared across model classes. For example, a post and comment model needs to keep track of its created date and modified date. Manually copying and pasting the fields and their associated method is not a very DRY approach.
+#### جزییات مشکل
 
-Since Django models are classes, object-oriented approaches such as composition and inheritance are possible solutions. However, compositions (by having a property that contains an instance of the shared class) will need an additional level of indirection to access fields.
+هنگام طراحی مدل‌ها، ممکن است ویژگی‌ها یا رفتارهای مشترک مشخصی را پیدا کنید که در کلاس‌های مدل به اشتراک گذاشته شده است. به عنوان مثال، یک مدل پست و نظر باید تاریخ ایجاد و تاریخ اصلاح آن را پیگیری کند. کپی و چسباندن دستی فیلدها و روش مرتبط با آن‌ها یک رویکرد بسیار DRY نیست.
 
-Inheritance can get tricky. We can use a common base class for post and comments. 
-However, there are three kinds of inheritance in Django: concrete, abstract, and proxy.
+از آنجایی که مدل‌های جنگو کلاس هستند، رویکردهای شی گرا مانند ترکیب و ارث راه حل‌های ممکن هستند. با این حال، ترکیبات (با داشتن یک ویژگی که حاوی نمونه‌ای از کلاس مشترک است) برای دسترسی به فیلدها به یک سطح غیرمستقیم اضافی نیاز دارند.
 
-**Concrete inheritance** works by deriving from the base class just like you normally would in Python classes. However, in Django, this base class will be mapped into a separate table. 
-Each time you access base fields, an implicit join is needed. This leads to horrible performance.
+ارث می‌تواند مشکل ساز شود. ما می‌توانیم از یک کلاس پایه مشترک برای پست و نظرات استفاده کنیم.
+با این حال، سه نوع ارث در جنگو وجود دارد: عینی concrete، انتزاعی abstract و پروکسی proxy.
 
-**Proxy inheritance** can only add new behavior to the parent class. You cannot add new fields. Hence, it is not very useful for this situation.
-Finally, we are left with Abstract inheritance.
+**وراثت عینی** با ارث بری از کلاس پایه درست مانند آنچه که معمولاً در کلاس‌های پایتون انجام می‌دهید کار می‌کند. با این حال، در جنگو، این کلاس پایه در یک جدول جداگانه ثبت می‌شود.
+هر بار که به فیلدهای پایه دسترسی پیدا می‌کنید، به یک عملیات join نیاز است. این اتفاق منجر به افت شدید کارایی می‌شود.
 
-####Solution details
+**وراثت پراکسی** فقط می‌تواند رفتار جدیدی را به کلاس والد اضافه کند. شما نمی توانید فیلدهای جدید اضافه کنید. از این رو برای این وضعیت چندان مفید نیست.
+در نهایت، ما با وراثت Abstract باقی می‌مانیم.
 
-Abstract inheritance is an elegant solution which uses special Abstract base classes to share data and behavior among models. When you define an abstract base class in Django, which are not the same as abstract base classes (ABCs) in Python, it does not create any corresponding table in the database. Instead, these fields are created in the derived non-abstract classes.
+#### جزییات راه‌ حل
 
-Accessing abstract base class fields doesn't need a *JOIN* statement. The resulting tables are also self-contained with managed fields. Due to these advantages, most Django projects use abstract base classes to implement common fields or methods.
+وراثت انتزاعی یک راه حل ظریف است که از کلاس‌های پایه Abstract ویژه برای به اشتراک گذاشتن داده‌ها و رفتار بین مدل‌ها استفاده می‌کند. وقتی یک کلاس پایه انتزاعی را در جنگو تعریف می‌کنید، که با کلاس‌های پایه انتزاعی (ABC) در پایتون یکسان نیست، هیچ جدول مربوطه در پایگاه داده ایجاد نمی کند. در عوض، این فیلدها در کلاس‌های غیر انتزاعی مشتق شده ایجاد می‌شوند.
 
-Limitations of abstract models are as follows:
-- They cannot have a Foreign key or many-to-many field from another model
-- They cannot be instantiated or saved
-- They cannot be directly used in a query since it doesn't have a manager
+دسترسی به فیلدهای کلاس پایه انتزاعی نیازی به دستور *JOIN* ندارد. جداول به دست آمده نیز دارای فیلدهای مدیریت شده هستند. با توجه به این مزایا، اکثر پروژه‌های جنگو از کلاس‌های پایه انتزاعی برای پیاده سازی فیلدها یا روش‌های مشابه و تکراری استفاده می‌کنند.
 
-Here is how the post and comment classes can be initially designed with an abstract base class:
+محدودیت‌های مدل‌های انتزاعی به شرح زیر است:
 
-```python
+- نمی توانند کلید خارجی یا فیلد چند به چند از مدل دیگری داشته باشند
+-  از آن‌ها نمی توان نمونه (instance) تهیه کرد یا آن‌ها را ذخیره کرد
+- آن‌ها را نمی توان مستقیماً در کوئری استفاده کرد زیرا مدیری (class manager) ندارند
 
+در اینجا نحوه طراحی کلاس‌های پست و نظرات، در ابتدا با یک کلاس پایه انتزاعی، آمده است:
+
+```
 class Postable(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -366,39 +334,35 @@ class Postable(models.Model):
     class Meta:
         abstract = True
 
-
 class Post(Postable):
     ...
-
 
 class Comment(Postable):
     ...
 
 ```
 
-To turn a model into an abstract base class, you will need to mention *abstract = True* in its inner *Meta* class. Here, *Postable* is an abstract base class. However, it is not very reusable.
+برای تبدیل یک مدل به یک کلاس پایه انتزاعی، باید *abstract = True* را در کلاس *Meta* در داخل مدل اضافه کنید. در اینجا، *Postable* یک کلاس پایه انتزاعی است. با این حال، خیلی قابل استفاده مجدد نیست.
 
-In fact, if there was a class that had just the *created* and *modified/ field, then we can reuse that timestamp functionality in nearly any model needing a timestamp. In such cases, we usually define a model mixin.
+در واقع، اگر کلاسی وجود داشته باشد که فقط فیلد *created* و *modified* را داشته باشد، می‌توانیم تقریباً در هر مدلی که به مهر زمانی نیاز دارد، از آن عملکرد مهر زمانی مجدداً استفاده کنیم. در چنین مواردی، ما معمولا یک مدل میکسین را تعریف می‌کنیم.
 
-#####Model mixins
- 
-Model mixins are abstract classes that can be added as a parent class of a model. Python supports multiple inheritances, unlike other languages such as Java. Hence, you can list any number of parent classes for a model.
+##### میکسین‌های مدل
 
-Mixins ought to be orthogonal and easily composable. Drop in a mixin to the list of base classes and they should work. In this regard, they are more similar in behavior to composition rather than inheritance.
+میکسین‌های مدل، کلاس‌های انتزاعی هستند که می‌توانند به عنوان کلاس والد یک مدل اضافه شوند. پایتون بر خلاف زبان‌های دیگر مانند جاوا از چندین وراثت پشتیبانی می‌کند. از این رو، می‌توانید هر تعداد کلاس والد را برای یک مدل فهرست کنید.
 
-Smaller mixins are better. Whenever a mixin becomes large and violates the single responsibility principle, consider refactoring it into smaller classes. Let a mixin do one thing and do it well.
+میکسین‌ها باید بسیار واضح باشند و به راحتی ترکیب شوند. اگر یک میکسین را به صورت کلاس‌های پایه تعریف کنید باید به درستی کار کند. از این نظر رفتار آن‌ها بیشتر به ترکیب شبیه است تا وراثت.
 
-In our previous example, the model mixin used to update *created* and *modified* time can be easily factored out, as shown in the following code: 
+میکسین‌های کوچکتر بهتر هستند. هر زمان که یک میکسین بزرگ شد و اصل مسئولیت واحد را نقض کرد، آن را در کلاس‌های کوچک‌تر تقسیم کنید. اجازه دهید یک میکسین یک کار را انجام دهد و آن را به خوبی انجام دهد.
 
-```python
+در مثال قبلی، مدل میکسین مورد استفاده برای به‌روزرسانی زمان *created* و *modified* را می‌توان به راحتی فاکتور گرفت، همانطور که در کد زیر نشان داده شده است:
 
+```
 class TimeStampedModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now =True)
 
     class Meta:
         abstract = True
-
 
 class Postable(TimeStampedModel):
     message = models.TextField(max_length=500)
@@ -407,37 +371,35 @@ class Postable(TimeStampedModel):
     class Meta:
         abstract = True
 
-
 class Post(Postable):
     ...
-
 
 class Comment(Postable):
     ...
 
 ```
 
-We have two base classes now. However, the functionality is clearly separated. The mixin can be separated into its own module and reused in other contexts. 
+ما الان دو کلاس پایه داریم. با این حال، عملکردها به وضوح از هم جدا شده است. میکسین را می‌توان به عنوان یک ماژول جدا تعریف کرد و در اپ‌های دیگر دوباره استفاده کرد.
 
-#Pattern — user profiles
+# الگو — پروفایل‌های کاربر
 
-**Problem: ** Every website stores a different set of user profile details. However, Django's built-in user model is meant for authentication details.
-**Solution: ** Create a user profile class with a one-to-one relation with the user model.
+**مشکل:** هر وب سایت مجموعه متفاوتی از جزئیات را در پروفایل کاربر ذخیره می‌کند. با این حال، مدل پیش‌ساخته کاربر در جنگو، برای جزئیات احراز هویت در نظر گرفته شده است.
 
-####Problem details
+**راه حل:** یک کلاس پروفایل کاربری با یک رابطه یک به یک با مدل کاربر ایجاد کنید.
 
-Out of the box, Django provides a pretty decent user model. You can use it when you create a super user or login to the admin interface. It has a few basic fields, such as full name, username, and email.
+#### جزییات مشکل
 
-However, most real-world projects keep a lot more information about users, such as their address, favorite movies, or their superpower abilities. From Django 1.5 onwards, the default user model can be extended or replaced. However, official docs strongly recommend storing only authentication data even in a custom user model (it belongs to the *auth* app, after all).
+جنگو، یک مدل  بسیار مناسب برای تعریف کردن کاربر، ارائه می‌دهد. شما می‌توانید از آن در هنگام ایجاد یک کاربر super user یا ورود به رابط کاربری استفاده کنید. دارای چند فیلد اساسی مانند نام کامل، نام کاربری و ایمیل است.
 
-Certain projects need multiple types of users. For example, SuperBook can be used by superheroes and non-superheroes. There might be common fields and some distinctive fields based on the type of user.
+با این حال، اکثر پروژه‌های دنیای واقعی، اطلاعات بسیار بیشتری را در مورد کاربران، مانند آدرس، فیلم‌های مورد علاقه یا توانایی‌های ابرقدرت آن‌ها نگه می‌دارند. از جنگو 1.5 به بعد، مدل کاربر پیش فرض را می‌توان گسترش داد یا جایگزین کرد. با این حال، اسناد رسمی اکیداً توصیه می‌کنند که فقط داده‌های احراز هویت را حتی در یک مدل کاربر سفارشی ذخیره کنید (این بخش مربوط به اپلیکیشن `auth` است).
 
-####Solution details
+پروژه‌های خاص به چندین نوع کاربر نیاز دارند. به عنوان مثال، سوپربوک می‌تواند توسط ابرقهرمانان و غیر ابرقهرمانان استفاده شود. ممکن است فیلدهای مشترک و برخی فیلدهای متمایز بر اساس نوع کاربر وجود داشته باشد.
 
-The officially recommended solution is to create a user profile model. It should have a one-to-one relation with your user model. All the additional user information is stored in this model:
+#### جزییات راه‌ حل
 
-```python
+راه حل رسمی توصیه شده، ایجاد یک مدل پروفایل کاربر است. این مدل باید با مدل کاربری شما رابطه یک به یک داشته باشد. تمام اطلاعات اضافی کاربر در این مدل ذخیره می‌شود:
 
+```
 class Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -447,18 +409,17 @@ class Profile(models.Model):
 
 ```
 
-It is recommended that you set the *primary_key* explicitly to *True* to prevent concurrency issues in some database backends such as PostgreSQL. The rest of the model can contain any other user details, such as birth-date, favorite color, and so on. 
+توصیه می‌شود برای جلوگیری از مشکلات همزمانی در برخی از پایگاه‌های پشتیبان مانند PostgreSQL، مقدار  `primary_key` را به طور واضح روی `True` تنظیم کنید. بقیه مدل می‌تواند شامل هر گونه جزئیات دیگر کاربر مانند تاریخ تولد، رنگ مورد علاقه و غیره باشد.
 
-While designing the profile model, it is recommended that all the profile detail fields must be nullable or contain default values. Intuitively, we can understand that a user cannot fill out all their profile details while signing up. Additionally, we will ensure that the signal handler also doesn't pass any initial parameters while creating the profile instance.
+هنگام طراحی مدل پروفایل، توصیه می‌شود که تمام فیلدهای جزئیات پروفایل باید *nullable* یا *حاوی مقادیر پیش فرض* باشند. به طور شهودی، ما می‌توانیم درک کنیم که یک کاربر نمی تواند هنگام ثبت نام، تمام جزئیات نمایه خود را پر کند. علاوه بر این، ما اطمینان حاصل می‌کنیم که کنترل کننده سیگنال در هنگام ایجاد نمونه پروفایل، هیچ پارامتر اولیه‌ای را پاس نمی کند.
 
-######Signals
+###### سیگنال‌ها
 
-Ideally, every time a user model instance is created, a corresponding user profile instance must be created as well. This is usually done using signals.
+در حالت ایده آل، هر بار که یک نمونه مدل کاربر ایجاد می‌شود، یک نمونه پروفایل کاربر مربوطه نیز باید ایجاد شود. این‌کار معمولاً با استفاده از سیگنال انجام می‌شود.
 
-For example, we can listen for the *post_save* signal from the user model using the following signal handler in *profiles/signals.py*:
+برای مثال، می‌توانیم سیگنال `post_save` را از مدل کاربر، با استفاده از کنترل‌کننده سیگنال زیر در `profiles/signals.py` گوش کنیم:
 
-```python
-
+```
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
@@ -474,16 +435,15 @@ def create_profile_handler(sender, instance, created, **kwargs):
 
 ```
 
-The *profile* model has passed no additional initial parameters except for the *user=instance* .
+مدل `Profile` هیچ پارامتر اولیه اضافی به جز `user=instance` را ارسال نکرده است.
 
-Previously, there was no specific place for initializing the signal code. Typically, they were imported or implemented in *models.py* (which was unreliable). However, with app-loading refactor in Django 1.7, the application initialization code location is well defined.
+قبلاً مکان خاصی برای مقداردهی اولیه کد سیگنال وجود نداشت. به طور معمول، آن‌ها در `models.py` فراخوانی یا پیاده سازی می‌شدند (که قابل اعتماد نبود). با این حال، با ویژگی `app-loading refactor` در جنگو 1.7، مکان کدهای اولیه در برنامه به خوبی تعریف شده است.
 
-First, subclass the *ProfileConfig* method in *apps.py* within the profiles app and set up the signal in the *ready* method:
+ابتدا، متد `ProfileConfig` را در فایل `apps.py` در اپ پروفایل تغییر دهید و درون متد `ready`، سیگنال را تعریف کنید:
 
 ```
 # apps.py
 from django.apps import AppConfig
-
 
 class ProfilesConfig(AppConfig):
     name = "profiles"
@@ -494,10 +454,9 @@ class ProfilesConfig(AppConfig):
 
 ```
 
-Next, change the line mentioning profiles in your *INSTALLED_APPS* to a dotted path pointing to this *AppConfig*. So your settings should look as follows:
+سپس در بخش `INSTALLED_APPS`، خطی که مسیر اپ را تعریف می‌کند به کمک آدرس دهی نقطه‌ای به `AppConfig` متصل می‌کنیم. فایل تنظیمات به شکل زیر خواهد شد:
 
-```python
-
+```
 INSTALLED_APPS = [
     'profiles.apps.ProfilesConfig',
     'posts',
@@ -505,16 +464,15 @@ INSTALLED_APPS = [
 
 ```
 
-With your signals set up, accessing *user.profile* should return a *Profile* object to all users, even the newly created ones.
+با تنظیم سیگنال‌ها، دسترسی به `user.profile` باید یک شی `Profile` را از طریق هر کاربر، حتی کاربران تازه ایجاد شده، برگرداند.
 
-#####Admin
+##### Admin
 
-Now, a user's details will be in two different places within the admin: the authentication details in the usual user admin page, and the same user's additional profile details in a separate profile admin page. This gets very cumbersome. 
+اکنون، جزئیات یک کاربر در دو مکان مختلف در داخل ادمین خواهد بود: جزئیات احراز هویت در صفحه مدیریت معمولی کاربر، و جزئیات اضافی پروفایل همان کاربر در یک صفحه مدیریت نمایه جداگانه. این خیلی دست و پا گیر می‌شود.
 
-For convenience, the profile admin can be made inline to the default user admin by defining a custom *UserAdmin* in *profiles/admin.py* as follows:
+برای راحتی، ادمین پروفایل را می‌توان با تعریف یک `UserAdmin` سفارشی در `profiles/admin.py`،  به صورت زیر به ادمین پیش فرض کاربر، اضافه کرد:
 
-```python
-
+```
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import Profile
@@ -523,26 +481,23 @@ from django.contrib.auth.models import User
 class UserProfileInline(admin.StackedInline):
     model = Profile
 
-
 class NewUserAdmin(UserAdmin):
     inlines = [UserProfileInline]
-
 
 admin.site.unregister(User)
 admin.site.register(User, NewUserAdmin)
 
 ```
 
-#Multiple profile types
+# گونه‌های مختلف پروفایل
 
-Assume that you need several kinds of users and their corresponding profiles in your application — there needs to be a field to track which type of profile the user has. The *Profile* data itself needs to be stored in separate models or a unified model.
+فرض کنید به چندین نوع کاربر و پروفایل‌های مربوط به آن‌ها در برنامه خود نیاز دارید - باید یک فیلد برای ردیابی نوع پروفایل کاربر وجود داشته باشد. خود داده‌های `profile` باید در مدل‌های جداگانه یا یک مدل یکپارچه ذخیره شوند.
 
-An aggregate *Profile* approach is recommended since it gives the flexibility to change the *Profile* types without loss of *Profile* details and minimizes complexity. In this approach, the *Profile* model contains a superset of all profile fields from all *Profile* types.
+یک رویکرد تجمیعی برای `Profile` توصیه می‌شود زیرا انعطاف پذیری برای تغییر انواع `Profile` بدون از دست دادن جزئیات آن‌ها را می‌دهد و پیچیدگی را به حداقل می‌رساند. در این رویکرد، مدل `Profile` شامل یک ابرمجموعه از تمام فیلدها از همه انواع `Profile` است.
 
-For example, SuperBook will need a superhero type profile and an ordinary (non superhero) profile. It can be implemented using a single unified profile model as follows: 
+برای مثال، SuperBook به یک پروفایل نوع ابرقهرمانی و یک پروفایل معمولی (غیر ابرقهرمانی) نیاز دارد. می‌توان آن را با استفاده از یک مدل پروفایل یکپارچه به صورت زیر پیاده سازی کرد:
 
-```python
-
+```
 class BaseProfile(models.Model):
     USER_TYPES = (
         (0, 'Ordinary'),
@@ -558,13 +513,11 @@ class BaseProfile(models.Model):
     class Meta:
         abstract = True
 
-
 class SuperHeroProfile(models.Model):
     origin = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         abstract = True
-
 
 class OrdinaryProfile(models.Model):
     address = models.CharField(max_length=200, blank=True, null=True)
@@ -572,75 +525,64 @@ class OrdinaryProfile(models.Model):
     class Meta:
         abstract = True
 
-
 class Profile(SuperHeroProfile, OrdinaryProfile, BaseProfile):
     pass
 
 ```
+ما جزئیات پروفایل را در چندین کلاس پایه انتزاعی گروه بندی کردیم تا موضوعات را از هم جدا کنیم. کلاس `BaseProfile` شامل تمام جزئیات پروفایل رایج، صرف نظر از نوع کاربر است. همچنین دارای یک قسمت `user_type` است که پروفایل فعال کاربر را ردیابی می‌کند.
 
-We grouped the profile details into several abstract base classes to separate concerns. The *BaseProfile* class contains all the common profile details irrespective of the user type. It also has a *user_type* field that keeps track of the user's active profile.
+کلاس `SuperHeroProfile` و کلاس `OrdinaryProfile` به ترتیب حاوی جزئیات `Profile` مخصوص کاربران ابرقهرمانی و غیرقهرمانی هستند. در نهایت، کلاس `Profile` از تمام این کلاس‌های پایه برای ایجاد یک ابرمجموعه از جزئیات پروفایل مشتق می‌شود.
 
-The *SuperHeroProfile* class and *OrdinaryProfile* class contain the *Profile* details specific to superhero and non-hero users, respectively. Finally, the *Profile* class derives from all these base classes to create a superset of profile details.
+برخی از جزئیاتی که در هنگام استفاده از این روش باید رعایت شود به شرح زیر است:
 
-Some details to take care of while using this approach are as follows:
-- All *Profile* fields that belong to the class or its abstract bases classes must be nullable or with defaults.
-- This approach might consume more database space per user, but gives immense flexibility.
-- The active and inactive fields for a *Profile* type need to be managed outside the model. For example, a form to edit the profile must show the appropriate fields based on the currently active user type.
+- تمام فیلدهای `Profile` که متعلق به کلاس یا کلاسهای پایه انتزاعی آن هستند باید nullable یا دارای مقدار پیش فرض باشند.
+- این رویکرد ممکن است فضای پایگاه داده بیشتری را به ازای هر کاربر مصرف کند، اما انعطاف پذیری فوق العاده‌ای می‌دهد.
+- فیلدهای فعال و غیرفعال برای نوع `Pofile` باید خارج از مدل مدیریت شوند. برای مثال، فرمی برای ویرایش نمایه باید فیلدهای مناسب را بر اساس نوع کاربر فعال فعلی نشان دهد.
 
-#Pattern – service objects
+# Pattern – service objects
 
-**Problem**: Models can get large and unmanageable. Testing and maintenance get harder as a model does more than one thing.
-**Solution**: Refactor out a set of related methods into a specialized *Service* object.
+**مشکل**: مدل‌ها می‌توانند بزرگ و غیرقابل مدیریت شوند. تست و نگهداری آن‌ها سخت تر می‌شود زیرا یک مدل بیش از یک کار را انجام می‌دهد.
 
-####Problem details
+**راه‌حل**: مجموعه‌ای از متد‌های مرتبط یا یک مدل را در یک شیء تخصصی خدماتی به نام *Service* جای دهید.
 
-Fat models, thin views is an adage commonly told to Django beginners. Ideally, your views
-should not contain anything other than presentation logic.
+#### جزئیات مشکل
 
-However, over time, pieces of code that cannot be placed anywhere else tend to go into
-models. Soon, models become a dump yard for the code.
+مدل‌های چاق، ویوی لاغر ضرب‌المثلی است که معمولاً برای مبتدیان جنگو گفته می‌شود. در حالت ایده آل، ویوهای شما نباید حاوی چیزی غیر از منطق برنامه باشد.
 
-Consider refactoring out a *Service* object if your model contains code for any of the
-following:
+با این حال، با گذشت زمان، کدهایی که نمی توانند در جای دیگری قرار گیرند، تمایل پیدا می‌کنند درون مدل‌ها قرار گیرند. به زودی، مدل‌ها تبدیل به محل تخلیه کد می‌شوند.
 
-1. Interactions with external services, for example, checking whether the user is
-eligible to get a *SuperHeroProfile* with a web service
-2. Helper tasks that do not deal with the database, for example, generating a short
-URL or random captcha for a user
-3. Making a short-lived object without a database state, for example, creating a
-JSON response for an AJAX call
-4. Functionality spanning multiple model instances yet do not belong to anyone
-5. Long-running tasks such as Celery tasks
+اگر مدل شما حاوی هر یک از موارد زیر است، یک شی *Service* برای آن نیاز دارد:
 
-Models in Django follow the Active Record pattern, that is, each class instance corresponds
-to a row in the database table. Ideally, they encapsulate both database access
-and application (or domain) logic. However, keep the application logic minimal.
-While testing, if we find ourselves mocking the database even while not using it, then we
-need to consider breaking up the model class. A Service object is recommended in such
-situations.
+1. تعامل با سرویس‌های خارجی، به عنوان مثال، بررسی اینکه آیا کاربر واجد شرایط دریافت پروفایل *SuperHeroProfile* هست یا نه، به کمک یک وب‌سرویس.
+2. کارهای کمکی که با پایگاه داده سروکار ندارند، به عنوان مثال، ایجاد یک URL کوتاه یا کپچای تصادفی برای یک کاربر
+3. ساختن یک شی با عمر کوتاه بدون نیاز به پایگاه داده، به عنوان مثال، ایجاد یک پاسخ JSON برای یک تماس AJAX
+4. عملکردی که چندین نمونه مدل را در بر می‌گیرد اما به هیچکس تعلق ندارد
+5. وظایف طولانی مدت مانند وظایف Celery
 
-####Solution details
+مدل‌ها در جنگو از الگوی Active Record پیروی می‌کنند، یعنی هر نمونه از کلاس، مربوط به یک ردیف در جدول پایگاه داده است. در حالت ایده‌آل، آن‌ها هم دسترسی به پایگاه داده و هم منطق برنامه (یا دامنه) را محصور می‌کنند. با این حال، منطق برنامه را در حداقل ممکن، نگه دارید. 
 
-Service objects are **plain old Python objects (POPOs)** that encapsulate a service or
-interactions with a system. They are usually kept in a separate file named *services.py* or
-*utils.py*.
+در حین آزمایش، اگر متوجه شدیم که پایگاه داده را حتی در حالی که از آن استفاده نمی‌کنیم، به کار‌ می‌گیریم، باید کلاس مدل را تجزیه کنیم. استفاده از یک شیء Service در چنین شرایطی توصیه می‌شود.
 
-For example, checking a web service is sometimes dumped into a model method as follows:
+#### جزییات راه حل
 
-```python
+اشیاء سرویس **Plain Old Python Objects (POPO)** یا اشیاء ساده قدیمی پایتون، هستند که یک سرویس یا تعاملات با یک سیستم را محصور می‌کنند. آن‌ها معمولاً در یک فایل جداگانه با نام *services.py* یا *utils.py* نگهداری می‌شوند.
 
+به عنوان مثال، بررسی یک وب سرویس گاهی اوقات در یک متد مدل به شرح زیر قرار می‌گیرد:
+
+```
 class Profile(models.Model):
     ...
     def is_superhero(self):
-        url = "http://api.herocheck.com/?q={0}".format(
+        url = "<http://api.herocheck.com/?q={0}>".format(
             self.user.usernam
         )
         return webclient.get(url)
+
 ```
 
-This method can be refactored to use a service object as follows:
+این متد می‌تواند با تغییر به یک شیء سرویس به شکل زیر بازنویسی شود:
 
-```python
+```
 from .services import SuperHeroWebAPI
 
 def is_superhero(self):
@@ -648,11 +590,10 @@ def is_superhero(self):
 
 ```
 
-The service object can now be defined in *services.py* as follows:
+آبژکت‌های سرویس می‌توانند در فایلی به نام *services.py* به شکل زیر جمع‌آوری شوند:
 
-```python
-
-API_URL = "http://api.herocheck.com/?q={0}"
+```
+API_URL = "<http://api.herocheck.com/?q={0}>"
 
 class SuperHeroWebAPI:
     ...
@@ -663,18 +604,13 @@ class SuperHeroWebAPI:
 
 ```
 
-In most cases, methods of a service object are stateless, that is, they perform the action
-solely based on the function arguments without using any class properties. Hence, it is
-better to explicitly mark them as static methods (as we have done for *is_hero*).
+در بیشتر موارد، متدهای یک شیء سرویس بدون حالت هستند، یعنی عمل را صرفاً بر اساس آرگومان‌های تابع بدون استفاده از ویژگی‌های کلاس انجام می‌دهند. از این رو، بهتر است آن‌ها را به صراحت به عنوان متدهای استاتیک (ایستا) تعریف کنیم (همانطور که برای *is_hero* انجام دادیم).
 
-Consider refactoring your business logic or domain logic out of models into service objects.
-This way, you can use them outside your Django application as well.
+در نظر بگیرید که منطق کسب و کار یا منطق دامنه خود را از مدل‌ها به اشیاء خدماتی تبدیل کنید. به این ترتیب، می‌توانید از آن‌ها در خارج از برنامه جنگو نیز استفاده کنید.
 
-Imagine there is a business reason to blacklist certain users from becoming superhero types
-based on their username. Our service object can be easily modified to support this:
+تصور کنید یک دلیل تجاری وجود دارد که برخی از کاربران را بر اساس نام کاربری خود از تبدیل شدن به ابرقهرمانان، در لیست ممنوعه قرار دهید. شی سرویس ما را می‌توان به راحتی برای پشتیبانی از این موضوع، تغییر داد:
 
-```python
-
+```
 class SuperHeroWebAPI:
     ...
     @staticmethod
@@ -685,40 +621,29 @@ class SuperHeroWebAPI:
 
 ```
 
-Ideally, service objects are self-contained. This makes them easy to test without mocking,
-say, the database. They can also be easily reused.
+در حالت ایده آل، اشیاء سرویس، مستقل هستند. این باعث می‌شود که آن‌ها را بتوان بدون به کارگرفتن، مثلاً پایگاه داده، به سادگی آزمایش کرد. آن‌ها همچنین می‌توانند به راحتی مورد استفاده مجدد قرار گیرند.
 
-In Django, time-consuming services are executed asynchronously using task queues such as
-Celery. Typically, the service object actions are run as Celery tasks. Such tasks can be run
-periodically or after a delay.
+در جنگو، سرویس‌های وقت گیر به صورت ناهمزمان با استفاده از صف‌های وظیفه مانند Celery اجرا می‌شوند. به طور معمول، اقدامات شیء سرویس به عنوان وظایف Celery اجرا می‌شوند. چنین کارهایی را می‌توان به صورت دوره‌ای یا با تاخیر اجرا کرد.
 
-#Retrieval patterns
+# الگوهای بازیابی
 
-This section contains design patterns that deal with accessing model properties or
-performing queries on them. These Retrieval patterns can help you design better ways to
-access frequently needed information.
+این بخش شامل الگوهای طراحی است که با دسترسی به ویژگی‌های مدل یا انجام کوئری بر روی آن‌ها سروکار دارد. این الگوهای بازیابی می‌توانند به شما در طراحی راه‌های بهتر برای دسترسی به اطلاعاتی که اغلبزیاد مورد استفاده هستند، کمک کنند.
 
-####Pattern — property field
+#### الگو - فیلد ویژگی یا property field
 
-**Problem:** Models have derived attributes that are implemented as methods. However,
-these attributes should not be persisted to the database.
-**Solution:** Use the property decorator on such methods.
+**مشکل:** مدل‌ها دارای ویژگی‌های مشتق شده‌ای هستند که به عنوان متد پیاده سازی می‌شوند. با این حال، این ویژگی‌ها نباید در پایگاه داده حفظ شوند.
 
-####Problem details
+**راه حل:** از دکوراتور ویژگی در چنین روش‌هایی استفاده کنید.
 
-Model fields store per-instance attributes, such as first name, last name, birthday, and so
-on. They are also stored in the database. However, we also need to access some derived
-attributes, such as full name or age.
+#### جزئیات مشکل
 
-They can be easily calculated from the database fields, hence need not be stored separately.
-In some cases, they can just be a conditional check such as eligibility for offers based on age,
-membership points, and active status.
+فیلدهای یک مدل، ویژگی‌های هر نمونه از آن مدل را، مانند نام، نام خانوادگی، تاریخ تولد و غیره، در خود ذخیره می‌کنند. آن‌ها همچنین در پایگاه داده ذخیره می‌شوند. با این حال، ما باید به برخی از ویژگی‌های مشتق شده مانند نام کامل یا سن دسترسی داشته باشیم.
 
-A straightforward way to implement this is to define functions, such as get_age similar to
-the following:
+آن‌ها را می‌توان به راحتی از فیلدهای پایگاه داده محاسبه کرد، بنابراین نیازی به ذخیره جداگانه نیست. در برخی موارد، آن‌ها فقط می‌توانند یک بررسی مشروط مانند واجد شرایط بودن برای پیشنهادات بر اساس سن، امتیاز عضویت و وضعیت فعال باشند.
 
-```python
+یک راه ساده برای پیاده سازی این فیلد، تعریف توابعی مانند get_age به شکل زیر است:
 
+```
 class BaseProfile(models.Model):
     birthdate = models.DateField()
     #...
@@ -730,62 +655,41 @@ class BaseProfile(models.Model):
 
 ```
 
-Calling *profile.get_age()* would return the user's age by calculating the difference in
-the years adjusted by one based on the month and date (that is, if this year's birthday is yet
-to come).
+فراخوانی *profile.get_age()* سن کاربر را بر اساس تفاوت بین سال تولد و تاریخ امروز بر اساس سال و ماه و روز، محاسبه می‌کند. (یعنی اگر تولد امسال هنوز فرا نرسیده باشد، امسال به عدد سن اضافه نمی‌شود).
 
-This could be invoked by a function call. However, it is much more readable (and Pythonic)
-to call it *profile.age*.
+این می‌تواند توسط یک فراخوانی تابع احضار شود. با این حال، بسیار خواناتر (و پایتونیک) است که آن را *profile.age* نامید.
 
-####Solution details
+#### جزئیات راه حل
 
-Python classes can treat a function as an attribute using the property decorator. Django
-models can use it as well. In the previous example, replace the function definition line with
-the following:
+کلاس‌های پایتون می‌توانند  با استفاده از دکوراتور `property`، یک تابع را به‌عنوان یک ویژگی در نظر بگیرند. مدل‌های جنگو نیز می‌توانند از آن استفاده کنند. در مثال قبلی، خط تعریف تابع را با زیر جایگزین کنید:
 
-```python
-
+```
  @property
  def age(self):
 
 ```
 
-Now, we can access the user's age with *profile.age*. Notice that the function's name is
-shortened as well.
+اکنون می‌توانیم با `profile.age` به سن کاربر دسترسی پیدا کنیم. توجه داشته باشید که نام تابع نیز کوتاه شده است.
 
-An important shortcoming of a property is that it is invisible to the ORM, just like model
-methods are. You cannot use it in a *QuerySet* object. For example, this will not work,
-*Profile.objects.exclude(age__lt=18)*. However, it is visible to views or templates.
+یک نقص مهم یک property این است که برای ORM نامرئی است، درست مانند متدهای تعریف شده در مدل. شما نمی‌توانید آن را در یک شی `QuerySet` استفاده کنید. به عنوان مثال، این دستور کار نمی‌کند، `Profile.objects.exclude(age__lt=18)`. با این حال، برای ویوها یا تمپلیت‌ها قابل مشاهده است.
 
-In case you need to use it in a *QuerySet* object, you might want to use a Query expression.
-Use the *annotate* function to add a query expression to derive a calculated field from your
-existing fields.
+در صورت نیاز به استفاده از آن در یک شیء `QuerySet`، ممکن است بخواهید از عبارت `Query` استفاده کنید. از تابع `annotate` برای اضافه کردن یک عبارت کوئری، برای استخراج یک فیلد محاسبه شده از فیلدهای موجود خود استفاده کنید.
 
-A good reason to define a *property* is to hide the details of internal classes. This is
-formally known as the **Law of Demeter (LoD)**. Simply put, the law states that you should
-only access your own direct members or use only one dot.
+یک دلیل خوب برای تعریف یک `property`، پنهان کردن جزئیات کلاس‌های داخلی است. این موضوع به طور رسمی به عنوان **Law of Demeter (LoD)** یا **قانون دیمیتر** شناخته می‌شود. به بیان ساده، این قانون می‌گوید که شما فقط باید به اعضای مستقیم خود دسترسی داشته باشید یا فقط از یک نقطه برای دسترسی به اعضا، استفاده کنید.
 
-For example, rather than accessing *profile.birthdate.year*, it is better to define a
-*profile.birthyear* property. It helps you hide the underlying structure of the
-*birthdate* field this way.
+به عنوان مثال، به جای دسترسی به `profile.birthdate.year`، بهتر است ویژگی `profile.birthyear` را تعریف کنید. این کار به شما کمک می‌کند ساختار زیربنایی فیلد *birthdate* را از این طریق پنهان کنید.
 
-#####Best Practice
+##### Best Practice
 
-*Follow the LoD, and use only one dot when accessing a property.*
+*از LoD استفاده کنید تا وقتی به یک property دسترسی پیدا می‌کنید فقط با یک نقطه به آن برسید.*
 
-An undesirable side effect of this law is that it leads to the creation of several wrapper
-properties in the model. This could bloat up models and make them hard to maintain.Use
-the law to improve your model's API and reduce coupling wherever it makes sense.
+یک عارضه جانبی نامطلوب این قانون این است که منجر به ایجاد چندین ویژگی پوششی (wrapped properties) در مدل می‌شود. این موضوع می‌تواند مدل‌ها را متورم کند و نگهداری از آن‌ها را سخت کند. از این قانون برای بهبود API مدل خود استفاده کنید و هر جا که منطقی است، اتصال را کاهش دهید.
 
+#### ویژگی‌های ذخیره شده در حافظه پنهان (Cached)
 
-####Cached properties
+هر بار که یک *property* را فراخوانی می‌کنیم، یک تابع را دوباره محاسبه می‌کنیم. اگر محاسبه گرانی است، ممکن است بخواهیم نتیجه را در حافظه پنهان نگه داریم. به این ترتیب، دفعه بعد که به *property* دسترسی پیدا کرد، مقدار *cached* برگردانده می‌شود:
 
-Each time we call a *property*, we are recalculating a function. If it is an expensive
-calculation, we might want to cache the result. This way, the next time the *property* is
-accessed, the *cached* value is returned:
-
-```python
-
+```
 from django.utils.functional import cached_property
 
     #...
@@ -796,65 +700,45 @@ from django.utils.functional import cached_property
 
 ```
 
-The *cached* value will be saved as a part of the Python instance in memory. As long as the
-instance exists, the same value will be returned.
+مقدار *cached* به عنوان بخشی از نمونه پایتون (python instance) در حافظه ذخیره می‌شود. تا زمانی که نمونه وجود دارد، همان مقدار برگردانده می‌شود.
 
-As a fail-safe mechanism, you might want to force the execution of the *Expensive*
-*operation* to ensure that stale values are not returned. In such cases, set a keyword
-argument such as *cached=False* to prevent returning the *cached* value.
+به‌عنوان یک مکانیسم ایمن، ممکن است بخواهید اجرای *Expensiveoperation* را مجبور کنید تا اطمینان حاصل کنید که مقادیر قدیمی برنمی‌گردند. در چنین مواردی، یک آرگومان کلمه کلیدی مانند *cached=False* تنظیم کنید تا از بازگرداندن مقدار *cached* جلوگیری کنید.
 
-#Pattern — custom model managers
+# الگو - مدیریت سفارشی مدل (custom managers)
 
-**Problem:** Certain queries on models are defined and accessed repeatedly throughout the
-code violating the DRY principle.
-**Solution:** Define custom managers to give meaningful names to common queries.
+**مشکل:** برخی از کوئری‌های مربوط به مدل‌ها به طور مکرر و بدون رعایت اصل DRY، در سراسر کد تعریف شده و مورد دسترسی قرار می‌گیرند.
 
-####Problem details
+**راه‌حل:** مدیریت سفارشی را تعریف کنید تا نام‌های معنی‌داری به پرس و جوهای رایج بدهند.
 
-Every Django model has a default manager called objects. Invoking objects.all(),
-will return all the entries for that model in the database. Usually, we are interested in only a
-subset of all entries.
+#### جزئیات مشکل
 
-We apply various filters to find out the set of entries we need. The criterion to select them is
-often our core business logic. For example, we can find the posts accessible to the public
-by the following code:
+هر مدل جنگو دارای یک مدیر پیش فرض به نام **objects** است. فراخوانی `objects.all()`، تمام ورودی‌های آن مدل را در پایگاه داده برمی گرداند. معمولاً ما فقط به یک زیرمجموعه از همه ورودی‌ها علاقه‌مند هستیم.
 
-```python
+ما فیلترهای مختلفی را اعمال می‌کنیم تا مجموعه ورودی‌های مورد نیاز خود را پیدا کنیم. معیار انتخاب آن‌ها اغلب منطق اصلی کسب و کار ما است. به عنوان مثال، ما می‌توانیم پست‌های قابل دسترسی برای عموم را با کد زیر پیدا کنیم:
 
+```
 public = Posts.objects.filter(privacy="public")
 
 ```
 
-This criterion might change in the future. For example, we might want to also check
-whether the post was marked for editing. This change might look as follows:
+این معیار ممکن است در آینده تغییر کند. برای مثال، ممکن است بخواهیم بررسی کنیم که آیا پست برای ویرایش علامت‌گذاری شده است یا خیر. این تغییر ممکن است به صورت زیر باشد:
 
-```python
-
+```
     public = Posts.objects.filter(privacy=POST_PRIVACY.Public, draft=False)
 
 ```
 
-However, this change needs to be made everywhere a public post is needed. This can get
-very frustrating. There needs to be only one place to define such commonly used queries
-without *repeating oneself*.
+با این حال، این تغییر باید در هر جایی که به یک پست عمومی نیاز است انجام شود. این می‌تواند بسیار خسته کننده باشد. فقط باید یک مکان برای تعریف چنین کوئری‌های پرکاربرد بدون نقض قانون *repeating oneself* وجود داشته باشد.
 
+#### جزئیات راه حل
 
-####Solution details
+کلاس *QuerySet* یک کلاس انتزاعی بسیار قدرتمند است. آن‌ها تنها در صورت نیاز با تنبلی (lazily) ارزیابی می‌شوند. از این رو، ساخت *QuerySet* طولانی‌تر با روش زنجیره‌ای (شکلی از رابط روان) بر عملکرد آن‌ها تأثیر نمی گذارد.
 
-*QuerySet* is an extremely powerful abstraction. They are lazily evaluated only when
-needed. Hence, building longer *QuerySet* by method-chaining (a form of fluent interface)
-does not affect the performance.
+در واقع، با اعمال فیلتر بیشتر، مجموعه داده نتیجه کوچک می‌شود. این کار معمولا مصرف حافظه برای به‌دست آمدن نتیجه را کاهش می‌دهد.
 
-In fact, as more filtering is applied, the result dataset shrinks. This usually reduces the
-memory consumption of the result.
+مدیر یک مدل (model manager)، رابط مناسب برای یک مدل برای دریافت شیء *QuerySet* است. به عبارت دیگر، آن‌ها به شما کمک می‌کنند از ORM جنگو برای دسترسی به پایگاه داده زیربنایی استفاده کنید. در واقع، مدیران به عنوان پوشش‌های بسیار نازک در اطراف یک شیء *QuerySet* پیاده سازی می‌شوند. به این دو رابط یکسان توجه کنید:
 
-A model manager is a convenient interface for a model to get its *QuerySet* object. In other
-words, they help you use Django's ORM to access the underlying database. In fact,
-managers are implemented as very thin wrappers around a *QuerySet* object. Notice the
-identical interface:
-
-```python
-
+```
     >>> Post.objects.filter(posted_by__username="a")
     [<Post: a: Hello World>, <Post: a: This is Private!>]
     >>> Post.objects.get_queryset().filter(posted_by__username="a")
@@ -862,44 +746,30 @@ identical interface:
 
 ```
 
-The default manager created by Django, *objects*, has several methods, such as all,
-*filter*, or *exclude* that return a *QuerySet*. However, they only form a low-level API to
-your database.
+مدیر پیش‌فرض ایجاد شده توسط جنگو، *objects*، چندین متد دارد، مانند *all*، *filter* یا *exclude* که یک *QuerySet* را برمی‌گرداند. با این حال، آن‌ها فقط یک API سطح پایین برای پایگاه داده شما تشکیل می‌دهند.
+از مدیران سفارشی برای ایجاد یک API سطح بالاتر مخصوص دامنه استفاده می‌شود. این نه تنها قابل خواندن‌تر است، بلکه کمتر تحت تأثیر جزئیات پیاده سازی قرار می‌گیرد. بنابراین، شما می‌توانید در سطح بالاتری از انتزاع که دقیقاً با دامنه خود شما مدل شده است، کار کنید.
 
-Custom managers are used to create a domain-specific, higher-level API. This is not only
-more readable, but less affected by implementation details. Thus, you are able to work at a
-higher level of abstraction closely modeled to your domain.
+مثال قبلی ما برای پست‌های عمومی را می‌توان به راحتی به یک مدیر سفارشی به شرح زیر تبدیل کرد:
 
-Our previous example for public posts can be easily converted into a custom manager as
-follows:
-
-```python
-
+```
 # managers.py
 from django.db.models.query import QuerySet
-
 
 class PostQuerySet(QuerySet):
 
     def public_posts(self):
         return self.filter(privacy="public")
 
-
 PostManager = PostQuerySet.as_manager
 
 ```
 
-This convenient shortcut for creating a custom manager from a *QuerySet* object appeared
-in Django 1.7. Unlike other previous approaches, this *PostManager* object is chainable like
-the default *objects* manager.
+این میانبر مناسب برای ایجاد یک مدیر سفارشی از یک شی *QuerySet*، در جنگو 1.7 ظاهر شد. برخلاف سایر روش‌های قبلی، این شیء *PostManager* مانند مدیر پیش‌فرض *objects* قابل اتصال به کمک زنجیره کوئری‌ها است.
 
-It sometimes makes sense to replace the default *objects* manager with our custom
-manager, as shown in the following code:
+گاهی اوقات منطقی است که مدیر پیش فرض *objects* را با مدیر سفارشی خود جایگزین کنیم، همانطور که در کد زیر نشان داده شده است:
 
-```python
-
+```
 from .managers import PostManager
-
 
 class Post(Postable):
     ...
@@ -907,33 +777,27 @@ class Post(Postable):
 
 ```
 
-By doing this, to access *public_posts* our code gets considerably simplified to the
-following:
+با انجام این کار، برای دسترسی به *public_posts*، کد ما به میزان قابل توجهی به شکل زیر ساده می‌شود:
 
-```python
-
+```
 public = Post.objects.public_posts()
 
 ```
-Since the returned value is a *QuerySet*, they can be further filtered:
 
-```python
+از آنجایی که مقدار بازگشتی یک *QuerySet* است، می‌توان آن‌ها را بیشتر فیلتر کرد:
 
+```
 public_apology = Post.objects.public_posts().filter(message_startswith="Sorry")
 
 ```
 
-QuerySet have several interesting properties. In the next few sections, we can take a look
-at some common patterns that involve combining QuerySets.
+شیء *QuerySet* چندین ویژگی جالب دارد. در چند بخش بعدی، می‌توانیم به برخی از الگوهای رایج که شامل ترکیب *QuerySet*‌ها هستند نگاهی بیندازیم.
 
-#####Set operations on QuerySets
+##### عملیات را در QuerySets تنظیم کنید
 
-True to their name (or rather the latter half of their name), *QuerySets* support a lot of
-(mathematical) set operations. For the sake of illustration, consider two *QuerySets* that
-contain the user objects:
+شیء *QuerySets* مطابق با نام خود (یا بهتر بگوییم نیمه دوم نام خود) از بسیاری از ویژگی‌های مجموعه ریاضی، پشتیبانی می‌کند. برای مثال، دو *QuerySets* را در نظر بگیرید که شامل اشیاء کاربر است:
 
-```python
-
+```
     >>> q1 = User.objects.filter(username__in=["a", "b", "c"])
     [<User: a>, <User: b>, <User: c>]
     >>> q2 = User.objects.filter(username__in=["c", "d"])
@@ -941,20 +805,18 @@ contain the user objects:
 
 ```
 
-Some set operations that you can perform on them are as follows:
+برخی از عملیات مجموعه‌ای که می‌توانید بر روی آن‌ها انجام دهید به شرح زیر است:
 
-**Union:** This combines and removes duplicates. Use *q1 | q2* to get *[<User: a>,
-<User: b>, <User: c>, <User: d>].*
+- **Union:** این عملیات موارد تکراری را ترکیب و حذف می‌کند. استفاده از `q1 | q2` برای دریافت `[<User: a>،
+<User: b>، <User: c>، <User: d>]`.
 
-**Intersection:** This finds common items. Use *q1* and *q2* to get *[<User: c>]*.
-**Difference:** This removes elements in the second set from the first. There is no
-logical operator for this. Instead use *q1.exclude(pk__in=q2)* to get *[<User:
-a>, <User: b>]*.
+- **Intersection:** این عملیات موارد مشترک را پیدا می‌کند. برای دریافت `[<User: c>]` از `q1` و `q2` استفاده کنید.
 
-The same operations can be done on *QuerySets* using the *Q* objects:
+- **Difference:** این عملیات عنصرهای موجود در مجموعه دوم را از مجموعه اول حذف می‌کند. هیچ عملگر منطقی برای این کار وجود ندارد. در عوض از `q1.exclude(pk__in=q2)` برای دریافت `[<User: a>، <User: b>]` استفاده کنید.
 
-```python
+همین عملیات را می‌توان در *QuerySets* با استفاده از اشیاء *Q* انجام داد:
 
+```
     from django.db.models import Q
 
     # Union
@@ -972,91 +834,75 @@ The same operations can be done on *QuerySets* using the *Q* objects:
 
 ```
 
-*The difference is implemented using & (and) and ~ (negation). The Q
-objects are very powerful and can be used to build very complex queries.*
+*تفاوت با استفاده از & (and) و ~ (نفی) اجرا می‌شود. اشیاء *Q* بسیار قدرتمند هستند و می‌توان از آن‌ها برای ساخت کوئری‌های بسیار پیچیده استفاده کرد.*
 
-However, the *Set* analogy is not perfect. *QuerySets*, unlike mathematical sets, are
-ordered. So, they are closer to Python's list data structure in that respect.
+با این حال، رفتار **Set** و **QuerySets** کاملاً یکسان نیست، **QuerySets**ها بر خلاف مجموعه‌های ریاضی، مرتب‌شده هستند. بنابراین، آن‌ها از این نظر به ساختار داده **لیست** در پایتون، نزدیکتر هستند.
 
-#Chaining multiple QuerySets
+# زنجیره‌سازی چندین *QuerySets*
 
-So far, we have been combining *QuerySets* of the same type belonging to the same base
-class. However, we might need to combine *QuerySets* from different models and perform
-operations on them.
+تاکنون، *QuerySets* از همان نوع متعلق به یک کلاس پایه را با هم ترکیب کرده ایم. با این حال، ممکن است لازم باشد *QuerySets* را از مدل‌های مختلف ترکیب کنیم و عملیاتی را روی آن‌ها انجام دهیم.
 
-For example, a user's activity timeline contains all their posts and comments in reverse
-chronological order. The previous methods of combining *QuerySets* won't work. A naïve
-solution would be to convert them to lists, concatenate, and sort them, as follows:
+به عنوان مثال، جدول زمانی فعالیت یک کاربر شامل تمام پست‌ها و نظرات آن‌ها به ترتیب زمانی معکوس است. روش‌های قبلی ترکیب *QuerySets* کار نمی کند. یک راه حل ساده لوحانه، تبدیل آن‌ها به لیست، الحاق و مرتب کردن آن‌ها به شرح زیر است:
 
-```python
-
+```
  >>>recent = list(posts)+list(comments)
  >>>sorted(recent, key=lambda e: e.modified, reverse=True)[:3]
  [<Post: user: Post1>, <Comment: user: Comment1>, <Post: user: Post0>]
 
 ```
 
-Unfortunately, this operation has evaluated both the lazy *QuerySet* objects. The combined
-memory usage of the two lists can be overwhelming. Besides, it can be quite slow to convert
-large *QuerySets* into lists.
+متأسفانه، این عملیات هر دو شیء تنبل *QuerySet* را ارزیابی کرده است. استفاده از حافظه برای ترکیب این دو لیست می‌تواند بسیار زیاد باشد. علاوه بر این، تبدیل *QuerySets* بزرگ به لیست می‌تواند بسیار کند باشد.
 
-A much better solution uses iterators to reduce the memory consumption. Use the
-*itertools.chain* method to combine multiple *QuerySets* as follows:
+یک راه حل بسیار بهتر استفاده از iterator‌ها برای کاهش مصرف حافظه است. از روش *itertools.chain* برای ترکیب چند *QuerySets* به صورت زیر استفاده کنید:
 
-```python
-
+```
  >>> from itertools import chain
  >>> recent = chain(posts, comments)
  >>> sorted(recent, key=lambda e: e.modified, reverse=True)[:3]
 
 ```
 
-Once you evaluate a *QuerySet*, the cost of hitting the database can be quite high.
-So, it is important to delay it as long as possible by performing only operations that will
-return *QuerySets* unevaluated.
+هنگامی که یک *QuerySet* را ارزیابی می‌کنید، هزینه ورود به پایگاه داده می‌تواند بسیار زیاد باشد. بنابراین، مهم است که آن را تا جایی که ممکن است با انجام عملیاتی که *QuerySets* را بدون ارزیابی باز می‌گرداند به تأخیر بیندازید.
 
-*Keep *QuerySets* unevaluated as long as possible.*
+*تا جایی که ممکن است *QuerySets* را بدون ارزیابی نگه دارید.*
 
-#Migrations
+# مهاجرت‌ها (migrations)
 
-Migrations help you to confidently make changes to your models. Introduced in Django 1.7,
-migrations are essential to a methodical development workflow.
-The new workflow is essentially as follows:
+مهاجرت‌ها به شما کمک می‌کند تا با اطمینان در مدل‌های خود تغییراتی ایجاد کنید. مهاجرت مدل، در جنگو 1.7 معرفی شد، مهاجرت برای یک گردش کار توسعه روشمند، ضروری است. روند کار جدید اساساً به شرح زیر است:
 
-1. The first time you define your model classes, you will need to run the following:
-    ```python
-
-        python manage.py makemigrations <app_label>
+1. اولین باری که کلاس مدل خود را تعریف می‌کنید، باید موارد زیر را اجرا کنید:
 
     ```
-2. This will create migration scripts in the *app/migrations* folder
-3. Run the following command in the same (development) environment:
-
-    ```python
-        python manage.py migrate <app_label>
+        python manager.py makemigrations <app_label>
+   
     ```
 
-4. This will apply the model changes to the database. Sometimes, questions are
-asked to handle the default values, renaming, and so on.
-5. Propagate the migration scripts to other environments. Typically, your version
-control tool, for example Git, will take care of this. As the latest source is checked
-out, the new migration scripts will also appear.
-6. Run the following command in these environments to apply the model changes:
-    ```python
+2. با این کار اسکریپت‌های مهاجرت در پوشه *app/migrations* ایجاد می‌شود
 
-        python manage.py migrate <app_label>
+3. دستور زیر را در همان محیط (توسعه) اجرا کنید:
 
     ```
-7. Whenever you make changes to the models classes, repeat step 1 to step 5.
+        python manager.py migrate <app_label>
+   
+    ```
 
-If you omit the *app_label* in the commands, Django will find unapplied changes in every
-app and *migrate* them.
+4. این کار تغییرات مدل را در پایگاه داده اعمال می‌کند. گاهی اوقات، سؤالاتی برای رسیدگی به مقادیر پیش فرض، تغییر نام و غیره پرسیده می‌شود.
 
-#Summary
+5. اسکریپت‌های مهاجرت را به محیط‌های دیگر انتشار دهید. به طور معمول، ابزار کنترل نسخه شما، به عنوان مثال Git، این کار را انجام می‌دهد. همانطور که آخرین منبع بررسی می‌شود، اسکریپت‌های مهاجرت جدید نیز ظاهر می‌شوند.
 
-Model design is hard to get right. Yet, it is fundamental to Django development. In this
-chapter, we looked at several common patterns when working with models. In each case,
-we looked at the impact of the proposed solution and various trade-offs.
+6. دستور زیر را در این محیط‌ها اجرا کنید تا تغییرات مدل اعمال شود:
 
-In the next chapter, we will examine the common design patterns we encounter when
-working with views and URL configurations.
+    ```
+        python manager.py migrate <app_label>
+   
+    ```
+
+7. هر زمان که در کلاس مدل‌ها تغییراتی ایجاد کردید، مرحله 1 تا مرحله 5 را تکرار کنید.
+
+اگر *app_label* را در دستورات حذف کنید، جنگو تغییرات اعمال نشده را در هر برنامه پیدا می‌کند و آن‌ها را *migrate* می‌کند.
+
+# خلاصه
+
+درست طراحی کردن مدل، سخت است. با این حال، برای توسعه با جنگو، این بخش، یک مرحله اساسی است. در این فصل به چندین الگوی رایج هنگام کار با مدل‌ها نگاه کردیم. در هر مورد، ما به تاثیر راه حل پیشنهادی و مبادلات مختلف نگاه کردیم.
+
+در فصل بعد، الگوهای طراحی رایجی را که هنگام کار با نماها و تنظیمات URL با آن مواجه می‌شویم، بررسی خواهیم کرد.
