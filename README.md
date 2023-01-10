@@ -1,5 +1,7 @@
  # ترجمه آزاد کتاب  Django Design Patterns and Best Practices
 
+![Cover](cover.jpg)
+
 قبل از شروع فهرست کتاب، اگر مایل به مشارکت هستید، [نحوه مشارکت](https://github.com/ftg-iran/ddpabp-persian/blob/main/CONTRIBUTING.md) را حتما مطالعه کنید.
 
 شما می توانید برای کمک کردن و خشنود کردن و انگیزه دادن به تیم ما، اهدای مالی به خیریه‌ی محک داشته باشید.
