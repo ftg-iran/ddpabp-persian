@@ -1,0 +1,116 @@
+:root {
+  --theme-color: #3f51b5;
+  --accent-color: #ff4081;
+  --border-color: #e0e0e0;
+}
+
+body { 
+  font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  transition: background-color 0.3s ease;
+}
+
+/* Theme toggle button */
+#theme-toggle {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--theme-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 999;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+#theme-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* Navigation buttons */
+.nav-buttons {
+  margin: 3rem 0;
+  padding: 1.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-button {
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  background: var(--theme-color);
+  color: white !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.nav-button:hover {
+  background: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Dark mode specific styles */
+.dark {
+  --border-color: #444;
+}
+
+.dark .nav-button {
+  background: var(--accent-color);
+}
+
+.dark .nav-button:hover {
+  background: #ff2674;
+}
+
+/* Existing sidebar styles (keep these) */
+.sidebar {
+  width: 280px !important;
+  padding: 20px !important;
+}
+
+.sidebar-nav {
+  padding: 0 !important;
+}
+
+.sidebar-nav li {
+  margin: 0.5rem 0;
+}
+
+.sidebar-nav a {
+  border-radius: 4px;
+  padding: 6px 10px !important;
+  transition: all 0.2s ease;
+}
+
+.sidebar-nav a:hover {
+  background: rgba(var(--theme-color), 0.1);
+}
+
+.markdown-section {
+  max-width: 900px;
+  padding: 2rem 3rem;
+  direction: rtl;
+}
+
+.dark .sidebar {
+  background-color: #1e1e1e !important;
+}
+
+.dark .sidebar-nav a {
+  color: #e0e0e0 !important;
+}
+
+code {
+  direction: ltr;
+}
